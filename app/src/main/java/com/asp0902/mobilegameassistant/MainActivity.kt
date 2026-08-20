@@ -54,10 +54,12 @@ class MainActivity : ComponentActivity() {
                 template = template,
                 analysis = analysis,
                 detailSlot = detailSlot,
+                heroChoices = viewModel.heroChoices(),
                 onStart = ::startTracking,
                 onStop = { MediaProjectionService.stop(this) },
                 onTemplateSelected = viewModel::selectFormationTemplate,
                 onDetailSlotSelected = viewModel::selectDetailSlot,
+                onHeroCorrected = viewModel::correctHero,
             )
         }
     }

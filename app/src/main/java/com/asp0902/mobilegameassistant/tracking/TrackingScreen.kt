@@ -14,16 +14,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.asp0902.mobilegameassistant.analysis.ShopRoiOverlay
+import com.asp0902.mobilegameassistant.analysis.HeroReference
 import com.asp0902.mobilegameassistant.capture.TrackingState
 import com.asp0902.mobilegameassistant.formation.FormationOverlay
 import com.asp0902.mobilegameassistant.formation.FormationTemplate
@@ -37,10 +44,12 @@ fun TrackingScreen(
     template: FormationTemplate?,
     analysis: ShopAnalysisUiState,
     detailSlot: Int?,
+    heroChoices: List<HeroReference>,
     onStart: () -> Unit,
     onStop: () -> Unit,
     onTemplateSelected: (FormationTemplateId) -> Unit,
     onDetailSlotSelected: (Int) -> Unit,
+    onHeroCorrected: (Long, Int, String) -> Unit,
 ) {
     Scaffold { padding ->
         Column(
@@ -103,7 +112,7 @@ fun TrackingScreen(
                             }
                             template?.let { FormationOverlay(it, Modifier.fillMaxSize()) }
                         }
-                        AnalysisSummary(analysis, detailSlot, onDetailSlotSelected)
+                        AnalysisSummary(analysis, detailSlot, heroChoices, onDetailSlotSelected, onHeroCorrected)
                     }
                 }
             }
@@ -115,7 +124,9 @@ fun TrackingScreen(
 private fun AnalysisSummary(
     analysis: ShopAnalysisUiState,
     detailSlot: Int?,
+    heroChoices: List<HeroReference>,
     onDetailSlotSelected: (Int) -> Unit,
+    onHeroCorrected: (Long, Int, String) -> Unit,
 ) {
     when (analysis) {
         ShopAnalysisUiState.Idle -> Text("AFK 분석을 누르면 상점 OCR을 시작합니다.")
@@ -142,6 +153,9 @@ private fun AnalysisSummary(
                 val hero = item.heroName?.let { " · $it/${item.faction ?: "?"} ${item.heroRecognitionStatus}" } ?: ""
                 val offer = " · ${item.quantity ?: "?"}장/${item.heroRarity}${if (item.isTrialCard) " 체험" else ""}${item.equipmentName?.let { " $it" } ?: ""}"
                 Text("슬롯 ${item.slotIndex + 1}: ${item.itemType} (${(item.confidence * 100).toInt()}%)$hero$offer — ${item.classificationReasons.joinToString(" · ")}")
+                if (item.itemType.name.startsWith("HERO") || item.isTrialCard) {
+                    HeroCorrectionMenu(item.slotIndex, analysis.snapshotId, heroChoices, onHeroCorrected)
+                }
             }
             analysis.recommendations.forEach { recommendation ->
                 val action = when (recommendation.action) {
@@ -151,6 +165,28 @@ private fun AnalysisSummary(
                 }
                 Text("슬롯 ${recommendation.slotIndex + 1}: $action — ${recommendation.reason}")
             }
+        }
+    }
+}
+
+@Composable
+private fun HeroCorrectionMenu(
+    slotIndex: Int,
+    snapshotId: Long,
+    choices: List<HeroReference>,
+    onHeroCorrected: (Long, Int, String) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Button(onClick = { expanded = true }) { Text("슬롯 ${slotIndex + 1} 영웅 정정") }
+    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        choices.forEach { hero ->
+            DropdownMenuItem(
+                text = { Text(hero.koreanName) },
+                onClick = {
+                    onHeroCorrected(snapshotId, slotIndex, hero.koreanName)
+                    expanded = false
+                },
+            )
         }
     }
 }

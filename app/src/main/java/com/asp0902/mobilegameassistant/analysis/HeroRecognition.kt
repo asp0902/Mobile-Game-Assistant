@@ -25,6 +25,29 @@ data class HeroRecognitionResult(
     val reasons: List<String> = emptyList(),
 )
 
+enum class RecognitionSource { AUTO, USER_CONFIRMED }
+
+data class HeroCorrection(
+    val runId: Long,
+    val snapshotId: Long,
+    val slotIndex: Int,
+    val originalHeroId: String?,
+    val correctedHeroId: String,
+    val correctedName: String,
+    val portraitSignature: String?,
+)
+
+object HeroCorrectionApplier {
+    fun apply(item: ShopItemState, hero: HeroReference): ShopItemState = item.copy(
+        heroId = hero.id,
+        heroName = hero.koreanName,
+        faction = hero.faction,
+        confidence = 1f,
+        recognitionSource = RecognitionSource.USER_CONFIRMED,
+        classificationReasons = item.classificationReasons + "사용자 정정",
+    )
+}
+
 object HeroIdentityResolver {
     fun resolveText(text: String, heroes: List<HeroReference>): HeroRecognitionResult {
         val matches = heroes.filter { text.contains(it.koreanName) }
@@ -60,13 +83,30 @@ class HeroRecognitionCatalog @Inject constructor(
     private val heroes by lazy { loadManifest() + SCREEN_CONFIRMED_HEROES }
     private val templates by lazy { heroes.mapNotNull(::template) }
 
-    fun recognize(bitmap: Bitmap, bounds: NormalizedRect, text: String): HeroRecognitionResult {
+    fun recognize(
+        bitmap: Bitmap,
+        bounds: NormalizedRect,
+        text: String,
+        corrections: List<HeroCorrection> = emptyList(),
+    ): HeroRecognitionResult {
         HeroIdentityResolver.resolveText(text, heroes).takeIf { it.status == HeroRecognitionStatus.CONFIRMED }?.let { return it }
         if (!SlotVisualEvidence.from(bitmap, bounds, bounds.bottom).likelyHeroPortrait) {
             return HeroRecognitionResult(reasons = listOf("영웅 초상화 증거 없음"))
         }
-        return HeroIdentityResolver.resolveScores(templates.map { it.hero to similarity(signature(bitmap, bounds), it.signature) })
+        val signature = signature(bitmap, bounds)
+        val correctionScores = corrections.mapNotNull { correction ->
+            correction.portraitSignature?.let(::decodeSignature)?.let { saved ->
+                heroes.firstOrNull { it.id == correction.correctedHeroId }?.let { it to similarity(signature, saved) }
+            }
+        }
+        return HeroIdentityResolver.resolveScores(correctionScores + templates.map { it.hero to similarity(signature, it.signature) })
     }
+
+    fun portraitSignature(bitmap: Bitmap, bounds: NormalizedRect): String = signature(bitmap, bounds).joinToString(",")
+
+    fun heroByName(name: String): HeroReference? = heroes.firstOrNull { it.koreanName == name }
+
+    fun heroChoices(): List<HeroReference> = heroes.sortedBy { it.koreanName }
 
     private fun loadManifest(): List<HeroReference> = context.assets.open("hero_recognition/hero_manifest.csv")
         .bufferedReader()
@@ -100,6 +140,9 @@ class HeroRecognitionCatalog @Inject constructor(
 
     private fun similarity(left: IntArray, right: IntArray): Float =
         1f - left.indices.sumOf { kotlin.math.abs(left[it] - right[it]) }.toFloat() / (left.size * 255)
+
+    private fun decodeSignature(value: String): IntArray? = value.split(',').mapNotNull(String::toIntOrNull)
+        .takeIf { it.size == 256 }?.toIntArray()
 
     private data class HeroTemplate(val hero: HeroReference, val signature: IntArray)
 

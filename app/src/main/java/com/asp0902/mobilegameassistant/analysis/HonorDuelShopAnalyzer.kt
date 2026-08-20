@@ -12,10 +12,11 @@ import javax.inject.Singleton
 @Singleton
 class HonorDuelShopAnalyzer @Inject constructor(
     private val heroCatalog: HeroRecognitionCatalog,
+    private val correctionRepository: HeroCorrectionRepository,
 ) {
     private val recognizer = TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
 
-    fun analyze(bitmap: Bitmap): HonorDuelShopAnalysis {
+    fun analyze(bitmap: Bitmap, runId: Long? = null): HonorDuelShopAnalysis {
         val result = Tasks.await(recognizer.process(InputImage.fromBitmap(bitmap, 0)))
         val blocks = result.textBlocks.mapNotNull { block ->
             block.boundingBox?.let { box ->
@@ -48,7 +49,7 @@ class HonorDuelShopAnalyzer @Inject constructor(
             screenConfidence = screen.confidence,
             screenReasons = screen.reasons,
             header = header,
-            shopItems = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractSlots(bitmap, blocks, viewport) else emptyList(),
+            shopItems = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractSlots(bitmap, blocks, viewport, runId) else emptyList(),
             ocrBlocks = blocks,
             viewport = viewport,
             heroDetail = if (screen.type == ScreenType.HERO_DETAIL_POPUP) HeroDetailPopupParser.parse(allText) else null,
@@ -60,7 +61,12 @@ class HonorDuelShopAnalyzer @Inject constructor(
         blocks.any { frameBounds.contains(it.centerX, it.centerY) }
     }
 
-    private fun extractSlots(bitmap: Bitmap, blocks: List<OcrBlock>, viewport: GameViewport): List<ShopItemState> = SHOP_SLOT_BOUNDS.mapIndexed { index, localBounds ->
+    private fun extractSlots(
+        bitmap: Bitmap,
+        blocks: List<OcrBlock>,
+        viewport: GameViewport,
+        runId: Long?,
+    ): List<ShopItemState> = SHOP_SLOT_BOUNDS.mapIndexed { index, localBounds ->
         val bounds = viewport.toFrame(localBounds)
         val priceTop = viewport.top + (viewport.bottom - viewport.top) * localBounds.priceTop
         val slotBlocks = blocks.filter { bounds.contains(it.centerX, it.centerY) }
@@ -75,7 +81,7 @@ class HonorDuelShopAnalyzer @Inject constructor(
             visual,
         )
         val hero = if (classification.type == ShopItemType.UNKNOWN && visual.likelyHeroPortrait) {
-            heroCatalog.recognize(bitmap, bounds, text)
+            heroCatalog.recognize(bitmap, bounds, text, runId?.let(correctionRepository::forRun).orEmpty())
         } else {
             HeroRecognitionResult()
         }
@@ -100,6 +106,7 @@ class HonorDuelShopAnalyzer @Inject constructor(
             heroRarity = offer.rarity,
             isTrialCard = offer.isTrialCard,
             equipmentName = offer.equipmentName,
+            portraitSignature = if (visual.likelyHeroPortrait) heroCatalog.portraitSignature(bitmap, bounds) else null,
         )
     }
 
@@ -305,6 +312,8 @@ data class ShopItemState @JvmOverloads constructor(
     val heroRarity: HeroRarity = HeroRarity.UNKNOWN,
     val isTrialCard: Boolean = false,
     val equipmentName: String? = null,
+    val recognitionSource: RecognitionSource = RecognitionSource.AUTO,
+    val portraitSignature: String? = null,
 )
 
 data class NonHeroItemClassification(
