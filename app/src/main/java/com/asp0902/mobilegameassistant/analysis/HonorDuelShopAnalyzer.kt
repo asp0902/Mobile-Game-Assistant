@@ -10,7 +10,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class HonorDuelShopAnalyzer @Inject constructor() {
+class HonorDuelShopAnalyzer @Inject constructor(
+    private val heroCatalog: HeroRecognitionCatalog,
+) {
     private val recognizer = TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
 
     fun analyze(bitmap: Bitmap): HonorDuelShopAnalysis {
@@ -66,18 +68,28 @@ class HonorDuelShopAnalyzer @Inject constructor() {
             .filter { it.centerY > priceTop }
             .flatMap { Regex("\\d+").findAll(it.text).map { match -> match.value.toInt() }.toList() }
             .lastOrNull()
+        val visual = SlotVisualEvidence.from(bitmap, bounds, priceTop)
         val classification = NonHeroShopItemClassifier.classify(
             text,
-            SlotVisualEvidence.from(bitmap, bounds, priceTop),
+            visual,
         )
+        val hero = if (classification.type == ShopItemType.UNKNOWN && visual.likelyHeroPortrait) {
+            heroCatalog.recognize(bitmap, bounds, text)
+        } else {
+            HeroRecognitionResult()
+        }
         ShopItemState(
             slotIndex = index,
-            itemType = classification.type,
+            itemType = if (hero.status == HeroRecognitionStatus.UNKNOWN) classification.type else ShopItemType.HERO,
             price = price,
             artifactXpAmount = classification.artifactXpAmount,
-            confidence = classification.confidence,
+            confidence = if (hero.status == HeroRecognitionStatus.UNKNOWN) classification.confidence else hero.confidence,
             bounds = bounds,
-            classificationReasons = classification.reasons,
+            classificationReasons = if (hero.status == HeroRecognitionStatus.UNKNOWN) classification.reasons else hero.reasons,
+            heroId = hero.heroId,
+            heroName = hero.koreanName,
+            faction = hero.faction,
+            heroRecognitionStatus = hero.status,
         )
     }
 
@@ -181,6 +193,7 @@ object HonorDuelScreenClassifier {
 
 enum class ShopItemType {
     ARTIFACT_XP,
+    HERO,
     EQUIPMENT,
     RANDOM_HERO_PACK,
     FACTION_HERO_PACK,
@@ -272,6 +285,10 @@ data class ShopItemState @JvmOverloads constructor(
     val confidence: Float,
     val bounds: NormalizedRect? = null,
     val classificationReasons: List<String> = emptyList(),
+    val heroId: String? = null,
+    val heroName: String? = null,
+    val faction: String? = null,
+    val heroRecognitionStatus: HeroRecognitionStatus = HeroRecognitionStatus.UNKNOWN,
 )
 
 data class NonHeroItemClassification(

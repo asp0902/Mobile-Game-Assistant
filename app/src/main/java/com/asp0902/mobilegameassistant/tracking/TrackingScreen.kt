@@ -124,7 +124,8 @@ private fun AnalysisSummary(analysis: ShopAnalysisUiState) {
             )
             Text(analysis.analysis.screenReasons.joinToString(" · "))
             analysis.analysis.shopItems.forEach { item ->
-                Text("슬롯 ${item.slotIndex + 1}: ${item.itemType} (${(item.confidence * 100).toInt()}%) — ${item.classificationReasons.joinToString(" · ")}")
+                val hero = item.heroName?.let { " · $it/${item.faction ?: "?"} ${item.heroRecognitionStatus}" } ?: ""
+                Text("슬롯 ${item.slotIndex + 1}: ${item.itemType} (${(item.confidence * 100).toInt()}%)$hero — ${item.classificationReasons.joinToString(" · ")}")
             }
             analysis.recommendations.forEach { recommendation ->
                 val action = when (recommendation.action) {
