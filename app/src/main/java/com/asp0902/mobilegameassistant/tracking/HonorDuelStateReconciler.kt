@@ -24,6 +24,7 @@ data class ReconciledHonorDuelState(
     val runId: Long,
     val analysis: HonorDuelShopAnalysis,
     val headerSources: Map<HeaderField, ReconciliationSource>,
+    val progress: RunProgress = RunProgress(analysis.header.wins, analysis.header.targetWins),
 )
 
 object HonorDuelStateReconciler {

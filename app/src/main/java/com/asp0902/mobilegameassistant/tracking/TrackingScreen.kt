@@ -142,6 +142,7 @@ private fun AnalysisSummary(
                     "리롤 ${header.refreshCost ?: "?"} · " +
                     "아티팩트 ${header.artifactName ?: "?"} ${header.artifactXp?.current ?: "?"}/${header.artifactXp?.required ?: "?"}",
             )
+            Text("런 상태: ${analysis.runStatus} · ${header.wins ?: "?"}/${header.targetWins ?: "?"}승")
             Text(analysis.analysis.screenReasons.joinToString(" · "))
             if (analysis.analysis.shopItems.isNotEmpty()) {
                 Text("상세 팝업 연결 슬롯: ${detailSlot?.plus(1) ?: "선택 필요"}")

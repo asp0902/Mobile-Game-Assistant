@@ -124,6 +124,7 @@ private object SnapshotCodec {
         add("screen=${state.analysis.screenType.name},${state.analysis.screenConfidence}")
         add("header=${csv(header.currency, header.shopLevel, header.targetWins, header.artifactXp?.current, header.artifactXp?.required, header.wins, header.hp, header.refreshCost, header.currentRound, escape(header.artifactName))}")
         add("sources=${state.headerSources.entries.joinToString(",") { "${it.key.name}:${it.value.name}" }}")
+        add("progress=${state.progress.wins ?: ""},${state.progress.targetWins ?: ""},${state.progress.status.name},${state.progress.lastResultSignature.orEmpty()}")
         add("items=${state.analysis.shopItems.joinToString(";") { item -> csv(item.slotIndex, item.itemType.name, item.price, item.artifactXpAmount, item.confidence, escape(item.heroId), escape(item.heroName), escape(item.faction), item.quantity, item.heroRarity.name, item.isTrialCard, escape(item.equipmentName), item.recognitionSource.name) }}")
         add("heroes=${state.analysis.ownedHeroes.joinToString(";") { hero -> csv(hero.slotIndex, escape(hero.heroId), escape(hero.heroName), escape(hero.faction), hero.rarity.name, hero.promotion.progress, hero.promotion.required, hero.promotion.isMaxRank, escape(hero.equipmentName), hero.sellValue, hero.confidence) }}")
     }.joinToString("\n")
@@ -133,6 +134,7 @@ private object SnapshotCodec {
         val screen = values["screen"]?.split(',') ?: return null
         val header = values["header"]?.split(',') ?: return null
         val sources = values["sources"].orEmpty().split(',').mapNotNull { raw -> raw.split(':').takeIf { it.size == 2 }?.let { HeaderField.entries.firstOrNull { field -> field.name == it[0] }?.let { field -> field to ReconciliationSource.valueOf(it[1]) } } }.toMap()
+        val progress = values["progress"].orEmpty().split(',')
         val items = values["items"].orEmpty().split(';').filter(String::isNotBlank).mapNotNull(::decodeItem)
         val heroes = values["heroes"].orEmpty().split(';').filter(String::isNotBlank).mapNotNull(::decodeHero)
         val analysis = HonorDuelShopAnalysis(
@@ -148,7 +150,10 @@ private object SnapshotCodec {
             ownedHeroes = heroes,
             ocrBlocks = emptyList(),
         )
-        ReconciledHonorDuelState(runId, analysis, sources)
+        ReconciledHonorDuelState(runId, analysis, sources, RunProgress(
+            progress.getOrNull(0)?.toIntOrNull(), progress.getOrNull(1)?.toIntOrNull(),
+            progress.getOrNull(2)?.let(RunStatus::valueOf) ?: RunStatus.ACTIVE, progress.getOrNull(3).takeIf { !it.isNullOrBlank() },
+        ))
     }.getOrNull()
 
     private fun decodeItem(raw: String): ShopItemState? = raw.split(',').let { value -> runCatching {

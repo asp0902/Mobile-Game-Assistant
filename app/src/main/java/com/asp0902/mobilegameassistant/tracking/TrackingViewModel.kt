@@ -55,7 +55,7 @@ class TrackingViewModel @Inject constructor(
                     runId = restored.runId
                     lastRunState = restored
                     lastShopAnalysis = restored.analysis
-                    mutableAnalysis.value = ShopAnalysisUiState.Result(restored.analysis, ruleEngine.recommend(restored.analysis), nextSnapshotId++, restored.headerSources)
+                    mutableAnalysis.value = ShopAnalysisUiState.Result(restored.analysis, ruleEngine.recommend(restored.analysis), nextSnapshotId++, restored.headerSources, runStatus = restored.progress.status)
                 }
             }
         }
@@ -79,13 +79,16 @@ class TrackingViewModel @Inject constructor(
                         result
                     }
                     val reconciled = HonorDuelStateReconciler.reconcile(runId, lastRunState, observed)
-                    lastRunState = reconciled
-                    if (reconciled.analysis.shopItems.isNotEmpty()) lastShopAnalysis = reconciled.analysis
+                    val outcome = BattleResultRecognizer.recognize(observed.ocrBlocks.joinToString(" ") { it.text })
+                    val progress = BattleResultTracker.apply(lastRunState?.progress ?: reconciled.progress, outcome)
+                    val tracked = reconciled.copy(analysis = BattleResultTracker.apply(reconciled.analysis, progress), progress = progress)
+                    lastRunState = tracked
+                    if (tracked.analysis.shopItems.isNotEmpty()) lastShopAnalysis = tracked.analysis
                     val snapshotId = nextSnapshotId++
-                    mutableAnalysis.value = ShopAnalysisUiState.Result(reconciled.analysis, ruleEngine.recommend(reconciled.analysis), snapshotId, reconciled.headerSources)
+                    mutableAnalysis.value = ShopAnalysisUiState.Result(tracked.analysis, ruleEngine.recommend(tracked.analysis), snapshotId, tracked.headerSources, runStatus = tracked.progress.status)
                     viewModelScope.launch(Dispatchers.IO) {
-                        runRepository.save(reconciled)
-                        runRepository.reconcilePurchases(runId, reconciled.analysis)
+                        runRepository.save(tracked)
+                        runRepository.reconcilePurchases(runId, tracked.analysis)
                     }
                 }.onFailure {
                     mutableAnalysis.value = ShopAnalysisUiState.Error("OCR 분석 실패: ${it.message ?: "알 수 없음"}")
@@ -146,6 +149,7 @@ class TrackingViewModel @Inject constructor(
                 snapshotId,
                 sources,
                 "구매 예상 기록: ${item.heroName ?: heroId} ${action.quantity}장 / ${action.cost}",
+                lastRunState?.progress?.status ?: RunStatus.ACTIVE,
             )
         }
     }
@@ -160,6 +164,7 @@ sealed interface ShopAnalysisUiState {
         val snapshotId: Long,
         val headerSources: Map<com.asp0902.mobilegameassistant.analysis.HeaderField, ReconciliationSource> = emptyMap(),
         val actionMessage: String? = null,
+        val runStatus: RunStatus = RunStatus.ACTIVE,
     ) : ShopAnalysisUiState
     data class Error(val message: String) : ShopAnalysisUiState
 }
