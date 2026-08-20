@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,9 +36,11 @@ fun TrackingScreen(
     frame: Bitmap?,
     template: FormationTemplate?,
     analysis: ShopAnalysisUiState,
+    detailSlot: Int?,
     onStart: () -> Unit,
     onStop: () -> Unit,
     onTemplateSelected: (FormationTemplateId) -> Unit,
+    onDetailSlotSelected: (Int) -> Unit,
 ) {
     Scaffold { padding ->
         Column(
@@ -100,7 +103,7 @@ fun TrackingScreen(
                             }
                             template?.let { FormationOverlay(it, Modifier.fillMaxSize()) }
                         }
-                        AnalysisSummary(analysis)
+                        AnalysisSummary(analysis, detailSlot, onDetailSlotSelected)
                     }
                 }
             }
@@ -109,7 +112,11 @@ fun TrackingScreen(
 }
 
 @Composable
-private fun AnalysisSummary(analysis: ShopAnalysisUiState) {
+private fun AnalysisSummary(
+    analysis: ShopAnalysisUiState,
+    detailSlot: Int?,
+    onDetailSlotSelected: (Int) -> Unit,
+) {
     when (analysis) {
         ShopAnalysisUiState.Idle -> Text("AFK 분석을 누르면 상점 OCR을 시작합니다.")
         ShopAnalysisUiState.Analyzing -> Text("상점 분석 중")
@@ -123,9 +130,18 @@ private fun AnalysisSummary(analysis: ShopAnalysisUiState) {
                     "아티팩트 ${header.artifactName ?: "?"} ${header.artifactXp?.current ?: "?"}/${header.artifactXp?.required ?: "?"}",
             )
             Text(analysis.analysis.screenReasons.joinToString(" · "))
+            if (analysis.analysis.shopItems.isNotEmpty()) {
+                Text("상세 팝업 연결 슬롯: ${detailSlot?.plus(1) ?: "선택 필요"}")
+                (0 until 8).chunked(4).forEach { row ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        row.forEach { index -> Button(onClick = { onDetailSlotSelected(index) }) { Text("${index + 1}") } }
+                    }
+                }
+            }
             analysis.analysis.shopItems.forEach { item ->
                 val hero = item.heroName?.let { " · $it/${item.faction ?: "?"} ${item.heroRecognitionStatus}" } ?: ""
-                Text("슬롯 ${item.slotIndex + 1}: ${item.itemType} (${(item.confidence * 100).toInt()}%)$hero — ${item.classificationReasons.joinToString(" · ")}")
+                val offer = " · ${item.quantity ?: "?"}장/${item.heroRarity}${if (item.isTrialCard) " 체험" else ""}${item.equipmentName?.let { " $it" } ?: ""}"
+                Text("슬롯 ${item.slotIndex + 1}: ${item.itemType} (${(item.confidence * 100).toInt()}%)$hero$offer — ${item.classificationReasons.joinToString(" · ")}")
             }
             analysis.recommendations.forEach { recommendation ->
                 val action = when (recommendation.action) {

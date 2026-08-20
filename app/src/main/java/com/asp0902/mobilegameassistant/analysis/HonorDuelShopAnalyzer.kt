@@ -51,6 +51,7 @@ class HonorDuelShopAnalyzer @Inject constructor(
             shopItems = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractSlots(bitmap, blocks, viewport) else emptyList(),
             ocrBlocks = blocks,
             viewport = viewport,
+            heroDetail = if (screen.type == ScreenType.HERO_DETAIL_POPUP) HeroDetailPopupParser.parse(allText) else null,
         )
     }
 
@@ -78,18 +79,27 @@ class HonorDuelShopAnalyzer @Inject constructor(
         } else {
             HeroRecognitionResult()
         }
+        val offer = if (classification.type == ShopItemType.UNKNOWN && visual.likelyHeroPortrait) {
+            HeroOfferClassifier.classify(text, price, visual)
+        } else {
+            HeroOfferClassification()
+        }
         ShopItemState(
             slotIndex = index,
-            itemType = if (hero.status == HeroRecognitionStatus.UNKNOWN) classification.type else ShopItemType.HERO,
+            itemType = if (offer.type == ShopItemType.UNKNOWN) classification.type else offer.type,
             price = price,
             artifactXpAmount = classification.artifactXpAmount,
             confidence = if (hero.status == HeroRecognitionStatus.UNKNOWN) classification.confidence else hero.confidence,
             bounds = bounds,
-            classificationReasons = if (hero.status == HeroRecognitionStatus.UNKNOWN) classification.reasons else hero.reasons,
+            classificationReasons = classification.reasons + hero.reasons + offer.reasons,
             heroId = hero.heroId,
             heroName = hero.koreanName,
             faction = hero.faction,
             heroRecognitionStatus = hero.status,
+            quantity = offer.quantity,
+            heroRarity = offer.rarity,
+            isTrialCard = offer.isTrialCard,
+            equipmentName = offer.equipmentName,
         )
     }
 
@@ -194,6 +204,8 @@ object HonorDuelScreenClassifier {
 enum class ShopItemType {
     ARTIFACT_XP,
     HERO,
+    HERO_BUNDLE,
+    TRIAL_HERO_CARD,
     EQUIPMENT,
     RANDOM_HERO_PACK,
     FACTION_HERO_PACK,
@@ -289,6 +301,10 @@ data class ShopItemState @JvmOverloads constructor(
     val heroName: String? = null,
     val faction: String? = null,
     val heroRecognitionStatus: HeroRecognitionStatus = HeroRecognitionStatus.UNKNOWN,
+    val quantity: Int? = null,
+    val heroRarity: HeroRarity = HeroRarity.UNKNOWN,
+    val isTrialCard: Boolean = false,
+    val equipmentName: String? = null,
 )
 
 data class NonHeroItemClassification(
@@ -298,9 +314,12 @@ data class NonHeroItemClassification(
     val artifactXpAmount: Int? = null,
 )
 
-data class SlotVisualEvidence(
+data class SlotVisualEvidence @JvmOverloads constructor(
     val yellowIconRatio: Float = 0f,
     val likelyHeroPortrait: Boolean = false,
+    val redBackgroundRatio: Float = 0f,
+    val hasEquipmentBadge: Boolean = false,
+    val hasTrialCardBadge: Boolean = false,
 ) {
     companion object {
         fun from(bitmap: Bitmap, bounds: NormalizedRect, contentBottom: Float): SlotVisualEvidence {
@@ -311,6 +330,7 @@ data class SlotVisualEvidence(
             val bottom = (contentBottom * bitmap.height).toInt().coerceIn(top + 1, bitmap.height)
             var yellow = 0
             var orange = 0
+            var redBackground = 0
             var sampled = 0
             val step = ((right - left).coerceAtMost(bottom - top) / 24).coerceAtLeast(1)
             for (y in top until bottom step step) for (x in left until right step step) {
@@ -320,13 +340,96 @@ data class SlotVisualEvidence(
                 val blue = Color.blue(color)
                 if (red > 165 && green > 120 && blue < 105) yellow++
                 if (red > 165 && green in 65..195 && blue < 100) orange++
+                if (red > 145 && green < 105 && blue < 105) redBackground++
                 sampled++
             }
             return SlotVisualEvidence(
                 yellowIconRatio = yellow.toFloat() / sampled.coerceAtLeast(1),
                 likelyHeroPortrait = orange.toFloat() / sampled.coerceAtLeast(1) > .08f,
+                redBackgroundRatio = redBackground.toFloat() / sampled.coerceAtLeast(1),
             )
         }
+    }
+}
+
+enum class HeroRarity { EPIC, LEGENDARY, UNKNOWN }
+
+data class HeroOfferClassification(
+    val type: ShopItemType = ShopItemType.UNKNOWN,
+    val quantity: Int? = null,
+    val isTrialCard: Boolean = false,
+    val rarity: HeroRarity = HeroRarity.UNKNOWN,
+    val equipmentName: String? = null,
+    val reasons: List<String> = emptyList(),
+)
+
+object HeroOfferClassifier {
+    private val equipment = listOf("간이 활", "밀림 후드", "생엽", "침묵의 투구")
+
+    fun classify(text: String, price: Int?, visual: SlotVisualEvidence): HeroOfferClassification {
+        val quantity = Regex("(?:x|X|×)\\s*(\\d+)|(\\d+)\\s*장").find(text)?.groupValues
+            ?.drop(1)?.firstOrNull { it.isNotBlank() }?.toIntOrNull()
+        val trial = text.contains("체험 카드") || visual.hasTrialCardBadge
+        val equipmentName = equipment.firstOrNull(text::contains).takeIf { visual.hasEquipmentBadge || text.contains("체험 카드") }
+        val explicitRarity = when {
+            text.contains("레전드") -> HeroRarity.LEGENDARY
+            text.contains("에픽") -> HeroRarity.EPIC
+            else -> HeroRarity.UNKNOWN
+        }
+        val legendaryTrial = trial && price == 12 && visual.redBackgroundRatio >= .08f &&
+            (visual.hasEquipmentBadge || equipmentName != null)
+        val rarity = if (legendaryTrial) HeroRarity.LEGENDARY else explicitRarity
+        val type = when {
+            trial -> ShopItemType.TRIAL_HERO_CARD
+            quantity != null && quantity > 1 -> ShopItemType.HERO_BUNDLE
+            else -> ShopItemType.HERO
+        }
+        val reasons = buildList {
+            if (trial) add("체험 카드 표시")
+            if (quantity != null) add("수량 ${quantity}장")
+            if (legendaryTrial) add("12휘장·빨간 배경·체험 카드·장비")
+            if (explicitRarity != HeroRarity.UNKNOWN) add("등급 텍스트")
+        }
+        return HeroOfferClassification(type, quantity ?: if (type == ShopItemType.HERO) 1 else null, trial, rarity, equipmentName, reasons)
+    }
+}
+
+data class HeroDetailPopup(
+    val heroName: String? = null,
+    val rarity: HeroRarity = HeroRarity.UNKNOWN,
+    val isTrialCard: Boolean = false,
+    val equipmentName: String? = null,
+    val confidence: Float = 0f,
+)
+
+object HeroDetailPopupParser {
+    private val names = listOf("매혹의 세이렌", "사리에", "메이", "퀸", "루카", "발렌", "귀네스", "페르세우스")
+    private val equipment = listOf("간이 활", "밀림 후드", "생엽", "침묵의 투구")
+
+    fun parse(text: String): HeroDetailPopup = HeroDetailPopup(
+        heroName = names.firstOrNull(text::contains),
+        rarity = when {
+            text.contains("레전드") -> HeroRarity.LEGENDARY
+            text.contains("에픽") -> HeroRarity.EPIC
+            else -> HeroRarity.UNKNOWN
+        },
+        isTrialCard = text.contains("체험 카드"),
+        equipmentName = equipment.firstOrNull(text::contains),
+        confidence = if (text.contains("사정거리")) .95f else 0f,
+    )
+}
+
+object ShopDetailReconciler {
+    fun apply(items: List<ShopItemState>, slotIndex: Int, detail: HeroDetailPopup): List<ShopItemState> = items.map { item ->
+        if (item.slotIndex != slotIndex || detail.confidence < .9f) item else item.copy(
+            itemType = if (detail.isTrialCard) ShopItemType.TRIAL_HERO_CARD else item.itemType,
+            heroName = detail.heroName ?: item.heroName,
+            heroRarity = if (detail.rarity == HeroRarity.UNKNOWN) item.heroRarity else detail.rarity,
+            isTrialCard = detail.isTrialCard || item.isTrialCard,
+            equipmentName = detail.equipmentName ?: item.equipmentName,
+            confidence = detail.confidence,
+            classificationReasons = item.classificationReasons + "상세 팝업 우선",
+        )
     }
 }
 
@@ -426,4 +529,5 @@ data class HonorDuelShopAnalysis @JvmOverloads constructor(
     val screenConfidence: Float = if (screenType == ScreenType.HONOR_DUEL_SHOP) 1f else 0.9f,
     val screenReasons: List<String> = emptyList(),
     val viewport: GameViewport? = null,
+    val heroDetail: HeroDetailPopup? = null,
 )

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asp0902.mobilegameassistant.analysis.HonorDuelShopAnalysis
 import com.asp0902.mobilegameassistant.analysis.HonorDuelShopAnalyzer
+import com.asp0902.mobilegameassistant.analysis.ShopDetailReconciler
 import com.asp0902.mobilegameassistant.capture.CaptureSession
 import com.asp0902.mobilegameassistant.formation.FormationTemplate
 import com.asp0902.mobilegameassistant.formation.FormationTemplateId
@@ -32,6 +33,9 @@ class TrackingViewModel @Inject constructor(
     val template = mutableTemplate.asStateFlow()
     private val mutableAnalysis = MutableStateFlow<ShopAnalysisUiState>(ShopAnalysisUiState.Idle)
     val analysis = mutableAnalysis.asStateFlow()
+    private val mutableDetailSlot = MutableStateFlow<Int?>(null)
+    val detailSlot = mutableDetailSlot.asStateFlow()
+    private var lastShopAnalysis: HonorDuelShopAnalysis? = null
 
     init {
         viewModelScope.launch {
@@ -43,7 +47,18 @@ class TrackingViewModel @Inject constructor(
                         result to ruleEngine.recommend(result)
                     }
                 }.onSuccess { (result, recommendations) ->
-                    mutableAnalysis.value = ShopAnalysisUiState.Result(result, recommendations)
+                    val detail = result.heroDetail
+                    val priorShop = lastShopAnalysis
+                    if (detail != null && mutableDetailSlot.value != null && priorShop != null) {
+                        val reconciled = priorShop.copy(
+                            shopItems = ShopDetailReconciler.apply(priorShop.shopItems, mutableDetailSlot.value!!, detail),
+                        )
+                        lastShopAnalysis = reconciled
+                        mutableAnalysis.value = ShopAnalysisUiState.Result(reconciled, ruleEngine.recommend(reconciled))
+                    } else {
+                        if (result.shopItems.isNotEmpty()) lastShopAnalysis = result
+                        mutableAnalysis.value = ShopAnalysisUiState.Result(result, recommendations)
+                    }
                 }.onFailure {
                     mutableAnalysis.value = ShopAnalysisUiState.Error("OCR 분석 실패: ${it.message ?: "알 수 없음"}")
                 }
@@ -57,6 +72,10 @@ class TrackingViewModel @Inject constructor(
 
     fun selectFormationTemplate(id: FormationTemplateId) {
         mutableTemplate.value = FormationTemplates.fromId(id)
+    }
+
+    fun selectDetailSlot(slotIndex: Int) {
+        mutableDetailSlot.value = slotIndex
     }
 }
 

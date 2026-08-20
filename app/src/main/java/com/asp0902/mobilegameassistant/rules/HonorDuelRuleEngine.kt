@@ -29,6 +29,8 @@ class HonorDuelRuleEngine @Inject constructor() {
                 }
                 ShopItemType.EQUIPMENT,
                 ShopItemType.HERO,
+                ShopItemType.HERO_BUNDLE,
+                ShopItemType.TRIAL_HERO_CARD,
                 ShopItemType.RANDOM_HERO_PACK,
                 ShopItemType.FACTION_HERO_PACK,
                 ShopItemType.RANDOM_HERO_UPGRADE,
