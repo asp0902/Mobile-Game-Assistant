@@ -161,6 +161,14 @@ private fun AnalysisSummary(
                 val gauge = slot.gauge
                 Text("보유 슬롯 ${slot.slotIndex + 1}: ${if (gauge.isMaxRank) "최대 등급" else "${gauge.progress ?: "?"}/${gauge.required ?: "?"}"} (${(gauge.confidence * 100).toInt()}%)")
             }
+            val sellableReserve = analysis.analysis.ownedHeroes.sumOf { it.sellValue ?: 0 }
+            analysis.analysis.ownedHeroes.forEach { hero ->
+                val gauge = hero.promotion
+                Text("보유 ${hero.slotIndex + 1}: ${hero.heroName ?: "UNKNOWN"} ${hero.rarity} " +
+                    "${if (gauge.isMaxRank) "최대 등급" else "${gauge.progress ?: "?"}/${gauge.required ?: "?"}"} " +
+                    "장비 ${hero.equipmentName ?: "없음"} 판매 +${hero.sellValue ?: "?"} (${(hero.confidence * 100).toInt()}%)")
+            }
+            if (analysis.analysis.ownedHeroes.any { it.sellValue != null }) Text("판매 가능 재화: +$sellableReserve")
             analysis.recommendations.forEach { recommendation ->
                 val action = when (recommendation.action) {
                     RecommendationAction.BUY -> "BUY"

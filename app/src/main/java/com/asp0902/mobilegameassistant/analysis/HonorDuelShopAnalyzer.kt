@@ -44,13 +44,15 @@ class HonorDuelShopAnalyzer @Inject constructor(
             HonorDuelScreenClassifier.classifyNonShop(allText, shopScreen)
         }
         val header = HonorDuelHeaderParser.parse(blocks, allText, shopLevel)
+        val rosterGauges = if (screen.type in OWNED_HERO_SCREENS) extractRosterGauges(bitmap, blocks, viewport) else emptyList()
         return HonorDuelShopAnalysis(
             screenType = screen.type,
             screenConfidence = screen.confidence,
             screenReasons = screen.reasons,
             header = header,
             shopItems = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractSlots(bitmap, blocks, viewport, runId) else emptyList(),
-            ownedHeroGauges = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractRosterGauges(bitmap, blocks, viewport) else emptyList(),
+            ownedHeroGauges = rosterGauges,
+            ownedHeroes = if (screen.type in OWNED_HERO_SCREENS) extractOwnedHeroes(bitmap, blocks, viewport, rosterGauges, runId) else emptyList(),
             ocrBlocks = blocks,
             viewport = viewport,
             heroDetail = if (screen.type == ScreenType.HERO_DETAIL_POPUP) HeroDetailPopupParser.parse(allText) else null,
@@ -121,6 +123,18 @@ class HonorDuelShopAnalyzer @Inject constructor(
         OwnedHeroGaugeSlot(index, bounds, PromotionGaugeRecognizer.recognize(bitmap, bounds, slotText))
     }
 
+    private fun extractOwnedHeroes(
+        bitmap: Bitmap,
+        blocks: List<OcrBlock>,
+        viewport: GameViewport,
+        gauges: List<OwnedHeroGaugeSlot>,
+        runId: Long?,
+    ): List<OwnedHeroState> = gauges.map { gaugeSlot ->
+        val text = blocks.filter { gaugeSlot.bounds.contains(it.centerX, it.centerY) }.joinToString(" ") { it.text }
+        val hero = heroCatalog.recognize(bitmap, gaugeSlot.bounds, text, runId?.let(correctionRepository::forRun).orEmpty())
+        OwnedHeroRecognizer.state(gaugeSlot.slotIndex, text, hero, gaugeSlot.gauge)
+    }
+
     data class SlotBounds(
         val left: Float,
         val top: Float,
@@ -132,6 +146,11 @@ class HonorDuelShopAnalyzer @Inject constructor(
     }
 
     private companion object {
+        val OWNED_HERO_SCREENS = setOf(
+            ScreenType.HONOR_DUEL_SHOP,
+            ScreenType.HONOR_DUEL_HERO_MANAGEMENT,
+            ScreenType.HONOR_DUEL_HERO_SELL,
+        )
         // ponytail: fixed 4x2 shop grid. Add anchor-based slot detection when viewport crop varies.
         val SHOP_SLOT_BOUNDS = listOf(
             SlotBounds(.03f, .28f, .25f, .47f, .38f),
@@ -377,7 +396,7 @@ data class SlotVisualEvidence @JvmOverloads constructor(
     }
 }
 
-enum class HeroRarity { EPIC, LEGENDARY, UNKNOWN }
+enum class HeroRarity { EPIC, LEGENDARY, MYTHIC, UNKNOWN }
 
 data class HeroOfferClassification(
     val type: ShopItemType = ShopItemType.UNKNOWN,
@@ -556,4 +575,5 @@ data class HonorDuelShopAnalysis @JvmOverloads constructor(
     val viewport: GameViewport? = null,
     val heroDetail: HeroDetailPopup? = null,
     val ownedHeroGauges: List<OwnedHeroGaugeSlot> = emptyList(),
+    val ownedHeroes: List<OwnedHeroState> = emptyList(),
 )
