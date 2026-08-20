@@ -60,6 +60,7 @@ class MainActivity : ComponentActivity() {
                 onTemplateSelected = viewModel::selectFormationTemplate,
                 onDetailSlotSelected = viewModel::selectDetailSlot,
                 onHeroCorrected = viewModel::correctHero,
+                onHeroPurchaseRecorded = viewModel::recordHeroPurchase,
             )
         }
     }

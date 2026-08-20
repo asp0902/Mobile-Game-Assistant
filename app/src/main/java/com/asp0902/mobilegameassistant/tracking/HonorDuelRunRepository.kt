@@ -37,6 +37,20 @@ data class HonorDuelSnapshotEntity(
     val reconciledPayload: String,
 )
 
+@Entity(tableName = "honor_duel_actions")
+data class HonorDuelActionEntity(
+    @PrimaryKey val actionId: String,
+    val runId: Long,
+    val timestamp: Long,
+    val heroId: String,
+    val quantity: Int,
+    val cost: Int,
+    val expectedProgress: Int?,
+    val expectedRequired: Int?,
+    val resolved: Boolean = false,
+    val conflict: Boolean = false,
+)
+
 @Dao
 interface HonorDuelSnapshotDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -44,9 +58,18 @@ interface HonorDuelSnapshotDao {
 
     @Query("SELECT * FROM honor_duel_snapshots ORDER BY timestamp DESC, snapshotId DESC LIMIT 1")
     suspend fun latest(): HonorDuelSnapshotEntity?
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAction(action: HonorDuelActionEntity): Long
+
+    @Query("SELECT * FROM honor_duel_actions WHERE runId = :runId AND resolved = 0")
+    suspend fun pendingActions(runId: Long): List<HonorDuelActionEntity>
+
+    @Query("UPDATE honor_duel_actions SET resolved = 1, conflict = :conflict WHERE actionId = :actionId")
+    suspend fun resolveAction(actionId: String, conflict: Boolean)
 }
 
-@Database(entities = [HonorDuelSnapshotEntity::class], version = 1, exportSchema = false)
+@Database(entities = [HonorDuelSnapshotEntity::class, HonorDuelActionEntity::class], version = 2, exportSchema = false)
 abstract class HonorDuelDatabase : RoomDatabase() {
     abstract fun snapshots(): HonorDuelSnapshotDao
 }
@@ -70,6 +93,28 @@ class HonorDuelRunRepository @Inject constructor(
 
     suspend fun restoreLatest(): ReconciledHonorDuelState? = snapshots.latest()?.let { entity ->
         SnapshotCodec.decode(entity.runId, entity.reconciledPayload)
+    }
+
+    suspend fun savePurchase(runId: Long, action: HeroPurchaseAction, prediction: PurchasePrediction): Boolean =
+        snapshots.insertAction(HonorDuelActionEntity(
+            actionId = action.actionId,
+            runId = runId,
+            timestamp = System.currentTimeMillis(),
+            heroId = action.heroId,
+            quantity = action.quantity,
+            cost = action.cost,
+            expectedProgress = prediction.expectedProgress?.progress,
+            expectedRequired = prediction.expectedProgress?.required,
+        )) != -1L
+
+    suspend fun reconcilePurchases(runId: Long, observed: HonorDuelShopAnalysis) {
+        snapshots.pendingActions(runId).forEach { action ->
+            val hero = observed.ownedHeroes.firstOrNull { it.heroId == action.heroId }
+            if (hero != null && hero.confidence >= .9f) {
+                val conflict = hero.promotion.progress != action.expectedProgress || hero.promotion.required != action.expectedRequired
+                snapshots.resolveAction(action.actionId, conflict)
+            }
+        }
     }
 }
 

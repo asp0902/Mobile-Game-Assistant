@@ -83,7 +83,10 @@ class TrackingViewModel @Inject constructor(
                     if (reconciled.analysis.shopItems.isNotEmpty()) lastShopAnalysis = reconciled.analysis
                     val snapshotId = nextSnapshotId++
                     mutableAnalysis.value = ShopAnalysisUiState.Result(reconciled.analysis, ruleEngine.recommend(reconciled.analysis), snapshotId, reconciled.headerSources)
-                    viewModelScope.launch(Dispatchers.IO) { runRepository.save(reconciled) }
+                    viewModelScope.launch(Dispatchers.IO) {
+                        runRepository.save(reconciled)
+                        runRepository.reconcilePurchases(runId, reconciled.analysis)
+                    }
                 }.onFailure {
                     mutableAnalysis.value = ShopAnalysisUiState.Error("OCR 분석 실패: ${it.message ?: "알 수 없음"}")
                 }
@@ -120,6 +123,32 @@ class TrackingViewModel @Inject constructor(
             ))
         }
     }
+
+    fun recordHeroPurchase(snapshotId: Long, slotIndex: Int) {
+        val current = (mutableAnalysis.value as? ShopAnalysisUiState.Result) ?: return
+        val item = current.analysis.shopItems.firstOrNull { it.slotIndex == slotIndex } ?: return
+        val heroId = item.heroId ?: return
+        val action = HeroPurchaseAction(
+            actionId = "$runId:$snapshotId:$slotIndex",
+            heroId = heroId,
+            quantity = item.quantity ?: 1,
+            cost = item.price ?: return,
+        )
+        val prediction = PurchasePredictor.apply(current.analysis, action)
+        viewModelScope.launch {
+            if (!withContext(Dispatchers.IO) { runRepository.savePurchase(runId, action, prediction) }) return@launch
+            val sources = current.headerSources + (com.asp0902.mobilegameassistant.analysis.HeaderField.CURRENCY to ReconciliationSource.ACTION_PREDICTION)
+            lastRunState = ReconciledHonorDuelState(runId, prediction.analysis, sources)
+            lastShopAnalysis = prediction.analysis
+            mutableAnalysis.value = ShopAnalysisUiState.Result(
+                prediction.analysis,
+                ruleEngine.recommend(prediction.analysis),
+                snapshotId,
+                sources,
+                "구매 예상 기록: ${item.heroName ?: heroId} ${action.quantity}장 / ${action.cost}",
+            )
+        }
+    }
 }
 
 sealed interface ShopAnalysisUiState {
@@ -130,6 +159,7 @@ sealed interface ShopAnalysisUiState {
         val recommendations: List<ShopRecommendation>,
         val snapshotId: Long,
         val headerSources: Map<com.asp0902.mobilegameassistant.analysis.HeaderField, ReconciliationSource> = emptyMap(),
+        val actionMessage: String? = null,
     ) : ShopAnalysisUiState
     data class Error(val message: String) : ShopAnalysisUiState
 }

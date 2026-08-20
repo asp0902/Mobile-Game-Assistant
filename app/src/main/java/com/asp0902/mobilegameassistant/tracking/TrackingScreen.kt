@@ -50,6 +50,7 @@ fun TrackingScreen(
     onTemplateSelected: (FormationTemplateId) -> Unit,
     onDetailSlotSelected: (Int) -> Unit,
     onHeroCorrected: (Long, Int, String) -> Unit,
+    onHeroPurchaseRecorded: (Long, Int) -> Unit,
 ) {
     Scaffold { padding ->
         Column(
@@ -112,7 +113,7 @@ fun TrackingScreen(
                             }
                             template?.let { FormationOverlay(it, Modifier.fillMaxSize()) }
                         }
-                        AnalysisSummary(analysis, detailSlot, heroChoices, onDetailSlotSelected, onHeroCorrected)
+                        AnalysisSummary(analysis, detailSlot, heroChoices, onDetailSlotSelected, onHeroCorrected, onHeroPurchaseRecorded)
                     }
                 }
             }
@@ -127,6 +128,7 @@ private fun AnalysisSummary(
     heroChoices: List<HeroReference>,
     onDetailSlotSelected: (Int) -> Unit,
     onHeroCorrected: (Long, Int, String) -> Unit,
+    onHeroPurchaseRecorded: (Long, Int) -> Unit,
 ) {
     when (analysis) {
         ShopAnalysisUiState.Idle -> Text("AFK 분석을 누르면 상점 OCR을 시작합니다.")
@@ -156,6 +158,9 @@ private fun AnalysisSummary(
                 if (item.itemType.name.startsWith("HERO") || item.isTrialCard) {
                     HeroCorrectionMenu(item.slotIndex, analysis.snapshotId, heroChoices, onHeroCorrected)
                 }
+                if (item.itemType.name.startsWith("HERO") && item.heroId != null && item.price != null) {
+                    Button(onClick = { onHeroPurchaseRecorded(analysis.snapshotId, item.slotIndex) }) { Text("슬롯 ${item.slotIndex + 1} 구매 기록") }
+                }
             }
             analysis.analysis.ownedHeroGauges.forEach { slot ->
                 val gauge = slot.gauge
@@ -170,6 +175,7 @@ private fun AnalysisSummary(
             }
             if (analysis.analysis.ownedHeroes.any { it.sellValue != null }) Text("판매 가능 재화: +$sellableReserve")
             if (analysis.headerSources.isNotEmpty()) Text("조정 출처: ${analysis.headerSources.entries.joinToString { "${it.key}:${it.value}" }}")
+            analysis.actionMessage?.let { Text(it) }
             analysis.recommendations.forEach { recommendation ->
                 val action = when (recommendation.action) {
                     RecommendationAction.BUY -> "BUY"
