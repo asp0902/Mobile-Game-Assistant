@@ -123,6 +123,9 @@ private fun AnalysisSummary(analysis: ShopAnalysisUiState) {
                     "아티팩트 ${header.artifactName ?: "?"} ${header.artifactXp?.current ?: "?"}/${header.artifactXp?.required ?: "?"}",
             )
             Text(analysis.analysis.screenReasons.joinToString(" · "))
+            analysis.analysis.shopItems.forEach { item ->
+                Text("슬롯 ${item.slotIndex + 1}: ${item.itemType} (${(item.confidence * 100).toInt()}%) — ${item.classificationReasons.joinToString(" · ")}")
+            }
             analysis.recommendations.forEach { recommendation ->
                 val action = when (recommendation.action) {
                     RecommendationAction.BUY -> "BUY"

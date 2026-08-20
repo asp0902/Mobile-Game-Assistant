@@ -46,7 +46,7 @@ class HonorDuelShopAnalyzer @Inject constructor() {
             screenConfidence = screen.confidence,
             screenReasons = screen.reasons,
             header = header,
-            shopItems = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractSlots(blocks, viewport) else emptyList(),
+            shopItems = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractSlots(bitmap, blocks, viewport) else emptyList(),
             ocrBlocks = blocks,
             viewport = viewport,
         )
@@ -57,33 +57,27 @@ class HonorDuelShopAnalyzer @Inject constructor() {
         blocks.any { frameBounds.contains(it.centerX, it.centerY) }
     }
 
-    private fun extractSlots(blocks: List<OcrBlock>, viewport: GameViewport): List<ShopItemState> = SHOP_SLOT_BOUNDS.mapIndexed { index, localBounds ->
+    private fun extractSlots(bitmap: Bitmap, blocks: List<OcrBlock>, viewport: GameViewport): List<ShopItemState> = SHOP_SLOT_BOUNDS.mapIndexed { index, localBounds ->
         val bounds = viewport.toFrame(localBounds)
         val priceTop = viewport.top + (viewport.bottom - viewport.top) * localBounds.priceTop
         val slotBlocks = blocks.filter { bounds.contains(it.centerX, it.centerY) }
         val text = slotBlocks.joinToString(" ") { it.text }
-        val isSoldOut = text.contains("품절")
-        val xpAmount = Regex("\\+(\\d+)").find(text)?.groupValues?.get(1)?.toIntOrNull()
         val price = slotBlocks
             .filter { it.centerY > priceTop }
             .flatMap { Regex("\\d+").findAll(it.text).map { match -> match.value.toInt() }.toList() }
             .lastOrNull()
-        val type = when {
-            isSoldOut -> ShopItemType.SOLD_OUT
-            xpAmount != null -> ShopItemType.ARTIFACT_XP
-            else -> ShopItemType.UNKNOWN
-        }
+        val classification = NonHeroShopItemClassifier.classify(
+            text,
+            SlotVisualEvidence.from(bitmap, bounds, priceTop),
+        )
         ShopItemState(
             slotIndex = index,
-            itemType = type,
+            itemType = classification.type,
             price = price,
-            artifactXpAmount = if (type == ShopItemType.ARTIFACT_XP) xpAmount else null,
-            confidence = when (type) {
-                ShopItemType.ARTIFACT_XP -> 0.95f
-                ShopItemType.SOLD_OUT -> 0.95f
-                ShopItemType.UNKNOWN -> if (price != null) 0.55f else 0.1f
-            },
+            artifactXpAmount = classification.artifactXpAmount,
+            confidence = classification.confidence,
             bounds = bounds,
+            classificationReasons = classification.reasons,
         )
     }
 
@@ -185,7 +179,15 @@ object HonorDuelScreenClassifier {
     }
 }
 
-enum class ShopItemType { ARTIFACT_XP, SOLD_OUT, UNKNOWN }
+enum class ShopItemType {
+    ARTIFACT_XP,
+    EQUIPMENT,
+    RANDOM_HERO_PACK,
+    FACTION_HERO_PACK,
+    RANDOM_HERO_UPGRADE,
+    SOLD_OUT,
+    UNKNOWN,
+}
 
 data class ArtifactXp(val current: Int, val required: Int)
 
@@ -269,7 +271,72 @@ data class ShopItemState @JvmOverloads constructor(
     val artifactXpAmount: Int?,
     val confidence: Float,
     val bounds: NormalizedRect? = null,
+    val classificationReasons: List<String> = emptyList(),
 )
+
+data class NonHeroItemClassification(
+    val type: ShopItemType,
+    val confidence: Float,
+    val reasons: List<String>,
+    val artifactXpAmount: Int? = null,
+)
+
+data class SlotVisualEvidence(
+    val yellowIconRatio: Float = 0f,
+    val likelyHeroPortrait: Boolean = false,
+) {
+    companion object {
+        fun from(bitmap: Bitmap, bounds: NormalizedRect, contentBottom: Float): SlotVisualEvidence {
+            // ponytail: color ratios only gate OCR. Replace with templates when false positives appear.
+            val left = (bounds.left * bitmap.width).toInt().coerceIn(0, bitmap.width - 1)
+            val right = (bounds.right * bitmap.width).toInt().coerceIn(left + 1, bitmap.width)
+            val top = (bounds.top * bitmap.height).toInt().coerceIn(0, bitmap.height - 1)
+            val bottom = (contentBottom * bitmap.height).toInt().coerceIn(top + 1, bitmap.height)
+            var yellow = 0
+            var orange = 0
+            var sampled = 0
+            val step = ((right - left).coerceAtMost(bottom - top) / 24).coerceAtLeast(1)
+            for (y in top until bottom step step) for (x in left until right step step) {
+                val color = bitmap.getPixel(x, y)
+                val red = Color.red(color)
+                val green = Color.green(color)
+                val blue = Color.blue(color)
+                if (red > 165 && green > 120 && blue < 105) yellow++
+                if (red > 165 && green in 65..195 && blue < 100) orange++
+                sampled++
+            }
+            return SlotVisualEvidence(
+                yellowIconRatio = yellow.toFloat() / sampled.coerceAtLeast(1),
+                likelyHeroPortrait = orange.toFloat() / sampled.coerceAtLeast(1) > .08f,
+            )
+        }
+    }
+}
+
+object NonHeroShopItemClassifier {
+    private val factions = listOf("레오프론", "와일더스", "그레이브본", "트라이브", "기타")
+    private val equipment = listOf("간이 활", "밀림 후드", "생엽", "침묵의 투구")
+
+    @JvmOverloads
+    fun classify(text: String, visual: SlotVisualEvidence = SlotVisualEvidence()): NonHeroItemClassification {
+        if (text.contains("품절")) return fixed(ShopItemType.SOLD_OUT, "품절 텍스트")
+        val xp = Regex("\\+(\\d+)").find(text)?.groupValues?.get(1)?.toIntOrNull()
+        if (xp != null && visual.yellowIconRatio >= .01f) {
+            return NonHeroItemClassification(ShopItemType.ARTIFACT_XP, .95f, listOf("+EXP 텍스트", "노란 EXP 아이콘"), xp)
+        }
+        if (equipment.any(text::contains)) return fixed(ShopItemType.EQUIPMENT, "확정 장비명")
+        if (visual.likelyHeroPortrait) return unknown("영웅 초상화 가능성")
+        if (text.contains("랜덤") && text.contains("승급")) return fixed(ShopItemType.RANDOM_HERO_UPGRADE, "랜덤", "승급")
+        if (text.contains("랜덤") && factions.any(text::contains)) return fixed(ShopItemType.FACTION_HERO_PACK, "랜덤", "진영명")
+        if (text.contains("랜덤") && text.contains("영웅")) return fixed(ShopItemType.RANDOM_HERO_PACK, "랜덤", "영웅")
+        return unknown(if (xp != null) "+수치만 감지" else "확정 증거 없음")
+    }
+
+    private fun fixed(type: ShopItemType, vararg reasons: String) =
+        NonHeroItemClassification(type, .95f, reasons.toList())
+
+    private fun unknown(reason: String) = NonHeroItemClassification(ShopItemType.UNKNOWN, 0f, listOf(reason))
+}
 
 data class NormalizedRect(
     val left: Float,

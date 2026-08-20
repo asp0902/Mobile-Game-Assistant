@@ -27,6 +27,10 @@ class HonorDuelRuleEngine @Inject constructor() {
                             ShopRecommendation(item.slotIndex, RecommendationAction.SKIP, "해금 임계치와 거리가 있음")
                     }
                 }
+                ShopItemType.EQUIPMENT,
+                ShopItemType.RANDOM_HERO_PACK,
+                ShopItemType.FACTION_HERO_PACK,
+                ShopItemType.RANDOM_HERO_UPGRADE,
                 ShopItemType.UNKNOWN -> ShopRecommendation(
                     item.slotIndex,
                     RecommendationAction.CONSIDER,
