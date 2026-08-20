@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.asp0902.mobilegameassistant.analysis.ShopRoiOverlay
 import com.asp0902.mobilegameassistant.capture.TrackingState
 import com.asp0902.mobilegameassistant.formation.FormationOverlay
 import com.asp0902.mobilegameassistant.formation.FormationTemplate
@@ -94,6 +95,9 @@ fun TrackingScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Fit,
                             )
+                            (analysis as? ShopAnalysisUiState.Result)?.analysis?.shopItems?.let {
+                                ShopRoiOverlay(it, Modifier.fillMaxSize())
+                            }
                             template?.let { FormationOverlay(it, Modifier.fillMaxSize()) }
                         }
                         AnalysisSummary(analysis)

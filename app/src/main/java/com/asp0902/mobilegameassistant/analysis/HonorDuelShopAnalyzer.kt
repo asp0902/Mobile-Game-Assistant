@@ -1,6 +1,7 @@
 package com.asp0902.mobilegameassistant.analysis
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
@@ -26,12 +27,13 @@ class HonorDuelShopAnalyzer @Inject constructor() {
             }
         }
         val allText = blocks.joinToString(" ") { it.text }
+        val viewport = GameViewportDetector.detect(bitmap)
         val shopLevel = Regex("결투\\s*상점\\s*(\\d+)").find(allText)?.groupValues?.get(1)?.toIntOrNull()
         val shopScreen = HonorDuelScreenClassifier.classify(
             hasShopTitle = allText.contains("결투 상점"),
             hasPartialShopTitle = allText.contains("결투") || allText.contains("상점"),
             shopLevel = shopLevel,
-            visibleSlotCount = countVisibleSlots(blocks),
+            visibleSlotCount = countVisibleSlots(blocks, viewport),
         )
         val screen = if (shopScreen.type == ScreenType.HONOR_DUEL_SHOP) {
             shopScreen
@@ -44,22 +46,26 @@ class HonorDuelShopAnalyzer @Inject constructor() {
             screenConfidence = screen.confidence,
             screenReasons = screen.reasons,
             header = header,
-            shopItems = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractSlots(blocks) else emptyList(),
+            shopItems = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractSlots(blocks, viewport) else emptyList(),
             ocrBlocks = blocks,
+            viewport = viewport,
         )
     }
 
-    private fun countVisibleSlots(blocks: List<OcrBlock>): Int = SHOP_SLOT_BOUNDS.count { bounds ->
-        blocks.any { bounds.contains(it.centerX, it.centerY) }
+    private fun countVisibleSlots(blocks: List<OcrBlock>, viewport: GameViewport): Int = SHOP_SLOT_BOUNDS.count { bounds ->
+        val frameBounds = viewport.toFrame(bounds)
+        blocks.any { frameBounds.contains(it.centerX, it.centerY) }
     }
 
-    private fun extractSlots(blocks: List<OcrBlock>): List<ShopItemState> = SHOP_SLOT_BOUNDS.mapIndexed { index, bounds ->
+    private fun extractSlots(blocks: List<OcrBlock>, viewport: GameViewport): List<ShopItemState> = SHOP_SLOT_BOUNDS.mapIndexed { index, localBounds ->
+        val bounds = viewport.toFrame(localBounds)
+        val priceTop = viewport.top + (viewport.bottom - viewport.top) * localBounds.priceTop
         val slotBlocks = blocks.filter { bounds.contains(it.centerX, it.centerY) }
         val text = slotBlocks.joinToString(" ") { it.text }
         val isSoldOut = text.contains("품절")
         val xpAmount = Regex("\\+(\\d+)").find(text)?.groupValues?.get(1)?.toIntOrNull()
         val price = slotBlocks
-            .filter { it.centerY > bounds.priceTop }
+            .filter { it.centerY > priceTop }
             .flatMap { Regex("\\d+").findAll(it.text).map { match -> match.value.toInt() }.toList() }
             .lastOrNull()
         val type = when {
@@ -77,10 +83,11 @@ class HonorDuelShopAnalyzer @Inject constructor() {
                 ShopItemType.SOLD_OUT -> 0.95f
                 ShopItemType.UNKNOWN -> if (price != null) 0.55f else 0.1f
             },
+            bounds = bounds,
         )
     }
 
-    private data class SlotBounds(
+    data class SlotBounds(
         val left: Float,
         val top: Float,
         val right: Float,
@@ -91,7 +98,7 @@ class HonorDuelShopAnalyzer @Inject constructor() {
     }
 
     private companion object {
-        // ponytail: fixed 4x2 Honor Duel shop grid. Add viewport detection when real-device samples prove variation.
+        // ponytail: fixed 4x2 shop grid. Add anchor-based slot detection when viewport crop varies.
         val SHOP_SLOT_BOUNDS = listOf(
             SlotBounds(.03f, .28f, .25f, .47f, .38f),
             SlotBounds(.26f, .28f, .49f, .47f, .38f),
@@ -255,13 +262,66 @@ object HonorDuelHeaderParser {
     private val KNOWN_ARTIFACTS = listOf("마이다스의 재물")
 }
 
-data class ShopItemState(
+data class ShopItemState @JvmOverloads constructor(
     val slotIndex: Int,
     val itemType: ShopItemType,
     val price: Int?,
     val artifactXpAmount: Int?,
     val confidence: Float,
+    val bounds: NormalizedRect? = null,
 )
+
+data class NormalizedRect(
+    val left: Float,
+    val top: Float,
+    val right: Float,
+    val bottom: Float,
+) {
+    fun contains(x: Float, y: Float): Boolean = x in left..right && y in top..bottom
+}
+
+data class GameViewport(
+    val left: Float,
+    val top: Float,
+    val right: Float,
+    val bottom: Float,
+) {
+    fun toFrame(local: HonorDuelShopAnalyzer.SlotBounds): NormalizedRect =
+        toFrame(local.left, local.top, local.right, local.bottom)
+
+    private fun toFrame(left: Float, top: Float, right: Float, bottom: Float) = NormalizedRect(
+        left = this.left + (this.right - this.left) * left,
+        top = this.top + (this.bottom - this.top) * top,
+        right = this.left + (this.right - this.left) * right,
+        bottom = this.top + (this.bottom - this.top) * bottom,
+    )
+}
+
+object GameViewportDetector {
+    fun detect(bitmap: Bitmap): GameViewport {
+        // ponytail: trims only light top chrome. Add anchor-based bounds when side/bottom overlays appear.
+        val top = detectLightSystemBar(bitmap)
+        return GameViewport(0f, top, 1f, 1f)
+    }
+
+    private fun detectLightSystemBar(bitmap: Bitmap): Float {
+        val first = rowBrightness(bitmap, 0)
+        if (first < 180) return 0f
+        val limit = (bitmap.height * .12f).toInt()
+        for (y in 1 until limit) {
+            if (rowBrightness(bitmap, y) < first - 60) return y.toFloat() / bitmap.height
+        }
+        return 0f
+    }
+
+    private fun rowBrightness(bitmap: Bitmap, y: Int): Int {
+        val samples = 8
+        return (0 until samples).sumOf { index ->
+            val color = bitmap.getPixel(index * (bitmap.width - 1) / (samples - 1), y)
+            (Color.red(color) + Color.green(color) + Color.blue(color)) / 3
+        } / samples
+    }
+}
 
 data class OcrBlock(
     val text: String,
@@ -281,4 +341,5 @@ data class HonorDuelShopAnalysis @JvmOverloads constructor(
     val ocrBlocks: List<OcrBlock>,
     val screenConfidence: Float = if (screenType == ScreenType.HONOR_DUEL_SHOP) 1f else 0.9f,
     val screenReasons: List<String> = emptyList(),
+    val viewport: GameViewport? = null,
 )
