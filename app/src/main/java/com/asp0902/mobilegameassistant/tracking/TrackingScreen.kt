@@ -2,11 +2,13 @@ package com.asp0902.mobilegameassistant.tracking
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -19,14 +21,19 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.asp0902.mobilegameassistant.capture.TrackingState
+import com.asp0902.mobilegameassistant.formation.FormationOverlay
+import com.asp0902.mobilegameassistant.formation.FormationTemplate
+import com.asp0902.mobilegameassistant.formation.FormationTemplateId
 
 @Composable
 fun TrackingScreen(
     state: TrackingState,
     frame: Bitmap?,
+    template: FormationTemplate?,
     onStart: () -> Unit,
     onStop: () -> Unit,
     onAnalyze: () -> Unit,
+    onTemplateSelected: (FormationTemplateId) -> Unit,
 ) {
     Scaffold { padding ->
         Column(
@@ -68,12 +75,28 @@ fun TrackingScreen(
                     if (frame == null) {
                         Text("아직 캡처된 화면이 없습니다.")
                     } else {
-                        Image(
-                            bitmap = frame.asImageBitmap(),
-                            contentDescription = "최근 캡처 화면",
-                            modifier = Modifier.fillMaxWidth(),
-                            contentScale = ContentScale.Fit,
-                        )
+                        Text(template?.let { "필드 캐시: ${it.id.displayName}" } ?: "필드 선택 필요")
+                        FormationTemplateId.entries.forEach { id ->
+                            Button(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = { onTemplateSelected(id) },
+                            ) {
+                                Text(id.displayName)
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(frame.width.toFloat() / frame.height),
+                        ) {
+                            Image(
+                                bitmap = frame.asImageBitmap(),
+                                contentDescription = "최근 캡처 화면",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Fit,
+                            )
+                            template?.let { FormationOverlay(it, Modifier.fillMaxSize()) }
+                        }
                     }
                 }
             }
