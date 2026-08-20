@@ -46,13 +46,14 @@ class MainActivity : ComponentActivity() {
             val state by viewModel.state.collectAsStateWithLifecycle()
             val frame by viewModel.frame.collectAsStateWithLifecycle()
             val template by viewModel.template.collectAsStateWithLifecycle()
+            val analysis by viewModel.analysis.collectAsStateWithLifecycle()
             TrackingScreen(
                 state = state,
                 frame = frame,
                 template = template,
+                analysis = analysis,
                 onStart = ::startTracking,
                 onStop = { MediaProjectionService.stop(this) },
-                onAnalyze = { MediaProjectionService.capture(this) },
                 onTemplateSelected = viewModel::selectFormationTemplate,
             )
         }

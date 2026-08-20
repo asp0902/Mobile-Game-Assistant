@@ -2,6 +2,8 @@ package com.asp0902.mobilegameassistant.tracking
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,15 +26,16 @@ import com.asp0902.mobilegameassistant.capture.TrackingState
 import com.asp0902.mobilegameassistant.formation.FormationOverlay
 import com.asp0902.mobilegameassistant.formation.FormationTemplate
 import com.asp0902.mobilegameassistant.formation.FormationTemplateId
+import com.asp0902.mobilegameassistant.rules.RecommendationAction
 
 @Composable
 fun TrackingScreen(
     state: TrackingState,
     frame: Bitmap?,
     template: FormationTemplate?,
+    analysis: ShopAnalysisUiState,
     onStart: () -> Unit,
     onStop: () -> Unit,
-    onAnalyze: () -> Unit,
     onTemplateSelected: (FormationTemplateId) -> Unit,
 ) {
     Scaffold { padding ->
@@ -40,7 +43,8 @@ fun TrackingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(24.dp),
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         ) {
@@ -60,12 +64,7 @@ fun TrackingScreen(
                 -> CircularProgressIndicator()
 
                 TrackingState.Tracking -> {
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = onAnalyze,
-                    ) {
-                        Text("AFK 분석")
-                    }
+                    Text("게임 화면에서 알림의 ‘AFK 분석’을 누르세요.")
                     Button(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = onStop,
@@ -97,8 +96,34 @@ fun TrackingScreen(
                             )
                             template?.let { FormationOverlay(it, Modifier.fillMaxSize()) }
                         }
+                        AnalysisSummary(analysis)
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AnalysisSummary(analysis: ShopAnalysisUiState) {
+    when (analysis) {
+        ShopAnalysisUiState.Idle -> Text("AFK 분석을 누르면 상점 OCR을 시작합니다.")
+        ShopAnalysisUiState.Analyzing -> Text("상점 분석 중")
+        is ShopAnalysisUiState.Error -> Text(analysis.message)
+        is ShopAnalysisUiState.Result -> {
+            val header = analysis.analysis.header
+            Text(
+                "${analysis.analysis.screenType} · 휘장 ${header.currency ?: "?"} · " +
+                    "상점 Lv.${header.shopLevel ?: "?"} · " +
+                    "아티팩트 ${header.artifactXp?.current ?: "?"}/${header.artifactXp?.required ?: "?"}",
+            )
+            analysis.recommendations.forEach { recommendation ->
+                val action = when (recommendation.action) {
+                    RecommendationAction.BUY -> "BUY"
+                    RecommendationAction.CONSIDER -> "확인"
+                    RecommendationAction.SKIP -> "SKIP"
+                }
+                Text("슬롯 ${recommendation.slotIndex + 1}: $action — ${recommendation.reason}")
             }
         }
     }

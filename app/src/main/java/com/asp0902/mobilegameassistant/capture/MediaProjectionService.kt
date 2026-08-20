@@ -205,12 +205,19 @@ class MediaProjectionService : Service() {
             Intent(this, MediaProjectionService::class.java).setAction(ACTION_STOP),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
+        val analyzeIntent = PendingIntent.getService(
+            this,
+            1,
+            Intent(this, MediaProjectionService::class.java).setAction(ACTION_CAPTURE),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_menu_view)
             .setContentTitle("AFK 트래킹 중")
             .setContentText("사용자가 요청한 화면 공유 세션입니다.")
             .setOngoing(true)
+            .addAction(0, "AFK 분석", analyzeIntent)
             .addAction(0, "트래킹 중지", stopIntent)
             .build()
     }
