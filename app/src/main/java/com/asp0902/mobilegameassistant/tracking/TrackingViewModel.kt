@@ -32,6 +32,7 @@ class TrackingViewModel @Inject constructor(
     private val ruleEngine: HonorDuelRuleEngine,
     private val heroCatalog: HeroRecognitionCatalog,
     private val correctionRepository: HeroCorrectionRepository,
+    private val runRepository: HonorDuelRunRepository,
 ) : ViewModel() {
     val state = captureSession.state
     val frame = captureSession.frame
@@ -42,12 +43,25 @@ class TrackingViewModel @Inject constructor(
     private val mutableDetailSlot = MutableStateFlow<Int?>(null)
     val detailSlot = mutableDetailSlot.asStateFlow()
     private var lastShopAnalysis: HonorDuelShopAnalysis? = null
-    private val runId = System.currentTimeMillis()
+    private var runId = System.currentTimeMillis()
     private var nextSnapshotId = 1L
+    private var lastRunState: ReconciledHonorDuelState? = null
+    private var hasLiveAnalysis = false
 
     init {
         viewModelScope.launch {
+            runRepository.restoreLatest()?.let { restored ->
+                if (!hasLiveAnalysis) {
+                    runId = restored.runId
+                    lastRunState = restored
+                    lastShopAnalysis = restored.analysis
+                    mutableAnalysis.value = ShopAnalysisUiState.Result(restored.analysis, ruleEngine.recommend(restored.analysis), nextSnapshotId++, restored.headerSources)
+                }
+            }
+        }
+        viewModelScope.launch {
             captureSession.frame.filterNotNull().collectLatest { bitmap ->
+                hasLiveAnalysis = true
                 mutableAnalysis.value = ShopAnalysisUiState.Analyzing
                 runCatching {
                     withContext(Dispatchers.Default) {
@@ -57,16 +71,19 @@ class TrackingViewModel @Inject constructor(
                 }.onSuccess { (result, recommendations) ->
                     val detail = result.heroDetail
                     val priorShop = lastShopAnalysis
-                    if (detail != null && mutableDetailSlot.value != null && priorShop != null) {
-                        val reconciled = priorShop.copy(
+                    val observed = if (detail != null && mutableDetailSlot.value != null && priorShop != null) {
+                        priorShop.copy(
                             shopItems = ShopDetailReconciler.apply(priorShop.shopItems, mutableDetailSlot.value!!, detail),
                         )
-                        lastShopAnalysis = reconciled
-                        mutableAnalysis.value = ShopAnalysisUiState.Result(reconciled, ruleEngine.recommend(reconciled), nextSnapshotId++)
                     } else {
-                        if (result.shopItems.isNotEmpty()) lastShopAnalysis = result
-                        mutableAnalysis.value = ShopAnalysisUiState.Result(result, recommendations, nextSnapshotId++)
+                        result
                     }
+                    val reconciled = HonorDuelStateReconciler.reconcile(runId, lastRunState, observed)
+                    lastRunState = reconciled
+                    if (reconciled.analysis.shopItems.isNotEmpty()) lastShopAnalysis = reconciled.analysis
+                    val snapshotId = nextSnapshotId++
+                    mutableAnalysis.value = ShopAnalysisUiState.Result(reconciled.analysis, ruleEngine.recommend(reconciled.analysis), snapshotId, reconciled.headerSources)
+                    viewModelScope.launch(Dispatchers.IO) { runRepository.save(reconciled) }
                 }.onFailure {
                     mutableAnalysis.value = ShopAnalysisUiState.Error("OCR 분석 실패: ${it.message ?: "알 수 없음"}")
                 }
@@ -96,7 +113,7 @@ class TrackingViewModel @Inject constructor(
             if (it.slotIndex == slotIndex) HeroCorrectionApplier.apply(it, hero) else it
         })
         lastShopAnalysis = corrected
-        mutableAnalysis.value = ShopAnalysisUiState.Result(corrected, ruleEngine.recommend(corrected), snapshotId)
+        mutableAnalysis.value = ShopAnalysisUiState.Result(corrected, ruleEngine.recommend(corrected), snapshotId, current.headerSources)
         viewModelScope.launch {
             correctionRepository.save(HeroCorrection(
                 runId, snapshotId, slotIndex, item.heroId, hero.id, hero.koreanName, item.portraitSignature,
@@ -112,6 +129,7 @@ sealed interface ShopAnalysisUiState {
         val analysis: HonorDuelShopAnalysis,
         val recommendations: List<ShopRecommendation>,
         val snapshotId: Long,
+        val headerSources: Map<com.asp0902.mobilegameassistant.analysis.HeaderField, ReconciliationSource> = emptyMap(),
     ) : ShopAnalysisUiState
     data class Error(val message: String) : ShopAnalysisUiState
 }

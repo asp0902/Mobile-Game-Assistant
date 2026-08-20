@@ -169,6 +169,7 @@ private fun AnalysisSummary(
                     "장비 ${hero.equipmentName ?: "없음"} 판매 +${hero.sellValue ?: "?"} (${(hero.confidence * 100).toInt()}%)")
             }
             if (analysis.analysis.ownedHeroes.any { it.sellValue != null }) Text("판매 가능 재화: +$sellableReserve")
+            if (analysis.headerSources.isNotEmpty()) Text("조정 출처: ${analysis.headerSources.entries.joinToString { "${it.key}:${it.value}" }}")
             analysis.recommendations.forEach { recommendation ->
                 val action = when (recommendation.action) {
                     RecommendationAction.BUY -> "BUY"

@@ -40,6 +40,8 @@ dependencies {
     ksp("com.google.dagger:hilt-compiler:2.60.1")
 
     implementation("androidx.room:room-runtime:2.8.4")
+    implementation("androidx.room:room-ktx:2.8.4")
+    ksp("androidx.room:room-compiler:2.8.4")
     implementation("androidx.datastore:datastore-preferences:1.1.6")
     implementation("com.google.mlkit:text-recognition-korean:16.0.1")
 
