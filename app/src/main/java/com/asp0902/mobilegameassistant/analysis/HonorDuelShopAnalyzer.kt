@@ -38,14 +38,7 @@ class HonorDuelShopAnalyzer @Inject constructor() {
         } else {
             HonorDuelScreenClassifier.classifyNonShop(allText, shopScreen)
         }
-        val header = HonorDuelHeader(
-            currency = parseCurrency(blocks),
-            shopLevel = shopLevel,
-            targetWins = Regex("목표\\s*:?\\s*(\\d+)").find(allText)?.groupValues?.get(1)?.toIntOrNull(),
-            artifactXp = Regex("(\\d+)\\s*/\\s*(\\d+)").find(allText)?.let {
-                ArtifactXp(it.groupValues[1].toInt(), it.groupValues[2].toInt())
-            },
-        )
+        val header = HonorDuelHeaderParser.parse(blocks, allText, shopLevel)
         return HonorDuelShopAnalysis(
             screenType = screen.type,
             screenConfidence = screen.confidence,
@@ -59,11 +52,6 @@ class HonorDuelShopAnalyzer @Inject constructor() {
     private fun countVisibleSlots(blocks: List<OcrBlock>): Int = SHOP_SLOT_BOUNDS.count { bounds ->
         blocks.any { bounds.contains(it.centerX, it.centerY) }
     }
-
-    private fun parseCurrency(blocks: List<OcrBlock>): Int? = blocks
-        .filter { it.centerX > 0.72f && it.centerY < 0.32f }
-        .mapNotNull { Regex("\\d+").find(it.text)?.value?.toIntOrNull() }
-        .maxOrNull()
 
     private fun extractSlots(blocks: List<OcrBlock>): List<ShopItemState> = SHOP_SLOT_BOUNDS.mapIndexed { index, bounds ->
         val slotBlocks = blocks.filter { bounds.contains(it.centerX, it.centerY) }
@@ -194,12 +182,78 @@ enum class ShopItemType { ARTIFACT_XP, SOLD_OUT, UNKNOWN }
 
 data class ArtifactXp(val current: Int, val required: Int)
 
-data class HonorDuelHeader(
+enum class HeaderField {
+    WINS,
+    TARGET_WINS,
+    HP,
+    CURRENCY,
+    SHOP_LEVEL,
+    REFRESH_COST,
+    ROUND,
+    ARTIFACT,
+    ARTIFACT_XP,
+}
+
+data class HonorDuelHeader @JvmOverloads constructor(
     val currency: Int?,
     val shopLevel: Int?,
     val targetWins: Int?,
     val artifactXp: ArtifactXp?,
+    val wins: Int? = null,
+    val hp: Int? = null,
+    val refreshCost: Int? = null,
+    val currentRound: Int? = null,
+    val artifactName: String? = null,
+    val confidence: Map<HeaderField, Float> = emptyMap(),
 )
+
+object HonorDuelHeaderParser {
+    fun parse(blocks: List<OcrBlock>, allText: String, shopLevel: Int?): HonorDuelHeader {
+        val currency = blocks
+            .filter { it.centerX > .72f && it.centerY < .22f }
+            .mapNotNull { Regex("\\d+").find(it.text)?.value?.toIntOrNull() }
+            .maxOrNull()
+        val refreshCost = blocks
+            .filter { it.centerX > .72f && it.centerY in .22f.. .34f }
+            .mapNotNull { Regex("\\d+").find(it.text)?.value?.toIntOrNull() }
+            .filter { it in 1..10 }
+            .minOrNull()
+        val targetWins = Regex("목표\\s*:?\\s*(\\d+)").find(allText)?.groupValues?.get(1)?.toIntOrNull()
+        val wins = Regex("현재\\s*(\\d+)\\s*승").find(allText)?.groupValues?.get(1)?.toIntOrNull()
+        val round = Regex("(\\d+)\\s*라운드").find(allText)?.groupValues?.get(1)?.toIntOrNull()
+        val artifactName = KNOWN_ARTIFACTS.firstOrNull(allText::contains)
+        val artifactXp = blocks
+            .filter { it.centerY > .65f }
+            .mapNotNull { Regex("(\\d+)\\s*/\\s*(\\d+)").find(it.text)?.let { match ->
+                ArtifactXp(match.groupValues[1].toInt(), match.groupValues[2].toInt())
+            } }
+            .firstOrNull()
+        return HonorDuelHeader(
+            currency = currency,
+            shopLevel = shopLevel,
+            targetWins = targetWins,
+            artifactXp = artifactXp,
+            wins = wins,
+            hp = null,
+            refreshCost = refreshCost,
+            currentRound = round,
+            artifactName = artifactName,
+            confidence = mapOf(
+                HeaderField.CURRENCY to if (currency == null) 0f else .9f,
+                HeaderField.SHOP_LEVEL to if (shopLevel == null) 0f else .95f,
+                HeaderField.TARGET_WINS to if (targetWins == null) 0f else .9f,
+                HeaderField.WINS to if (wins == null) 0f else .9f,
+                HeaderField.HP to 0f,
+                HeaderField.REFRESH_COST to if (refreshCost == null) 0f else .75f,
+                HeaderField.ROUND to if (round == null) 0f else .9f,
+                HeaderField.ARTIFACT to if (artifactName == null) 0f else .95f,
+                HeaderField.ARTIFACT_XP to if (artifactXp == null) 0f else .8f,
+            ),
+        )
+    }
+
+    private val KNOWN_ARTIFACTS = listOf("마이다스의 재물")
+}
 
 data class ShopItemState(
     val slotIndex: Int,

@@ -115,7 +115,8 @@ private fun AnalysisSummary(analysis: ShopAnalysisUiState) {
             Text(
                 "${analysis.analysis.screenType} (${(analysis.analysis.screenConfidence * 100).toInt()}%) · 휘장 ${header.currency ?: "?"} · " +
                     "상점 Lv.${header.shopLevel ?: "?"} · " +
-                    "아티팩트 ${header.artifactXp?.current ?: "?"}/${header.artifactXp?.required ?: "?"}",
+                    "리롤 ${header.refreshCost ?: "?"} · " +
+                    "아티팩트 ${header.artifactName ?: "?"} ${header.artifactXp?.current ?: "?"}/${header.artifactXp?.required ?: "?"}",
             )
             Text(analysis.analysis.screenReasons.joinToString(" · "))
             analysis.recommendations.forEach { recommendation ->
