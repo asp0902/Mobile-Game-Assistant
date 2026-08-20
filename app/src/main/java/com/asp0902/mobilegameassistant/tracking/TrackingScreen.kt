@@ -113,10 +113,11 @@ private fun AnalysisSummary(analysis: ShopAnalysisUiState) {
         is ShopAnalysisUiState.Result -> {
             val header = analysis.analysis.header
             Text(
-                "${analysis.analysis.screenType} · 휘장 ${header.currency ?: "?"} · " +
+                "${analysis.analysis.screenType} (${(analysis.analysis.screenConfidence * 100).toInt()}%) · 휘장 ${header.currency ?: "?"} · " +
                     "상점 Lv.${header.shopLevel ?: "?"} · " +
                     "아티팩트 ${header.artifactXp?.current ?: "?"}/${header.artifactXp?.required ?: "?"}",
             )
+            Text(analysis.analysis.screenReasons.joinToString(" · "))
             analysis.recommendations.forEach { recommendation ->
                 val action = when (recommendation.action) {
                     RecommendationAction.BUY -> "BUY"

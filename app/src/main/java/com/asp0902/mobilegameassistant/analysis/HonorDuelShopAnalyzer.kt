@@ -26,21 +26,33 @@ class HonorDuelShopAnalyzer @Inject constructor() {
             }
         }
         val allText = blocks.joinToString(" ") { it.text }
-        val screenType = if (allText.contains("결투 상점")) ScreenType.HONOR_DUEL_SHOP else ScreenType.OTHER
+        val shopLevel = Regex("결투\\s*상점\\s*(\\d+)").find(allText)?.groupValues?.get(1)?.toIntOrNull()
+        val screen = HonorDuelScreenClassifier.classify(
+            hasShopTitle = allText.contains("결투 상점"),
+            hasPartialShopTitle = allText.contains("결투") || allText.contains("상점"),
+            shopLevel = shopLevel,
+            visibleSlotCount = countVisibleSlots(blocks),
+        )
         val header = HonorDuelHeader(
             currency = parseCurrency(blocks),
-            shopLevel = Regex("결투\\s*상점\\s*(\\d+)").find(allText)?.groupValues?.get(1)?.toIntOrNull(),
+            shopLevel = shopLevel,
             targetWins = Regex("목표\\s*:?\\s*(\\d+)").find(allText)?.groupValues?.get(1)?.toIntOrNull(),
             artifactXp = Regex("(\\d+)\\s*/\\s*(\\d+)").find(allText)?.let {
                 ArtifactXp(it.groupValues[1].toInt(), it.groupValues[2].toInt())
             },
         )
         return HonorDuelShopAnalysis(
-            screenType = screenType,
+            screenType = screen.type,
+            screenConfidence = screen.confidence,
+            screenReasons = screen.reasons,
             header = header,
-            shopItems = if (screenType == ScreenType.HONOR_DUEL_SHOP) extractSlots(blocks) else emptyList(),
+            shopItems = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractSlots(blocks) else emptyList(),
             ocrBlocks = blocks,
         )
+    }
+
+    private fun countVisibleSlots(blocks: List<OcrBlock>): Int = SHOP_SLOT_BOUNDS.count { bounds ->
+        blocks.any { bounds.contains(it.centerX, it.centerY) }
     }
 
     private fun parseCurrency(blocks: List<OcrBlock>): Int? = blocks
@@ -100,7 +112,41 @@ class HonorDuelShopAnalyzer @Inject constructor() {
     }
 }
 
-enum class ScreenType { HONOR_DUEL_SHOP, OTHER }
+enum class ScreenType { HONOR_DUEL_SHOP, OTHER, UNKNOWN }
+
+data class ScreenClassification(
+    val type: ScreenType,
+    val confidence: Float,
+    val reasons: List<String>,
+)
+
+object HonorDuelScreenClassifier {
+    fun classify(
+        hasShopTitle: Boolean,
+        hasPartialShopTitle: Boolean,
+        shopLevel: Int?,
+        visibleSlotCount: Int,
+    ): ScreenClassification {
+        if (hasShopTitle && shopLevel != null && visibleSlotCount >= 4) {
+            return ScreenClassification(
+                ScreenType.HONOR_DUEL_SHOP,
+                0.95f,
+                listOf("결투 상점 제목", "상점 레벨", "상품 슬롯 ${visibleSlotCount}개"),
+            )
+        }
+        if (hasShopTitle && visibleSlotCount >= 2) {
+            return ScreenClassification(
+                ScreenType.HONOR_DUEL_SHOP,
+                0.75f,
+                listOf("결투 상점 제목", "상품 슬롯 ${visibleSlotCount}개"),
+            )
+        }
+        if (hasPartialShopTitle || shopLevel != null || visibleSlotCount >= 4) {
+            return ScreenClassification(ScreenType.UNKNOWN, 0.5f, listOf("상점 증거 불충분"))
+        }
+        return ScreenClassification(ScreenType.OTHER, 0.9f, listOf("상점 증거 없음"))
+    }
+}
 
 enum class ShopItemType { ARTIFACT_XP, SOLD_OUT, UNKNOWN }
 
@@ -132,9 +178,11 @@ data class OcrBlock(
     val centerY: Float get() = (top + bottom) / 2
 }
 
-data class HonorDuelShopAnalysis(
+data class HonorDuelShopAnalysis @JvmOverloads constructor(
     val screenType: ScreenType,
     val header: HonorDuelHeader,
     val shopItems: List<ShopItemState>,
     val ocrBlocks: List<OcrBlock>,
+    val screenConfidence: Float = if (screenType == ScreenType.HONOR_DUEL_SHOP) 1f else 0.9f,
+    val screenReasons: List<String> = emptyList(),
 )
