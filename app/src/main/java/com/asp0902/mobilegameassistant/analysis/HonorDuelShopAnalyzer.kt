@@ -50,6 +50,7 @@ class HonorDuelShopAnalyzer @Inject constructor(
             screenReasons = screen.reasons,
             header = header,
             shopItems = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractSlots(bitmap, blocks, viewport, runId) else emptyList(),
+            ownedHeroGauges = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractRosterGauges(bitmap, blocks, viewport) else emptyList(),
             ocrBlocks = blocks,
             viewport = viewport,
             heroDetail = if (screen.type == ScreenType.HERO_DETAIL_POPUP) HeroDetailPopupParser.parse(allText) else null,
@@ -110,6 +111,16 @@ class HonorDuelShopAnalyzer @Inject constructor(
         )
     }
 
+    private fun extractRosterGauges(
+        bitmap: Bitmap,
+        blocks: List<OcrBlock>,
+        viewport: GameViewport,
+    ): List<OwnedHeroGaugeSlot> = ROSTER_SLOT_BOUNDS.mapIndexed { index, localBounds ->
+        val bounds = viewport.toFrame(localBounds)
+        val slotText = blocks.filter { bounds.contains(it.centerX, it.centerY) }.joinToString(" ") { it.text }
+        OwnedHeroGaugeSlot(index, bounds, PromotionGaugeRecognizer.recognize(bitmap, bounds, slotText))
+    }
+
     data class SlotBounds(
         val left: Float,
         val top: Float,
@@ -132,6 +143,11 @@ class HonorDuelShopAnalyzer @Inject constructor(
             SlotBounds(.51f, .47f, .74f, .67f, .58f),
             SlotBounds(.75f, .47f, .98f, .67f, .58f),
         )
+        // ponytail: six visible first-row roster cards. Add second-row anchors with a matching Golden sample.
+        val ROSTER_SLOT_BOUNDS = (0 until 6).map { index ->
+            val left = .04f + index * .155f
+            SlotBounds(left, .75f, left + .14f, .92f, .9f)
+        }
     }
 }
 
@@ -539,4 +555,5 @@ data class HonorDuelShopAnalysis @JvmOverloads constructor(
     val screenReasons: List<String> = emptyList(),
     val viewport: GameViewport? = null,
     val heroDetail: HeroDetailPopup? = null,
+    val ownedHeroGauges: List<OwnedHeroGaugeSlot> = emptyList(),
 )

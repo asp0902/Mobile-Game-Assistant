@@ -157,6 +157,10 @@ private fun AnalysisSummary(
                     HeroCorrectionMenu(item.slotIndex, analysis.snapshotId, heroChoices, onHeroCorrected)
                 }
             }
+            analysis.analysis.ownedHeroGauges.forEach { slot ->
+                val gauge = slot.gauge
+                Text("보유 슬롯 ${slot.slotIndex + 1}: ${if (gauge.isMaxRank) "최대 등급" else "${gauge.progress ?: "?"}/${gauge.required ?: "?"}"} (${(gauge.confidence * 100).toInt()}%)")
+            }
             analysis.recommendations.forEach { recommendation ->
                 val action = when (recommendation.action) {
                     RecommendationAction.BUY -> "BUY"
