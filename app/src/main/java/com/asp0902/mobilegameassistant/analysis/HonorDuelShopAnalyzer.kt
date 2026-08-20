@@ -27,12 +27,17 @@ class HonorDuelShopAnalyzer @Inject constructor() {
         }
         val allText = blocks.joinToString(" ") { it.text }
         val shopLevel = Regex("결투\\s*상점\\s*(\\d+)").find(allText)?.groupValues?.get(1)?.toIntOrNull()
-        val screen = HonorDuelScreenClassifier.classify(
+        val shopScreen = HonorDuelScreenClassifier.classify(
             hasShopTitle = allText.contains("결투 상점"),
             hasPartialShopTitle = allText.contains("결투") || allText.contains("상점"),
             shopLevel = shopLevel,
             visibleSlotCount = countVisibleSlots(blocks),
         )
+        val screen = if (shopScreen.type == ScreenType.HONOR_DUEL_SHOP) {
+            shopScreen
+        } else {
+            HonorDuelScreenClassifier.classifyNonShop(allText, shopScreen)
+        }
         val header = HonorDuelHeader(
             currency = parseCurrency(blocks),
             shopLevel = shopLevel,
@@ -112,7 +117,17 @@ class HonorDuelShopAnalyzer @Inject constructor() {
     }
 }
 
-enum class ScreenType { HONOR_DUEL_SHOP, OTHER, UNKNOWN }
+enum class ScreenType {
+    HONOR_DUEL_SHOP,
+    HONOR_DUEL_HERO_MANAGEMENT,
+    HONOR_DUEL_HERO_SELL,
+    HONOR_DUEL_BATTLE_DEPLOYMENT,
+    HONOR_DUEL_BATTLE_RESULT,
+    HERO_DETAIL_POPUP,
+    EQUIPMENT_DETAIL_POPUP,
+    OTHER,
+    UNKNOWN,
+}
 
 data class ScreenClassification(
     val type: ScreenType,
@@ -121,6 +136,10 @@ data class ScreenClassification(
 )
 
 object HonorDuelScreenClassifier {
+    private val factions = listOf("레오프론", "와일더스", "그레이브본", "트라이브", "기타")
+    private val roles = listOf("전사", "탱커", "사수", "마법사", "서포터", "레인저")
+    private val knownEquipment = listOf("간이 활", "밀림 후드", "생엽", "침묵의 투구")
+
     fun classify(
         hasShopTitle: Boolean,
         hasPartialShopTitle: Boolean,
@@ -145,6 +164,29 @@ object HonorDuelScreenClassifier {
             return ScreenClassification(ScreenType.UNKNOWN, 0.5f, listOf("상점 증거 불충분"))
         }
         return ScreenClassification(ScreenType.OTHER, 0.9f, listOf("상점 증거 없음"))
+    }
+
+    fun classifyNonShop(text: String, shopScreen: ScreenClassification): ScreenClassification {
+        val heroDetail = factions.any(text::contains) && roles.any(text::contains) && text.contains("사정거리")
+        if (heroDetail) {
+            return ScreenClassification(ScreenType.HERO_DETAIL_POPUP, 0.95f, listOf("진영", "직업", "사정거리"))
+        }
+        if (knownEquipment.any(text::contains)) {
+            return ScreenClassification(ScreenType.EQUIPMENT_DETAIL_POPUP, 0.9f, listOf("확정 장비명"))
+        }
+        if (Regex("확인\\s*\\(\\s*\\d+초\\s*\\)").containsMatchIn(text)) {
+            return ScreenClassification(ScreenType.HONOR_DUEL_BATTLE_DEPLOYMENT, 0.9f, listOf("배치 확인 타이머"))
+        }
+        if (text.contains("전투 승리") || text.contains("전투 패배") || text.contains("명예의 결투 종료")) {
+            return ScreenClassification(ScreenType.HONOR_DUEL_BATTLE_RESULT, 0.9f, listOf("전투 결과 문구"))
+        }
+        if (text.contains("판매가") || text.contains("영웅 판매")) {
+            return ScreenClassification(ScreenType.HONOR_DUEL_HERO_SELL, 0.9f, listOf("영웅 판매 문구"))
+        }
+        if (text.contains("보유 영웅") || text.contains("진형 관리")) {
+            return ScreenClassification(ScreenType.HONOR_DUEL_HERO_MANAGEMENT, 0.75f, listOf("영웅 관리 문구"))
+        }
+        return shopScreen
     }
 }
 
