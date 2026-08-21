@@ -1,6 +1,6 @@
 package com.asp0902.mobilegameassistant.analysis
 
-data class OwnedHeroState(
+data class OwnedHeroState @JvmOverloads constructor(
     val slotIndex: Int,
     val heroId: String? = null,
     val heroName: String? = null,
@@ -10,6 +10,7 @@ data class OwnedHeroState(
     val equipmentName: String? = null,
     val sellValue: Int? = null,
     val confidence: Float = 0f,
+    val isSellCandidate: Boolean = false,
 )
 
 object SellValueParser {

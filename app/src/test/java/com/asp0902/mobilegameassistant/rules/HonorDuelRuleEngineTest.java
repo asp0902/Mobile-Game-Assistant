@@ -84,6 +84,33 @@ public class HonorDuelRuleEngineTest {
         assertEquals(RecommendationAction.SKIP, recommendation.getAction());
     }
 
+    @Test
+    public void countsOnlyExplicitNonCoreScreenConfirmedSellCandidates() {
+        HonorDuelShopAnalysis analysis = new HonorDuelShopAnalysis(
+                ScreenType.HONOR_DUEL_SHOP, new HonorDuelHeader(27, 1, 9, null), Collections.emptyList(),
+                Collections.emptyList(), 1f, Collections.emptyList(), null, null, Collections.emptyList(), Arrays.asList(
+                        sellHero("zohra", "조르아", 2), sellHero("hepler", "헤플러", 2), sellHero("tiloa", "틸로아", 2),
+                        sellHero("valen", "발렌", 16), hero("perseus", "페르세우스", 0, false)));
+
+        SpendableState state = new HonorDuelRuleEngine(new MidasGoldenPolicy()).spendableState(analysis);
+
+        assertEquals(6, state.getSellableReserve());
+        assertEquals(Integer.valueOf(33), state.getLiquidPotential());
+    }
+
+    @Test
+    public void skipsIrreversibleEquipmentBelowReserveBudget() {
+        HonorDuelShopAnalysis analysis = new HonorDuelShopAnalysis(
+                ScreenType.HONOR_DUEL_SHOP, new HonorDuelHeader(48, 1, 9, null),
+                Collections.singletonList(new ShopItemState(0, ShopItemType.EQUIPMENT, 40, null, .95f)), Collections.emptyList());
+
+        ShopRecommendation recommendation = new HonorDuelRuleEngine(new MidasGoldenPolicy()).recommend(analysis).get(0);
+
+        assertEquals(RecommendationAction.SKIP, recommendation.getAction());
+        assertTrue(recommendation.getReason().contains("장비 판매 불가"));
+        assertEquals(40, new HonorDuelRuleEngine(new MidasGoldenPolicy()).spendableState(analysis, 40).getIrreversibleSpend());
+    }
+
     private static java.util.List<ShopRecommendation> recommendations(OwnedHeroState hero, java.util.List<ShopItemState> items, int currency) {
         HonorDuelShopAnalysis analysis = new HonorDuelShopAnalysis(
                 ScreenType.HONOR_DUEL_SHOP, new HonorDuelHeader(currency, 1, 9, null), items,
@@ -100,5 +127,10 @@ public class HonorDuelRuleEngineTest {
     private static OwnedHeroState hero(String id, String name, int progress, boolean maxRank) {
         return new OwnedHeroState(0, id, name, "레오프론", HeroRarity.LEGENDARY,
                 new PromotionGaugeObservation(progress, 4, maxRank, .95f, Collections.emptyList()), null, null, .95f);
+    }
+
+    private static OwnedHeroState sellHero(String id, String name, int sellValue) {
+        return new OwnedHeroState(0, id, name, "그레이브본", HeroRarity.EPIC,
+                new PromotionGaugeObservation(0, 4, false, .95f, Collections.emptyList()), null, sellValue, .95f, true);
     }
 }

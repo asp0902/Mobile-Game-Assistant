@@ -17,6 +17,13 @@ class HonorDuelRuleEngine private constructor(
 
     constructor(midasPolicy: MidasGoldenPolicy) : this({ midasPolicy })
 
+    @JvmOverloads
+    fun spendableState(
+        analysis: HonorDuelShopAnalysis,
+        purchaseCost: Int? = null,
+        reservedPurchaseBudget: Int = DEFAULT_RESERVED_PURCHASE_BUDGET,
+    ): SpendableState = HonorDuelEconomy.state(analysis, purchaseCost, reservedPurchaseBudget)
+
     fun recommend(analysis: HonorDuelShopAnalysis): List<ShopRecommendation> {
         if (analysis.screenType != ScreenType.HONOR_DUEL_SHOP) return emptyList()
         val currency = analysis.header.currency
@@ -43,7 +50,7 @@ class HonorDuelRuleEngine private constructor(
                             ShopRecommendation(item.slotIndex, RecommendationAction.SKIP, "해금 임계치와 거리가 있음")
                     }
                 }
-                ShopItemType.EQUIPMENT,
+                ShopItemType.EQUIPMENT -> equipmentRecommendation(item, analysis)
                 ShopItemType.RANDOM_HERO_PACK,
                 ShopItemType.FACTION_HERO_PACK,
                 ShopItemType.RANDOM_HERO_UPGRADE,
@@ -64,6 +71,20 @@ class HonorDuelRuleEngine private constructor(
                     else -> ShopRecommendation(item.slotIndex, RecommendationAction.CONSIDER, "마이다스 체험 카드 시너지 — 상세 후 구매 판단")
                 }
             }
+        }
+    }
+
+    private fun equipmentRecommendation(item: ShopItemState, analysis: HonorDuelShopAnalysis): ShopRecommendation {
+        val price = item.price ?: return ShopRecommendation(item.slotIndex, RecommendationAction.CONSIDER, "장비 가격 확인 필요")
+        val currency = analysis.header.currency
+        val state = spendableState(analysis, price)
+        val afterPurchase = state.currencyAfterPurchase
+        return when {
+            currency == null -> ShopRecommendation(item.slotIndex, RecommendationAction.CONSIDER, "현재 휘장 확인 필요")
+            currency < price -> ShopRecommendation(item.slotIndex, RecommendationAction.SKIP, "현재 휘장 부족 — 장비 회수액 0")
+            afterPurchase != null && afterPurchase < state.reservedPurchaseBudget ->
+                ShopRecommendation(item.slotIndex, RecommendationAction.SKIP, "장비 판매 불가 — 구매 후 $afterPurchase, 보존 휘장 ${state.reservedPurchaseBudget} 미만")
+            else -> ShopRecommendation(item.slotIndex, RecommendationAction.CONSIDER, "장비 판매 불가 — 비용 $price 전액 비가역 지출")
         }
     }
 
@@ -116,6 +137,53 @@ class HonorDuelRuleEngine private constructor(
         } else {
             "${if (isBundle) "BUY BOTH — " else ""}$heroName $next/$required → 진급"
         }
+    }
+
+    private companion object {
+        const val DEFAULT_RESERVED_PURCHASE_BUDGET = 30
+    }
+}
+
+data class SellCandidate(
+    val heroId: String,
+    val heroName: String,
+    val expectedCurrency: Int,
+)
+
+data class SpendableState(
+    val currentCurrency: Int?,
+    val sellableReserve: Int,
+    val reservedPurchaseBudget: Int,
+    val purchaseCost: Int? = null,
+    val irreversibleSpend: Int = 0,
+    val sellCandidates: List<SellCandidate> = emptyList(),
+) {
+    val liquidPotential: Int? get() = currentCurrency?.plus(sellableReserve)
+    val currencyAfterPurchase: Int? get() = currentCurrency?.minus(purchaseCost ?: 0)
+}
+
+object HonorDuelEconomy {
+    private val coreHeroIds = setOf("valen", "bonnie")
+
+    fun state(
+        analysis: HonorDuelShopAnalysis,
+        purchaseCost: Int? = null,
+        reservedPurchaseBudget: Int = 30,
+    ): SpendableState {
+        val candidates = analysis.ownedHeroes.mapNotNull { hero ->
+            val sellValue = hero.sellValue ?: return@mapNotNull null
+            val heroId = hero.heroId ?: return@mapNotNull null
+            if (!hero.isSellCandidate || heroId in coreHeroIds || hero.promotion.isMaxRank || hero.equipmentName != null) return@mapNotNull null
+            SellCandidate(heroId, hero.heroName ?: heroId, sellValue)
+        }
+        return SpendableState(
+            currentCurrency = analysis.header.currency,
+            sellableReserve = candidates.sumOf(SellCandidate::expectedCurrency),
+            reservedPurchaseBudget = reservedPurchaseBudget,
+            purchaseCost = purchaseCost,
+            irreversibleSpend = if (purchaseCost == null) 0 else purchaseCost,
+            sellCandidates = candidates,
+        )
     }
 }
 

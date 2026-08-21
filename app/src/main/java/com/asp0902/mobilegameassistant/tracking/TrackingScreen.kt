@@ -36,6 +36,7 @@ import com.asp0902.mobilegameassistant.formation.FormationOverlay
 import com.asp0902.mobilegameassistant.formation.FormationTemplate
 import com.asp0902.mobilegameassistant.formation.FormationTemplateId
 import com.asp0902.mobilegameassistant.rules.RecommendationAction
+import com.asp0902.mobilegameassistant.rules.HonorDuelEconomy
 
 @Composable
 fun TrackingScreen(
@@ -167,14 +168,15 @@ private fun AnalysisSummary(
                 val gauge = slot.gauge
                 Text("보유 슬롯 ${slot.slotIndex + 1}: ${if (gauge.isMaxRank) "최대 등급" else "${gauge.progress ?: "?"}/${gauge.required ?: "?"}"} (${(gauge.confidence * 100).toInt()}%)")
             }
-            val sellableReserve = analysis.analysis.ownedHeroes.sumOf { it.sellValue ?: 0 }
+            val spendable = HonorDuelEconomy.state(analysis.analysis)
             analysis.analysis.ownedHeroes.forEach { hero ->
                 val gauge = hero.promotion
                 Text("보유 ${hero.slotIndex + 1}: ${hero.heroName ?: "UNKNOWN"} ${hero.rarity} " +
                     "${if (gauge.isMaxRank) "최대 등급" else "${gauge.progress ?: "?"}/${gauge.required ?: "?"}"} " +
                     "장비 ${hero.equipmentName ?: "없음"} 판매 +${hero.sellValue ?: "?"} (${(hero.confidence * 100).toInt()}%)")
             }
-            if (analysis.analysis.ownedHeroes.any { it.sellValue != null }) Text("판매 가능 재화: +$sellableReserve")
+            Text("사용 가능: ${spendable.currentCurrency ?: "?"} + 판매 후보 ${spendable.sellableReserve} = ${spendable.liquidPotential ?: "?"} · 보존 ${spendable.reservedPurchaseBudget}")
+            spendable.sellCandidates.forEach { candidate -> Text("판매 후보: ${candidate.heroName} +${candidate.expectedCurrency}") }
             if (analysis.headerSources.isNotEmpty()) Text("조정 출처: ${analysis.headerSources.entries.joinToString { "${it.key}:${it.value}" }}")
             analysis.actionMessage?.let { Text(it) }
             analysis.recommendations.forEach { recommendation ->
