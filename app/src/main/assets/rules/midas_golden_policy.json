@@ -1,0 +1,10 @@
+{
+  "artifactName": "마이다스의 재물",
+  "artifactXp": {
+    "minimumAmount": 1,
+    "buyWhenAffordable": true
+  },
+  "trialCard": {
+    "minimumConfidence": 0.9
+  }
+}
