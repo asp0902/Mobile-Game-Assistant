@@ -35,6 +35,19 @@ public class HeroIdentityResolverTest {
     }
 
     @Test
+    public void appliesConfirmedKoreanNameCorrectionBeforeMatching() {
+        List<HeroReference> correctedHeroes = Arrays.asList(
+                new HeroReference("hugin", "후긴", "레오프론", null));
+
+        HeroRecognitionResult result = HeroIdentityResolver.INSTANCE.resolveText(
+                "휴긴 레오프론",
+                correctedHeroes,
+                Arrays.asList(new Pair<>("휴긴", "후긴")));
+
+        assertEquals("hugin", result.getHeroId());
+    }
+
+    @Test
     public void keepsClosePortraitScoresUnconfirmed() {
         HeroRecognitionResult result = HeroIdentityResolver.INSTANCE.resolveScores(Arrays.asList(
                 new Pair<>(heroes.get(0), 0.86f),

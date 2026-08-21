@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import dagger.hilt.android.qualifiers.ApplicationContext
+import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -49,8 +50,14 @@ object HeroCorrectionApplier {
 }
 
 object HeroIdentityResolver {
-    fun resolveText(text: String, heroes: List<HeroReference>): HeroRecognitionResult {
-        val matches = heroes.filter { text.contains(it.koreanName) }
+    @JvmOverloads
+    fun resolveText(
+        text: String,
+        heroes: List<HeroReference>,
+        nameCorrections: List<Pair<String, String>> = emptyList(),
+    ): HeroRecognitionResult {
+        val canonicalText = nameCorrections.fold(text) { value, (wrong, correct) -> value.replace(wrong, correct) }
+        val matches = heroes.filter { canonicalText.contains(it.koreanName) }
         return if (matches.size == 1) confirmed(matches.single(), "이름 OCR") else unknown("이름 OCR 불충분")
     }
 
@@ -80,7 +87,8 @@ object HeroIdentityResolver {
 class HeroRecognitionCatalog @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) {
-    private val heroes by lazy { loadManifest() + SCREEN_CONFIRMED_HEROES }
+    private val learningData by lazy { loadLearningData() }
+    private val heroes by lazy { (loadManifest() + learningData.heroes + SCREEN_CONFIRMED_HEROES).distinctBy { it.koreanName } }
     private val templates by lazy { heroes.mapNotNull(::template) }
 
     fun recognize(
@@ -89,7 +97,8 @@ class HeroRecognitionCatalog @Inject constructor(
         text: String,
         corrections: List<HeroCorrection> = emptyList(),
     ): HeroRecognitionResult {
-        HeroIdentityResolver.resolveText(text, heroes).takeIf { it.status == HeroRecognitionStatus.CONFIRMED }?.let { return it }
+        HeroIdentityResolver.resolveText(text, heroes, learningData.nameCorrections)
+            .takeIf { it.status == HeroRecognitionStatus.CONFIRMED }?.let { return it }
         if (!SlotVisualEvidence.from(bitmap, bounds, bounds.bottom).likelyHeroPortrait) {
             return HeroRecognitionResult(reasons = listOf("영웅 초상화 증거 없음"))
         }
@@ -116,6 +125,26 @@ class HeroRecognitionCatalog @Inject constructor(
             val values = row.removePrefix("\uFEFF").split(',')
             if (values.size < 11) null else HeroReference(values[0], values[1], values[7], "hero_recognition/portraits/${values[0]}.png")
         }
+
+    private fun loadLearningData(): LearningHeroData = runCatching {
+        context.assets.open("learning/game_knowledge_20260821.json").bufferedReader().use { reader ->
+            val root = JSONObject(reader.readText())
+            LearningHeroData(
+                heroes = root.getJSONArray("heroes").let { list ->
+                    (0 until list.length()).map { index ->
+                        list.getJSONObject(index).let { hero ->
+                            HeroReference(hero.getString("id"), hero.getString("name"), hero.getString("faction"))
+                        }
+                    }
+                },
+                nameCorrections = root.getJSONArray("nameCorrections").let { list ->
+                    (0 until list.length()).map { index ->
+                        list.getJSONObject(index).let { it.getString("wrong") to it.getString("correct") }
+                    }
+                },
+            )
+        }
+    }.getOrDefault(LearningHeroData())
 
     private fun template(hero: HeroReference): HeroTemplate? = hero.portraitAsset?.let { asset ->
         context.assets.open(asset).use(BitmapFactory::decodeStream)?.let { HeroTemplate(hero, signature(it, null)) }
@@ -145,6 +174,10 @@ class HeroRecognitionCatalog @Inject constructor(
         .takeIf { it.size == 256 }?.toIntArray()
 
     private data class HeroTemplate(val hero: HeroReference, val signature: IntArray)
+    private data class LearningHeroData(
+        val heroes: List<HeroReference> = emptyList(),
+        val nameCorrections: List<Pair<String, String>> = emptyList(),
+    )
 
     private companion object {
         // README/manifest lacks these older Honor Duel portraits; direct screen-confirmed name only.
