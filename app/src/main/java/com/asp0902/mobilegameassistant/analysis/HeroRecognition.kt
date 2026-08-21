@@ -150,6 +150,7 @@ class HeroRecognitionCatalog @Inject constructor(
         // README/manifest lacks these older Honor Duel portraits; direct screen-confirmed name only.
         val SCREEN_CONFIRMED_HEROES = listOf(
             HeroReference("valen", "발렌", "레오프론"),
+            HeroReference("bonnie", "보니", "그레이브본"),
             HeroReference("guinness", "귀네스", "레오프론"),
             HeroReference("tiloa", "틸로아", "와일더스"),
             HeroReference("perseus", "페르세우스", "레오프론"),

@@ -3,7 +3,9 @@ package com.asp0902.mobilegameassistant.rules
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import com.asp0902.mobilegameassistant.analysis.HonorDuelShopAnalysis
+import com.asp0902.mobilegameassistant.analysis.OwnedHeroState
 import com.asp0902.mobilegameassistant.analysis.ScreenType
+import com.asp0902.mobilegameassistant.analysis.ShopItemState
 import com.asp0902.mobilegameassistant.analysis.ShopItemType
 import javax.inject.Inject
 
@@ -21,6 +23,7 @@ class HonorDuelRuleEngine private constructor(
         val xp = analysis.header.artifactXp
         val midasPolicy = midasPolicyProvider()
         val isMidas = analysis.header.artifactName == midasPolicy.artifactName
+        val promotionOffers = promotionOffers(analysis, currency)
         return analysis.shopItems.map { item ->
             when (item.itemType) {
                 ShopItemType.SOLD_OUT -> ShopRecommendation(item.slotIndex, RecommendationAction.SKIP, "품절")
@@ -41,8 +44,6 @@ class HonorDuelRuleEngine private constructor(
                     }
                 }
                 ShopItemType.EQUIPMENT,
-                ShopItemType.HERO,
-                ShopItemType.HERO_BUNDLE,
                 ShopItemType.RANDOM_HERO_PACK,
                 ShopItemType.FACTION_HERO_PACK,
                 ShopItemType.RANDOM_HERO_UPGRADE,
@@ -51,12 +52,69 @@ class HonorDuelRuleEngine private constructor(
                     RecommendationAction.CONSIDER,
                     "상품 유형 미확정 — 상세 확인 필요",
                 )
+                ShopItemType.HERO,
+                ShopItemType.HERO_BUNDLE -> promotionOffers[item.slotIndex] ?: ShopRecommendation(
+                    item.slotIndex,
+                    RecommendationAction.CONSIDER,
+                    "영웅·진급 게이지 확인 필요",
+                )
                 ShopItemType.TRIAL_HERO_CARD -> when {
                     !isMidas -> ShopRecommendation(item.slotIndex, RecommendationAction.CONSIDER, "체험 카드 상세 확인 필요")
                     item.confidence < midasPolicy.trialMinimumConfidence -> ShopRecommendation(item.slotIndex, RecommendationAction.CONSIDER, "체험 카드 인식 신뢰도 확인 필요")
                     else -> ShopRecommendation(item.slotIndex, RecommendationAction.CONSIDER, "마이다스 체험 카드 시너지 — 상세 후 구매 판단")
                 }
             }
+        }
+    }
+
+    private fun promotionOffers(
+        analysis: HonorDuelShopAnalysis,
+        currency: Int?,
+    ): Map<Int, ShopRecommendation> {
+        val offers = analysis.shopItems.filter {
+            it.itemType in setOf(ShopItemType.HERO, ShopItemType.HERO_BUNDLE) && it.heroId != null
+        }.groupBy { it.heroId!! }
+        return offers.flatMap { (heroId, items) ->
+            val hero = analysis.ownedHeroes.firstOrNull { it.heroId == heroId }
+            promotionRecommendation(hero, items, currency).let { recommendation ->
+                items.map { it.slotIndex to recommendation.copy(slotIndex = it.slotIndex) }
+            }
+        }.toMap()
+    }
+
+    private fun promotionRecommendation(
+        hero: OwnedHeroState?,
+        items: List<ShopItemState>,
+        currency: Int?,
+    ): ShopRecommendation {
+        val first = items.first()
+        val gauge = hero?.promotion
+        if (hero == null || gauge?.progress == null || gauge.required == null) {
+            return ShopRecommendation(first.slotIndex, RecommendationAction.CONSIDER, "보유 영웅 진급 게이지 확인 필요")
+        }
+        if (gauge.isMaxRank) return ShopRecommendation(first.slotIndex, RecommendationAction.SKIP, "최대 등급 — 중복 진급 가치 0")
+
+        val quantity = items.sumOf { it.quantity ?: 1 }
+        val next = (gauge.progress + quantity).coerceAtMost(gauge.required)
+        val totalCost = items.sumOf { it.price ?: 0 }
+        val allPricesKnown = items.all { it.price != null }
+        val completesPromotion = next == gauge.required
+        return when {
+            !allPricesKnown || currency == null -> ShopRecommendation(first.slotIndex, RecommendationAction.CONSIDER, "진급 조합 재화 확인 필요")
+            completesPromotion && currency < totalCost -> ShopRecommendation(first.slotIndex, RecommendationAction.CONSIDER, "진급 가능 — 필요 휘장 $totalCost")
+            completesPromotion -> ShopRecommendation(first.slotIndex, RecommendationAction.BUY, promotionReason(hero, gauge.required, next, items.size > 1))
+            currency < first.price!! -> ShopRecommendation(first.slotIndex, RecommendationAction.SKIP, "현재 휘장 부족")
+            else -> ShopRecommendation(first.slotIndex, RecommendationAction.CONSIDER, "미래 진급 가치 — ${hero.heroName ?: hero.heroId} ${gauge.progress}/${gauge.required} → $next/${gauge.required}")
+        }
+    }
+
+    private fun promotionReason(hero: OwnedHeroState, required: Int, next: Int, isBundle: Boolean): String {
+        val heroName = hero.heroName ?: hero.heroId ?: "영웅"
+        val knownMaxAfterPromotion = required == 4 && hero.heroId in setOf("valen", "bonnie")
+        return if (knownMaxAfterPromotion) {
+            "${if (isBundle) "BUY BOTH — " else ""}$heroName $next/$required → 신화 → 최대 등급"
+        } else {
+            "${if (isBundle) "BUY BOTH — " else ""}$heroName $next/$required → 진급"
         }
     }
 }
