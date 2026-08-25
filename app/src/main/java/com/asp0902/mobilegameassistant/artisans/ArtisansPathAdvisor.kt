@@ -4,8 +4,6 @@ import com.asp0902.mobilegameassistant.analysis.NormalizedRect
 import com.asp0902.mobilegameassistant.analysis.OcrBlock
 import kotlin.math.abs
 import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
 
 enum class ArtisansAction { SELECT, CONSIDER, SKIP, CHECK }
 
@@ -127,6 +125,9 @@ object ArtisansPathAdvisor {
 
     private fun parseCandidates(text: String, blocks: List<OcrBlock>): List<ArtisansCandidate> {
         if (blocks.isNotEmpty()) {
+            val byRows = parseCandidatesFromRows(blocks)
+            if (byRows.isNotEmpty()) return byRows
+
             val namedBlocks = blocks.mapNotNull { block ->
                 val card = cards.firstOrNull { containsCardName(block.text, it.name) } ?: return@mapNotNull null
                 block to card
@@ -135,7 +136,7 @@ object ArtisansPathAdvisor {
             }
             val ordered = namedBlocks
                 .sortedBy { it.first.centerY }
-                .mapIndexed { index, pair -> toCandidate(text, index, pair.second, pair.first, blocks) }
+                .mapIndexed { index, pair -> toCandidate(index, pair.second, pair.first, blocks) }
             if (ordered.isNotEmpty()) return ordered
         }
 
@@ -159,8 +160,27 @@ object ArtisansPathAdvisor {
         }
     }
 
+    private fun parseCandidatesFromRows(
+        blocks: List<OcrBlock>,
+    ): List<ArtisansCandidate> {
+        return groupByRows(blocks)
+            .asSequence()
+            .mapNotNull { row ->
+                val card = resolveCardFromRow(row) ?: return@mapNotNull null
+                row to card
+            }
+            .distinctBy { it.second.name }
+            .take(3)
+            .mapIndexed { slotIndex, (row, card) ->
+                val normalizedCardName = normalizeCardText(card.name)
+                val anchor = row.firstOrNull { normalizeCardText(it.text).contains(normalizedCardName) }
+                    ?: row.maxByOrNull { area(it) }!!
+                toCandidate(slotIndex, card, anchor, blocks)
+            }
+            .toList()
+    }
+
     private fun toCandidate(
-        _text: String,
         slotIndex: Int,
         card: ArtisansCard,
         anchor: OcrBlock,
@@ -232,23 +252,30 @@ object ArtisansPathAdvisor {
     private data class ParsedScore(val value: Int, val confidence: Float)
 
     private fun parseCurrentScore(text: String, blocks: List<OcrBlock>, round: Int?): ParsedScore? {
-        val candidate = parseScoreWithBlockAnchor(blocks)
+        val candidate = parseScoreFromBlocks(blocks)
         if (candidate != null && candidate.value != round) return candidate
         return parseScoreFromSentence(text)?.takeIf { it.value != round } ?: if (candidate != null && round == null) candidate else null
     }
 
-    private fun parseScoreWithBlockAnchor(blocks: List<OcrBlock>): ParsedScore? {
+    private fun parseScoreFromBlocks(blocks: List<OcrBlock>): ParsedScore? {
         if (blocks.isEmpty()) return null
-        val anchors = blocks.filter { containsCardName(it.text, "현재 포인트") || containsCardName(it.text, "현재 점수") || containsCardName(it.text, "포인트") }
+        val anchors = blocks.filter { isCurrentPointAnchor(it.text) }
         if (anchors.isEmpty()) return null
+        anchors.mapNotNull { parseStrictNumber(it.text) }.firstOrNull()?.let {
+            return ParsedScore(it, SCORE_FROM_CANDIDATE)
+        }
         val scoreBlock = blocks
-            .filter { isScoreBlock(it.text) }
+            .filter { parseStrictNumber(it.text) != null }
+            .filter { block ->
+                val value = parseStrictNumber(block.text) ?: return@filter false
+                !isForbiddenScoreNumber(block.text, value) && !isAdjacentToForbiddenHint(block, blocks)
+            }
             .mapNotNull { block ->
-                val value = Regex("\\d+").find(block.text)?.value?.toIntOrNull() ?: return@mapNotNull null
-                if (isForbiddenScoreNumber(block.text, value)) return@mapNotNull null
                 val distance = anchors.minOf { anchor ->
-                    abs(anchor.centerX - block.centerX) + abs(anchor.centerY - block.centerY)
+                    abs(anchor.centerX - block.centerX) * 0.25f + abs(anchor.centerY - block.centerY)
                 }
+                if (distance > 0.18f) return@mapNotNull null
+                val value = parseStrictNumber(block.text) ?: return@mapNotNull null
                 ParsedScoreCandidate(value, distance)
             }
             .minByOrNull { it.distance }
@@ -270,11 +297,94 @@ object ArtisansPathAdvisor {
     }
 
     private fun isForbiddenScoreNumber(text: String, value: Int): Boolean {
+        if (value == 1000) return true
         if (text.contains("/")) return true
         if (text.contains("보유") && value in 0..9) return true
         if (text.contains("포인트") || text.contains("점")) return true
         return false
     }
+
+    private fun isCurrentPointAnchor(text: String): Boolean {
+        val normalized = normalizeCardText(text)
+        return when {
+            normalized.isEmpty() -> false
+            normalized == "현재" -> true
+            normalized == "포인트" -> true
+            normalized == "스코어" -> true
+            normalized.contains("현재") && (normalized.contains("점수") || normalized.contains("포인트") || normalized.contains("스코어")) -> true
+            else -> false
+        }
+    }
+
+    private fun parseStrictNumber(text: String): Int? {
+        val trimmed = text.trim()
+        if (!trimmed.matches(Regex("[\\d,]+"))) return null
+        return trimmed.replace(",", "").toIntOrNull()
+    }
+
+    private fun isAdjacentToForbiddenHint(block: OcrBlock, blocks: List<OcrBlock>): Boolean {
+        val forbidden = listOf("보유", "보유수", "덱", "덱수", "라운드", "카드", "보유 수", "덱 수")
+        return blocks.any {
+            it != block &&
+                abs(it.centerY - block.centerY) <= 0.04f &&
+                forbidden.any { forbiddenWord -> normalizeCardText(it.text).contains(forbiddenWord) }
+        }
+    }
+
+    private fun normalizeCardText(text: String): String =
+        text.replace(Regex("\\s+"), "").replace(Regex("[^가-힣0-9]"), "")
+
+    private fun groupByRows(blocks: List<OcrBlock>): List<List<OcrBlock>> {
+        val ordered = blocks.sortedBy { it.centerY }
+        val rows = mutableListOf<MutableList<OcrBlock>>()
+        val tolerance = 0.028f
+        for (block in ordered) {
+            val target = rows.lastOrNull { row ->
+                abs(row.averageCenterY() - block.centerY) <= tolerance
+            }
+            if (target == null) rows.add(mutableListOf(block)) else target.add(block)
+        }
+        return rows.map { it.sortedBy { it.left } }
+    }
+
+    private fun resolveCardFromRow(row: List<OcrBlock>): ArtisansCard? {
+        val mergedText = row.joinToString("") { normalizeCardText(it.text) }
+        if (mergedText.isBlank()) return null
+        val exactMatch = cards
+            .filter { it.name.length > 1 }
+            .filter { mergedText.contains(normalizeCardText(it.name)) }
+            .maxByOrNull { it.name.length }
+        if (exactMatch != null) return exactMatch
+
+        val cookingCandidates = cards
+            .filter { it.theme == "요리" }
+            .map { card -> card to levenshtein(mergedText, normalizeCardText(card.name)) }
+            .filter { it.second == 1 }
+            .map { it.first }
+        return if (cookingCandidates.size == 1) cookingCandidates.first() else null
+    }
+
+    private fun levenshtein(a: String, b: String): Int {
+        if (a == b) return 0
+        if (a.isEmpty()) return b.length
+        if (b.isEmpty()) return a.length
+        val dp = Array(a.length + 1) { IntArray(b.length + 1) }
+        for (i in 0..a.length) dp[i][0] = i
+        for (j in 0..b.length) dp[0][j] = j
+        for (i in 1..a.length) {
+            for (j in 1..b.length) {
+                val cost = if (a[i - 1] == b[j - 1]) 0 else 1
+                dp[i][j] = minOf(
+                    dp[i - 1][j] + 1,
+                    dp[i][j - 1] + 1,
+                    dp[i - 1][j - 1] + cost,
+                )
+            }
+        }
+        return dp[a.length][b.length]
+    }
+
+    private fun MutableList<OcrBlock>.averageCenterY(): Float = map { it.centerY }.average().toFloat()
 
     private fun recommend(
         card: ArtisansCard,

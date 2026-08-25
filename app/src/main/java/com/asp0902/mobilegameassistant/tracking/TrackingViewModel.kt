@@ -151,6 +151,7 @@ class TrackingViewModel @Inject constructor(
         artisans: ArtisansPathAnalysis?,
         viewport: GameViewport?,
     ): List<RecommendationOverlayController.OverlayTarget> {
+        if (artisans?.candidates?.size != 3) return emptyList()
         val selected = artisans?.recommendations?.firstOrNull { it.action == ArtisansAction.SELECT } ?: return emptyList()
         val slot = selected.slotIndex ?: return emptyList()
         val sourceBounds = artisans.candidates.firstOrNull { it.slotIndex == slot }?.fullCardBounds ?: return emptyList()

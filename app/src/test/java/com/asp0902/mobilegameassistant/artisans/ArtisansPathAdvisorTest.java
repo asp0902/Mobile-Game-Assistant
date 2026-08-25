@@ -1,5 +1,7 @@
 package com.asp0902.mobilegameassistant.artisans;
 
+import com.asp0902.mobilegameassistant.analysis.OcrBlock;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -67,6 +69,37 @@ public class ArtisansPathAdvisorTest {
         ArtisansPathAnalysis analysis = ArtisansPathAdvisor.INSTANCE.analyze("장인의 길 라운드 1/24 현재 포인트 51 광산 광석 제련소 장원 수레 원소 수집장 원소 제련소 연금술 공방");
         assertEquals(5, analysis.getRecommendations().size());
         assertEquals(1, analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).count());
+    }
+
+    @Test public void parsesRound2Score99AndSplitCookingCardNameFromSeparateBlocks() {
+        ArtisansPathAnalysis analysis = ArtisansPathAdvisor.INSTANCE.analyze(
+            "장인의 길 2/24 현재 포인트 99",
+            java.util.List.of(
+                new OcrBlock("2/24", 0.05f, 0.05f, 0.10f, 0.09f),
+                new OcrBlock("현재", 0.52f, 0.05f, 0.58f, 0.09f),
+                new OcrBlock("포인트", 0.59f, 0.05f, 0.67f, 0.09f),
+                new OcrBlock("99", 0.70f, 0.05f, 0.74f, 0.09f),
+                new OcrBlock("1000", 0.76f, 0.05f, 0.82f, 0.09f),
+                new OcrBlock("보유", 0.05f, 0.12f, 0.12f, 0.16f),
+                new OcrBlock("수", 0.13f, 0.12f, 0.17f, 0.16f),
+                new OcrBlock("3", 0.18f, 0.12f, 0.21f, 0.16f),
+                new OcrBlock("덱", 0.23f, 0.12f, 0.26f, 0.16f),
+                new OcrBlock("수", 0.27f, 0.12f, 0.31f, 0.16f),
+                new OcrBlock("2", 0.32f, 0.12f, 0.35f, 0.16f),
+                new OcrBlock("벌목장", 0.16f, 0.30f, 0.30f, 0.34f),
+                new OcrBlock("나무집", 0.16f, 0.38f, 0.28f, 0.42f),
+                new OcrBlock("노점", 0.29f, 0.38f, 0.40f, 0.42f),
+                new OcrBlock("영롱한", 0.16f, 0.45f, 0.28f, 0.49f),
+                new OcrBlock("트롤리", 0.29f, 0.45f, 0.42f, 0.49f)
+            )
+        );
+        assertEquals(Integer.valueOf(2), analysis.getRound());
+        assertEquals(Integer.valueOf(99), analysis.getScore());
+        assertEquals(3, analysis.getRecommendations().size());
+        assertEquals(1, analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).count());
+        assertTrue(analysis.getRecommendations().stream().anyMatch(it -> it.getCardName().equals("벌목장")));
+        assertTrue(analysis.getRecommendations().stream().anyMatch(it -> it.getCardName().equals("나무집 노점")));
+        assertTrue(analysis.getRecommendations().stream().anyMatch(it -> it.getCardName().equals("영롱한 트롤리")));
     }
 
     @Test public void requiresThreeCandidatesToIssueSelect() {
