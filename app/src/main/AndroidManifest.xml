@@ -9,7 +9,9 @@
     <application
         android:name=".AssistantApp"
         android:allowBackup="false"
+        android:icon="@drawable/ic_afk_tracker"
         android:label="AFK 트래커"
+        android:roundIcon="@drawable/ic_afk_tracker"
         android:resizeableActivity="true"
         android:theme="@style/Theme.MobileGameAssistant">
 
