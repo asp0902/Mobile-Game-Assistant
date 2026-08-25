@@ -17,5 +17,7 @@ public class ArtisansPathAdvisorTest {
         assertEquals(Integer.valueOf(1), analysis.getRound());
         assertEquals(Integer.valueOf(51), analysis.getScore());
         assertEquals(3, analysis.getRecommendations().size());
+        assertEquals(1, analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).count());
+        assertTrue(analysis.getRecommendations().stream().anyMatch(it -> it.getCardName().equals("원소 수집장") && it.getAction() == ArtisansAction.SELECT));
     }
 }

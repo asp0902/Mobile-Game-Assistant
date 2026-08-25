@@ -139,13 +139,18 @@ class TrackingViewModel @Inject constructor(
     private fun artisanTargets(
         artisans: ArtisansPathAnalysis?,
         blocks: List<OcrBlock>,
-    ): List<RecommendationOverlayController.OverlayTarget> = artisans?.recommendations?.mapNotNull { recommendation ->
-        blocks.firstOrNull { it.text.contains(recommendation.cardName) }?.let { block ->
+    ): List<RecommendationOverlayController.OverlayTarget> {
+        val matches = artisans?.recommendations?.mapNotNull { recommendation ->
+            blocks.firstOrNull { it.text.contains(recommendation.cardName) }?.let { recommendation to it }
+        }?.sortedBy { it.second.centerY }.orEmpty()
+        return matches.mapIndexed { index, (recommendation, block) ->
+            val previousCenter = matches.getOrNull(index - 1)?.second?.centerY
+            val nextCenter = matches.getOrNull(index + 1)?.second?.centerY
             RecommendationOverlayController.OverlayTarget(
                 left = .06f,
-                top = (block.top - .05f).coerceAtLeast(0f),
+                top = ((previousCenter?.let { (it + block.centerY) / 2f + .01f }) ?: (block.centerY - .07f)).coerceAtLeast(0f),
                 right = .94f,
-                bottom = (block.bottom + .10f).coerceAtMost(1f),
+                bottom = ((nextCenter?.let { (it + block.centerY) / 2f - .01f }) ?: (block.centerY + .09f)).coerceAtMost(1f),
                 action = when (recommendation.action) {
                     ArtisansAction.SELECT -> RecommendationOverlayController.OverlayTarget.Action.SELECT
                     ArtisansAction.CONSIDER, ArtisansAction.CHECK -> RecommendationOverlayController.OverlayTarget.Action.CONSIDER
@@ -153,7 +158,7 @@ class TrackingViewModel @Inject constructor(
                 },
             )
         }
-    }.orEmpty()
+    }
 
     fun selectFormationTemplate(id: FormationTemplateId) {
         mutableTemplate.value = FormationTemplates.fromId(id)

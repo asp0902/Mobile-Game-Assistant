@@ -51,7 +51,10 @@ object ArtisansPathAdvisor {
             ?: Regex("(\\d+)\\s*(?:라운드|R)").find(text)?.groupValues?.get(1)?.toIntOrNull()
         val score = Regex("(?:현재\\s*)?(?:점수|포인트|스코어)\\s*[:：]?\\s*([\\d,]+)").find(text)?.groupValues?.get(1)?.replace(",", "")?.toIntOrNull()
         val checkpoint = checkpointFor(round)
-        val recommendations = recognized.map { card -> recommend(card, recognized, text) }
+        val recommendations = ensureSingleSelection(
+            recognized.map { card -> recommend(card, recognized, text) },
+            recognized,
+        )
         val reasons = buildList {
             add("확인 카드 ${recognized.size}개")
             if (checkpoint != null && score != null && score < checkpoint) add("체크포인트 ${checkpoint}점 미달 — 즉시 점수 우선")
@@ -72,6 +75,30 @@ object ArtisansPathAdvisor {
             score >= 55 -> ArtisansRecommendation(card.name, ArtisansAction.SELECT, reason(card, upgraded, hasInput, feedsKnownCard))
             score >= 30 -> ArtisansRecommendation(card.name, ArtisansAction.CONSIDER, reason(card, upgraded, hasInput, feedsKnownCard))
             else -> ArtisansRecommendation(card.name, ArtisansAction.SKIP, "현재 화면에서 입력 공급 또는 후속 소비처가 확인되지 않음")
+        }
+    }
+
+    private fun ensureSingleSelection(
+        recommendations: List<ArtisansRecommendation>,
+        recognized: List<ArtisansCard>,
+    ): List<ArtisansRecommendation> {
+        if (recommendations.any { it.action == ArtisansAction.SELECT }) return recommendations
+        val produced = recognized.flatMap { it.outputs }.toSet()
+        val consumed = recognized.flatMap { it.inputs }.toSet()
+        val best = recognized.maxByOrNull { card ->
+            when {
+                card.inputs.isNotEmpty() && card.inputs.all(produced::contains) -> 100
+                card.outputs.any(consumed::contains) -> 80
+                card.inputs.isEmpty() -> 40
+                card.highValueOutput -> 20
+                else -> 0
+            }
+        } ?: return recommendations
+        return recommendations.map {
+            if (it.cardName == best.name) it.copy(
+                action = ArtisansAction.SELECT,
+                reason = "현재 세 후보 중 생산망 연결 우선순위 1위 — ${it.reason}",
+            ) else it
         }
     }
 
