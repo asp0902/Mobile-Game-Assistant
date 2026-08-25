@@ -47,12 +47,14 @@ class MainActivity : ComponentActivity() {
             val frame by viewModel.frame.collectAsStateWithLifecycle()
             val template by viewModel.template.collectAsStateWithLifecycle()
             val analysis by viewModel.analysis.collectAsStateWithLifecycle()
+            val artisansAnalysis by viewModel.artisansAnalysis.collectAsStateWithLifecycle()
             val detailSlot by viewModel.detailSlot.collectAsStateWithLifecycle()
             TrackingScreen(
                 state = state,
                 frame = frame,
                 template = template,
                 analysis = analysis,
+                artisansAnalysis = artisansAnalysis,
                 detailSlot = detailSlot,
                 heroChoices = viewModel.heroChoices(),
                 onStart = ::startTracking,

@@ -10,6 +10,8 @@ import com.asp0902.mobilegameassistant.analysis.HeroCorrectionApplier
 import com.asp0902.mobilegameassistant.analysis.HeroRecognitionCatalog
 import com.asp0902.mobilegameassistant.analysis.ShopDetailReconciler
 import com.asp0902.mobilegameassistant.capture.CaptureSession
+import com.asp0902.mobilegameassistant.artisans.ArtisansPathAdvisor
+import com.asp0902.mobilegameassistant.artisans.ArtisansPathAnalysis
 import com.asp0902.mobilegameassistant.formation.FormationTemplate
 import com.asp0902.mobilegameassistant.formation.FormationTemplateId
 import com.asp0902.mobilegameassistant.formation.FormationTemplates
@@ -41,6 +43,8 @@ class TrackingViewModel @Inject constructor(
     val template = mutableTemplate.asStateFlow()
     private val mutableAnalysis = MutableStateFlow<ShopAnalysisUiState>(ShopAnalysisUiState.Idle)
     val analysis = mutableAnalysis.asStateFlow()
+    private val mutableArtisansAnalysis = MutableStateFlow<ArtisansPathAnalysis?>(null)
+    val artisansAnalysis = mutableArtisansAnalysis.asStateFlow()
     private val mutableDetailSlot = MutableStateFlow<Int?>(null)
     val detailSlot = mutableDetailSlot.asStateFlow()
     private var lastShopAnalysis: HonorDuelShopAnalysis? = null
@@ -70,6 +74,7 @@ class TrackingViewModel @Inject constructor(
                         result to ruleEngine.recommend(result)
                     }
                 }.onSuccess { (result, recommendations) ->
+                    mutableArtisansAnalysis.value = ArtisansPathAdvisor.analyze(result.ocrBlocks.joinToString(" ") { it.text })
                     val detail = result.heroDetail
                     val priorShop = lastShopAnalysis
                     val observed = if (detail != null && mutableDetailSlot.value != null && priorShop != null) {

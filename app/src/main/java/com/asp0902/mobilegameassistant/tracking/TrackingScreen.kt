@@ -38,6 +38,8 @@ import com.asp0902.mobilegameassistant.formation.FormationTemplateId
 import com.asp0902.mobilegameassistant.rules.RecommendationAction
 import com.asp0902.mobilegameassistant.rules.RunRecommendationAction
 import com.asp0902.mobilegameassistant.rules.HonorDuelEconomy
+import com.asp0902.mobilegameassistant.artisans.ArtisansAction
+import com.asp0902.mobilegameassistant.artisans.ArtisansPathAnalysis
 
 @Composable
 fun TrackingScreen(
@@ -45,6 +47,7 @@ fun TrackingScreen(
     frame: Bitmap?,
     template: FormationTemplate?,
     analysis: ShopAnalysisUiState,
+    artisansAnalysis: ArtisansPathAnalysis?,
     detailSlot: Int?,
     heroChoices: List<HeroReference>,
     onStart: () -> Unit,
@@ -115,7 +118,7 @@ fun TrackingScreen(
                             }
                             template?.let { FormationOverlay(it, Modifier.fillMaxSize()) }
                         }
-                        AnalysisSummary(analysis, detailSlot, heroChoices, onDetailSlotSelected, onHeroCorrected, onHeroPurchaseRecorded)
+                        AnalysisSummary(analysis, artisansAnalysis, detailSlot, heroChoices, onDetailSlotSelected, onHeroCorrected, onHeroPurchaseRecorded)
                     }
                 }
             }
@@ -126,12 +129,28 @@ fun TrackingScreen(
 @Composable
 private fun AnalysisSummary(
     analysis: ShopAnalysisUiState,
+    artisansAnalysis: ArtisansPathAnalysis?,
     detailSlot: Int?,
     heroChoices: List<HeroReference>,
     onDetailSlotSelected: (Int) -> Unit,
     onHeroCorrected: (Long, Int, String) -> Unit,
     onHeroPurchaseRecorded: (Long, Int) -> Unit,
 ) {
+    artisansAnalysis?.let {
+        Text("장인의 길 · ${it.round?.let { round -> "${round}라운드" } ?: "라운드 확인 필요"} · ${it.score?.let { score -> "${score}점" } ?: "점수 확인 필요"}")
+        it.nextCheckpoint?.let { checkpoint -> Text("다음 체크포인트: ${checkpoint}점") }
+        it.reasons.forEach { reason -> Text(reason) }
+        it.recommendations.forEach { recommendation ->
+            val action = when (recommendation.action) {
+                ArtisansAction.SELECT -> "선택"
+                ArtisansAction.CONSIDER -> "확인"
+                ArtisansAction.SKIP -> "SKIP"
+                ArtisansAction.CHECK -> "확인"
+            }
+            Text("${recommendation.cardName}: $action — ${recommendation.reason}")
+        }
+        return
+    }
     when (analysis) {
         ShopAnalysisUiState.Idle -> Text("AFK 분석을 누르면 상점 OCR을 시작합니다.")
         ShopAnalysisUiState.Analyzing -> Text("상점 분석 중")

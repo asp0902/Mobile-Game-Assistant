@@ -171,6 +171,7 @@ class HonorDuelShopAnalyzer @Inject constructor(
 }
 
 enum class ScreenType {
+    ARTISANS_PATH_CARD_SELECTION,
     HONOR_DUEL_SHOP,
     HONOR_DUEL_HERO_MANAGEMENT,
     HONOR_DUEL_HERO_SELL,
@@ -220,6 +221,9 @@ object HonorDuelScreenClassifier {
     }
 
     fun classifyNonShop(text: String, shopScreen: ScreenClassification): ScreenClassification {
+        if (text.contains("장인의 길")) {
+            return ScreenClassification(ScreenType.ARTISANS_PATH_CARD_SELECTION, 0.95f, listOf("장인의 길 제목"))
+        }
         val heroDetail = factions.any(text::contains) && roles.any(text::contains) && text.contains("사정거리")
         if (heroDetail) {
             return ScreenClassification(ScreenType.HERO_DETAIL_POPUP, 0.95f, listOf("진영", "직업", "사정거리"))
