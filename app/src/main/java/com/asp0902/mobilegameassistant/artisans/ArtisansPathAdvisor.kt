@@ -47,8 +47,9 @@ object ArtisansPathAdvisor {
     fun analyze(text: String): ArtisansPathAnalysis? {
         val recognized = cards.filter { text.contains(it.name) }
         if (!text.contains("장인의 길") && recognized.isEmpty()) return null
-        val round = Regex("(\\d+)\\s*(?:라운드|R)").find(text)?.groupValues?.get(1)?.toIntOrNull()
-        val score = Regex("(?:점수|스코어)\\s*[:：]?\\s*([\\d,]+)").find(text)?.groupValues?.get(1)?.replace(",", "")?.toIntOrNull()
+        val round = Regex("(?:라운드\\s*)?(\\d+)\\s*/\\s*\\d+").find(text)?.groupValues?.get(1)?.toIntOrNull()
+            ?: Regex("(\\d+)\\s*(?:라운드|R)").find(text)?.groupValues?.get(1)?.toIntOrNull()
+        val score = Regex("(?:현재\\s*)?(?:점수|포인트|스코어)\\s*[:：]?\\s*([\\d,]+)").find(text)?.groupValues?.get(1)?.replace(",", "")?.toIntOrNull()
         val checkpoint = checkpointFor(round)
         val recommendations = recognized.map { card -> recommend(card, recognized, text) }
         val reasons = buildList {

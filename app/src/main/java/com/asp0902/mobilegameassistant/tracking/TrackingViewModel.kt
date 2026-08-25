@@ -8,10 +8,12 @@ import com.asp0902.mobilegameassistant.analysis.HeroCorrection
 import com.asp0902.mobilegameassistant.analysis.HeroCorrectionRepository
 import com.asp0902.mobilegameassistant.analysis.HeroCorrectionApplier
 import com.asp0902.mobilegameassistant.analysis.HeroRecognitionCatalog
+import com.asp0902.mobilegameassistant.analysis.OcrBlock
 import com.asp0902.mobilegameassistant.analysis.ShopDetailReconciler
 import com.asp0902.mobilegameassistant.capture.CaptureSession
 import com.asp0902.mobilegameassistant.artisans.ArtisansPathAdvisor
 import com.asp0902.mobilegameassistant.artisans.ArtisansPathAnalysis
+import com.asp0902.mobilegameassistant.artisans.ArtisansAction
 import com.asp0902.mobilegameassistant.formation.FormationTemplate
 import com.asp0902.mobilegameassistant.formation.FormationTemplateId
 import com.asp0902.mobilegameassistant.formation.FormationTemplates
@@ -96,7 +98,7 @@ class TrackingViewModel @Inject constructor(
                     val shopRecommendations = ruleEngine.recommend(tracked.analysis)
                     val runRecommendations = ruleEngine.recommendRunActions(tracked.analysis, tracked.progress.status)
                     mutableAnalysis.value = ShopAnalysisUiState.Result(tracked.analysis, shopRecommendations, runRecommendations, snapshotId, tracked.headerSources, runStatus = tracked.progress.status)
-                    updateOverlay(artisans, shopRecommendations, runRecommendations)
+                    updateOverlay(artisans, shopRecommendations, runRecommendations, artisanTargets(artisans, result.ocrBlocks))
                     viewModelScope.launch(Dispatchers.IO) {
                         runRepository.save(tracked)
                         runRepository.reconcilePurchases(runId, tracked.analysis)
@@ -117,11 +119,12 @@ class TrackingViewModel @Inject constructor(
         artisans: ArtisansPathAnalysis?,
         shop: List<ShopRecommendation>,
         run: List<RunRecommendation>,
+        targets: List<RecommendationOverlayController.OverlayTarget> = emptyList(),
     ) {
         val text = when {
             artisans != null -> buildString {
                 append("장인의 길\n")
-                artisans.recommendations.take(2).forEach { append("${it.cardName}: ${it.action}\n") }
+                append("초록 선택 · 노랑 확인 · 회색 SKIP")
             }
             shop.isNotEmpty() -> buildString {
                 append("명예의 결투\n")
@@ -130,8 +133,27 @@ class TrackingViewModel @Inject constructor(
             }
             else -> null
         }?.trim()
-        if (text == null) overlayController.hide() else overlayController.show(text)
+        if (text == null) overlayController.hide() else overlayController.show(text, targets)
     }
+
+    private fun artisanTargets(
+        artisans: ArtisansPathAnalysis?,
+        blocks: List<OcrBlock>,
+    ): List<RecommendationOverlayController.OverlayTarget> = artisans?.recommendations?.mapNotNull { recommendation ->
+        blocks.firstOrNull { it.text.contains(recommendation.cardName) }?.let { block ->
+            RecommendationOverlayController.OverlayTarget(
+                left = .06f,
+                top = (block.top - .05f).coerceAtLeast(0f),
+                right = .94f,
+                bottom = (block.bottom + .10f).coerceAtMost(1f),
+                action = when (recommendation.action) {
+                    ArtisansAction.SELECT -> RecommendationOverlayController.OverlayTarget.Action.SELECT
+                    ArtisansAction.CONSIDER, ArtisansAction.CHECK -> RecommendationOverlayController.OverlayTarget.Action.CONSIDER
+                    ArtisansAction.SKIP -> RecommendationOverlayController.OverlayTarget.Action.SKIP
+                },
+            )
+        }
+    }.orEmpty()
 
     fun selectFormationTemplate(id: FormationTemplateId) {
         mutableTemplate.value = FormationTemplates.fromId(id)
