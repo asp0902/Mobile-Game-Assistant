@@ -124,7 +124,8 @@ class TrackingViewModel @Inject constructor(
         val text = when {
             artisans != null -> buildString {
                 append("장인의 길\n")
-                append("초록 선택 · 노랑 확인 · 회색 SKIP")
+                append("선택: ")
+                append(artisans.recommendations.firstOrNull { it.action == ArtisansAction.SELECT }?.cardName ?: "후보 확인 필요")
             }
             shop.isNotEmpty() -> buildString {
                 append("명예의 결투\n")
@@ -143,7 +144,8 @@ class TrackingViewModel @Inject constructor(
         val matches = artisans?.recommendations?.mapNotNull { recommendation ->
             blocks.firstOrNull { it.text.contains(recommendation.cardName) }?.let { recommendation to it }
         }?.sortedBy { it.second.centerY }.orEmpty()
-        return matches.mapIndexed { index, (recommendation, block) ->
+        return matches.mapIndexedNotNull { index, (recommendation, block) ->
+            if (recommendation.action != ArtisansAction.SELECT) return@mapIndexedNotNull null
             val previousCenter = matches.getOrNull(index - 1)?.second?.centerY
             val nextCenter = matches.getOrNull(index + 1)?.second?.centerY
             RecommendationOverlayController.OverlayTarget(
