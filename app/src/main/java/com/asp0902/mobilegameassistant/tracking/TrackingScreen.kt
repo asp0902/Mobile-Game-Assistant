@@ -36,6 +36,7 @@ import com.asp0902.mobilegameassistant.formation.FormationOverlay
 import com.asp0902.mobilegameassistant.formation.FormationTemplate
 import com.asp0902.mobilegameassistant.formation.FormationTemplateId
 import com.asp0902.mobilegameassistant.rules.RecommendationAction
+import com.asp0902.mobilegameassistant.rules.RunRecommendationAction
 import com.asp0902.mobilegameassistant.rules.HonorDuelEconomy
 
 @Composable
@@ -186,6 +187,15 @@ private fun AnalysisSummary(
                     RecommendationAction.SKIP -> "SKIP"
                 }
                 Text("슬롯 ${recommendation.slotIndex + 1}: $action — ${recommendation.reason}")
+            }
+            analysis.runRecommendations.forEach { recommendation ->
+                val action = when (recommendation.action) {
+                    RunRecommendationAction.REFRESH -> "REFRESH"
+                    RunRecommendationAction.STOP_REFRESHING -> "STOP_REFRESHING"
+                    RunRecommendationAction.PROCEED_TO_NEXT_ROUND -> "다음 라운드"
+                    RunRecommendationAction.CHECK -> "확인"
+                }
+                Text("$action — ${recommendation.reason}")
             }
         }
     }

@@ -14,6 +14,7 @@ import com.asp0902.mobilegameassistant.formation.FormationTemplate
 import com.asp0902.mobilegameassistant.formation.FormationTemplateId
 import com.asp0902.mobilegameassistant.formation.FormationTemplates
 import com.asp0902.mobilegameassistant.rules.HonorDuelRuleEngine
+import com.asp0902.mobilegameassistant.rules.RunRecommendation
 import com.asp0902.mobilegameassistant.rules.ShopRecommendation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +56,7 @@ class TrackingViewModel @Inject constructor(
                     runId = restored.runId
                     lastRunState = restored
                     lastShopAnalysis = restored.analysis
-                    mutableAnalysis.value = ShopAnalysisUiState.Result(restored.analysis, ruleEngine.recommend(restored.analysis), nextSnapshotId++, restored.headerSources, runStatus = restored.progress.status)
+                    mutableAnalysis.value = ShopAnalysisUiState.Result(restored.analysis, ruleEngine.recommend(restored.analysis), ruleEngine.recommendRunActions(restored.analysis, restored.progress.status), nextSnapshotId++, restored.headerSources, runStatus = restored.progress.status)
                 }
             }
         }
@@ -85,7 +86,7 @@ class TrackingViewModel @Inject constructor(
                     lastRunState = tracked
                     if (tracked.analysis.shopItems.isNotEmpty()) lastShopAnalysis = tracked.analysis
                     val snapshotId = nextSnapshotId++
-                    mutableAnalysis.value = ShopAnalysisUiState.Result(tracked.analysis, ruleEngine.recommend(tracked.analysis), snapshotId, tracked.headerSources, runStatus = tracked.progress.status)
+                    mutableAnalysis.value = ShopAnalysisUiState.Result(tracked.analysis, ruleEngine.recommend(tracked.analysis), ruleEngine.recommendRunActions(tracked.analysis, tracked.progress.status), snapshotId, tracked.headerSources, runStatus = tracked.progress.status)
                     viewModelScope.launch(Dispatchers.IO) {
                         runRepository.save(tracked)
                         runRepository.reconcilePurchases(runId, tracked.analysis)
@@ -119,7 +120,7 @@ class TrackingViewModel @Inject constructor(
             if (it.slotIndex == slotIndex) HeroCorrectionApplier.apply(it, hero) else it
         })
         lastShopAnalysis = corrected
-        mutableAnalysis.value = ShopAnalysisUiState.Result(corrected, ruleEngine.recommend(corrected), snapshotId, current.headerSources)
+        mutableAnalysis.value = ShopAnalysisUiState.Result(corrected, ruleEngine.recommend(corrected), ruleEngine.recommendRunActions(corrected, current.runStatus), snapshotId, current.headerSources, runStatus = current.runStatus)
         viewModelScope.launch {
             correctionRepository.save(HeroCorrection(
                 runId, snapshotId, slotIndex, item.heroId, hero.id, hero.koreanName, item.portraitSignature,
@@ -146,6 +147,7 @@ class TrackingViewModel @Inject constructor(
             mutableAnalysis.value = ShopAnalysisUiState.Result(
                 prediction.analysis,
                 ruleEngine.recommend(prediction.analysis),
+                ruleEngine.recommendRunActions(prediction.analysis, lastRunState?.progress?.status ?: RunStatus.ACTIVE),
                 snapshotId,
                 sources,
                 "구매 예상 기록: ${item.heroName ?: heroId} ${action.quantity}장 / ${action.cost}",
@@ -161,6 +163,7 @@ sealed interface ShopAnalysisUiState {
     data class Result(
         val analysis: HonorDuelShopAnalysis,
         val recommendations: List<ShopRecommendation>,
+        val runRecommendations: List<RunRecommendation>,
         val snapshotId: Long,
         val headerSources: Map<com.asp0902.mobilegameassistant.analysis.HeaderField, ReconciliationSource> = emptyMap(),
         val actionMessage: String? = null,

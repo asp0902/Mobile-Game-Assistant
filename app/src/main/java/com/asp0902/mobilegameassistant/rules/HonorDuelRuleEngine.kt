@@ -7,6 +7,7 @@ import com.asp0902.mobilegameassistant.analysis.OwnedHeroState
 import com.asp0902.mobilegameassistant.analysis.ScreenType
 import com.asp0902.mobilegameassistant.analysis.ShopItemState
 import com.asp0902.mobilegameassistant.analysis.ShopItemType
+import com.asp0902.mobilegameassistant.tracking.RunStatus
 import javax.inject.Inject
 
 class HonorDuelRuleEngine private constructor(
@@ -72,6 +73,46 @@ class HonorDuelRuleEngine private constructor(
                 }
             }
         }
+    }
+
+    @JvmOverloads
+    fun recommendRunActions(
+        analysis: HonorDuelShopAnalysis,
+        status: RunStatus = RunStatus.ACTIVE,
+    ): List<RunRecommendation> {
+        val header = analysis.header
+        if (status == RunStatus.COMPLETED) {
+            return listOf(RunRecommendation(RunRecommendationAction.STOP_REFRESHING, "9승 완료 — 리롤·다음 전투 추천 없음"))
+        }
+        val currencyConfidence = header.confidence[com.asp0902.mobilegameassistant.analysis.HeaderField.CURRENCY] ?: .9f
+        val winsConfidence = header.confidence[com.asp0902.mobilegameassistant.analysis.HeaderField.WINS] ?: .9f
+        if (header.currency == null || header.wins == null || header.targetWins == null || currencyConfidence < .7f || winsConfidence < .7f) {
+            return listOf(RunRecommendation(RunRecommendationAction.CHECK, "휘장 또는 승수 인식 신뢰도 낮음 — 리롤 전 확인 필요"))
+        }
+
+        val economy = spendableState(analysis)
+        val liquid = economy.liquidPotential ?: return listOf(RunRecommendation(RunRecommendationAction.CHECK, "사용 가능 휘장 확인 필요"))
+        val cheapestOffer = analysis.shopItems.filter { it.itemType != ShopItemType.SOLD_OUT }.mapNotNull { it.price }.minOrNull()
+        val refreshCost = header.refreshCost
+        val remainingWins = (header.targetWins - header.wins).coerceAtLeast(0)
+        val hasBuy = recommend(analysis).any { it.action == RecommendationAction.BUY }
+        if (hasBuy) {
+            return listOf(RunRecommendation(RunRecommendationAction.STOP_REFRESHING, "현재 상점 확정 구매 우선 — 리롤 보류"))
+        }
+        if (refreshCost == null || refreshCost <= 0) {
+            return listOf(RunRecommendation(RunRecommendationAction.CHECK, "리롤 비용 인식 확인 필요"))
+        }
+        if (cheapestOffer == null || liquid < cheapestOffer || liquid - refreshCost < cheapestOffer) {
+            return listOf(
+                RunRecommendation(RunRecommendationAction.STOP_REFRESHING, "구매 자금 부족 — 리롤 중단"),
+                RunRecommendation(RunRecommendationAction.PROCEED_TO_NEXT_ROUND, "다음 라운드 진행"),
+            )
+        }
+        if (liquid - economy.reservedPurchaseBudget < refreshCost) {
+            return listOf(RunRecommendation(RunRecommendationAction.STOP_REFRESHING, "보존 휘장 ${economy.reservedPurchaseBudget} 유지 — 리롤 중단"))
+        }
+        val reason = if (remainingWins <= 1) "${header.wins}/${header.targetWins}승 — 다음 전투 즉시 전력 상품 탐색" else "남은 ${remainingWins}승 — 미래 진급·선택지 탐색"
+        return listOf(RunRecommendation(RunRecommendationAction.REFRESH, "$reason · 리롤 비용 $refreshCost"))
     }
 
     private fun equipmentRecommendation(item: ShopItemState, analysis: HonorDuelShopAnalysis): ShopRecommendation {
@@ -188,6 +229,13 @@ object HonorDuelEconomy {
 }
 
 enum class RecommendationAction { BUY, CONSIDER, SKIP }
+
+enum class RunRecommendationAction { REFRESH, STOP_REFRESHING, PROCEED_TO_NEXT_ROUND, CHECK }
+
+data class RunRecommendation(
+    val action: RunRecommendationAction,
+    val reason: String,
+)
 
 data class ShopRecommendation(
     val slotIndex: Int,
