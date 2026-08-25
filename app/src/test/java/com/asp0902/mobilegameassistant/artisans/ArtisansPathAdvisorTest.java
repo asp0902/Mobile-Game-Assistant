@@ -26,4 +26,13 @@ public class ArtisansPathAdvisorTest {
         assertEquals(5, analysis.getRecommendations().size());
         assertEquals(1, analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).count());
     }
+
+    @Test public void requiresThreeCandidatesToIssueSelect() {
+        ArtisansPathAnalysis analysis = ArtisansPathAdvisor.INSTANCE.analyze("장인의 길 라운드 1/24 현재 포인트 51 광산 원소 수집장");
+        assertEquals(Integer.valueOf(1), analysis.getRound());
+        assertEquals(Integer.valueOf(51), analysis.getScore());
+        assertEquals(2, analysis.getRecommendations().size());
+        assertEquals(0, analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).count());
+        assertTrue(analysis.getRecommendations().stream().allMatch(it -> it.getAction() == ArtisansAction.SKIP));
+    }
 }

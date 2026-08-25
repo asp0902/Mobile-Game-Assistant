@@ -59,6 +59,8 @@ class TrackingViewModel @Inject constructor(
     private var nextSnapshotId = 1L
     private var lastRunState: ReconciledHonorDuelState? = null
     private var hasLiveAnalysis = false
+    private var lastArtisansSelectionSignature: String? = null
+    private var artisansStableFrames = 0
 
     init {
         viewModelScope.launch {
@@ -83,6 +85,8 @@ class TrackingViewModel @Inject constructor(
                     val artisans = ArtisansPathAdvisor.analyze(result.ocrBlocks.joinToString(" ") { it.text })
                     mutableArtisansAnalysis.value = artisans
                     val detail = result.heroDetail
+                    val hasStableArtisans = isArtisansStable(artisans, result.ocrBlocks)
+                    if (artisans == null) resetArtisansStability()
                     val priorShop = lastShopAnalysis
                     val observed = if (detail != null && mutableDetailSlot.value != null && priorShop != null) {
                         priorShop.copy(
@@ -101,7 +105,8 @@ class TrackingViewModel @Inject constructor(
                     val shopRecommendations = ruleEngine.recommend(tracked.analysis)
                     val runRecommendations = ruleEngine.recommendRunActions(tracked.analysis, tracked.progress.status)
                     mutableAnalysis.value = ShopAnalysisUiState.Result(tracked.analysis, shopRecommendations, runRecommendations, snapshotId, tracked.headerSources, runStatus = tracked.progress.status)
-                    updateOverlay(artisans, shopRecommendations, runRecommendations, artisanTargets(artisans, result.ocrBlocks, result.viewport))
+                    val artisanTargets = if (hasStableArtisans) artisanTargets(artisans, result.ocrBlocks, result.viewport) else emptyList()
+                    updateOverlay(artisans, shopRecommendations, runRecommendations, artisanTargets)
                     viewModelScope.launch(Dispatchers.IO) {
                         runRepository.save(tracked)
                         runRepository.reconcilePurchases(runId, tracked.analysis)
@@ -124,10 +129,11 @@ class TrackingViewModel @Inject constructor(
         run: List<RunRecommendation>,
         targets: List<RecommendationOverlayController.OverlayTarget> = emptyList(),
     ) {
+        val selectionConfirmed = isArtisanSelectionConfirmed(artisans)
         val text = when {
             artisans != null -> buildString {
                 append("장인의 길 · 선택: ")
-                append(artisans.recommendations.firstOrNull { it.action == ArtisansAction.SELECT }?.cardName ?: "후보 확인 필요")
+                append(if (selectionConfirmed) artisans.recommendations.firstOrNull { it.action == ArtisansAction.SELECT }?.cardName else "후보 확인 필요")
             }
             shop.isNotEmpty() -> buildString {
                 append("명예의 결투\n")
@@ -186,6 +192,58 @@ class TrackingViewModel @Inject constructor(
         }
 
     private fun normalizeText(text: String): String = text.replace(Regex("[^가-힣0-9]"), "")
+
+    private fun isArtisanSelectionConfirmed(artisans: ArtisansPathAnalysis?): Boolean {
+        if (artisans == null) return false
+        if (artisans.recommendations.size < 3) return false
+        if (artisans.round == null || artisans.score == null) return false
+        return artisans.recommendations.count { it.action == ArtisansAction.SELECT } == 1
+    }
+
+    private fun isArtisansStable(
+        artisans: ArtisansPathAnalysis?,
+        blocks: List<OcrBlock>,
+    ): Boolean {
+        if (!isArtisanSelectionConfirmed(artisans)) {
+            resetArtisansStability()
+            return false
+        }
+        val signature = artisanSelectionSignature(artisans!!, blocks) ?: run {
+            resetArtisansStability()
+            return false
+        }
+        if (signature != lastArtisansSelectionSignature) {
+            lastArtisansSelectionSignature = signature
+            artisansStableFrames = 1
+            return false
+        }
+        artisansStableFrames++
+        return artisansStableFrames >= 2
+    }
+
+    private fun artisanSelectionSignature(artisans: ArtisansPathAnalysis, blocks: List<OcrBlock>): String? {
+        val selected = artisans.recommendations.firstOrNull { it.action == ArtisansAction.SELECT } ?: return null
+        val top = blocks.filter { isExactCardTextMatch(it.text, selected.cardName) }.minByOrNull { it.top } ?: return null
+        val bottom = blocks.filter { isExactCardTextMatch(it.text, selected.cardName) }.maxByOrNull { it.bottom } ?: return null
+        return buildString {
+            append(artisans.round)
+            append('|')
+            append(artisans.score)
+            append('|')
+            append(selected.cardName)
+            append('|')
+            append(artisans.recommendations.size)
+            append('|')
+            append(top.centerY)
+            append('|')
+            append(bottom.centerY)
+        }
+    }
+
+    private fun resetArtisansStability() {
+        lastArtisansSelectionSignature = null
+        artisansStableFrames = 0
+    }
 
     private fun candidateBand(blocks: List<OcrBlock>, names: Set<String>): Pair<Float, Float>? {
         val normalizedNames = names.map { normalizeText(it) }.toSet()

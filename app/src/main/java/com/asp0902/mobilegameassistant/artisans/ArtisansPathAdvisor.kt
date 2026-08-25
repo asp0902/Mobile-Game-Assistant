@@ -51,13 +51,17 @@ object ArtisansPathAdvisor {
             ?: Regex("(\\d+)\\s*(?:라운드|R)").find(text)?.groupValues?.get(1)?.toIntOrNull()
         val score = Regex("(?:현재\\s*)?(?:점수|포인트|스코어)\\s*[:：]?\\s*([\\d,]+)").find(text)?.groupValues?.get(1)?.replace(",", "")?.toIntOrNull()
         val checkpoint = checkpointFor(round)
-        val recommendations = ensureSingleSelection(
-            recognized.map { card -> recommend(card, recognized, text) },
-            recognized,
-            text,
-        )
+        val baseRecommendations = recognized.map { card -> recommend(card, recognized, text) }
+        val recommendations = if (recognized.size >= 3) {
+            ensureSingleSelection(baseRecommendations, recognized, text)
+        } else {
+            baseRecommendations.map {
+                it.copy(action = ArtisansAction.SKIP, reason = "후보 카드 3개 미인지로 확정 SELECT 보류")
+            }
+        }
         val reasons = buildList {
             add("확인 카드 ${recognized.size}개")
+            if (recognized.size < 3) add("후보 수 부족(${recognized.size}/3) — 후보 확인 필요")
             if (checkpoint != null && score != null && score < checkpoint) add("체크포인트 ${checkpoint}점 미달 — 즉시 점수 우선")
             if (recognized.isEmpty()) add("후보 카드명 또는 소비→생산 OCR 확인 필요")
         }
