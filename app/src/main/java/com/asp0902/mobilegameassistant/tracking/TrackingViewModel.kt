@@ -8,7 +8,6 @@ import com.asp0902.mobilegameassistant.analysis.HeroCorrection
 import com.asp0902.mobilegameassistant.analysis.HeroCorrectionRepository
 import com.asp0902.mobilegameassistant.analysis.HeroCorrectionApplier
 import com.asp0902.mobilegameassistant.analysis.HeroRecognitionCatalog
-import com.asp0902.mobilegameassistant.analysis.OcrBlock
 import com.asp0902.mobilegameassistant.analysis.GameViewport
 import com.asp0902.mobilegameassistant.analysis.ShopDetailReconciler
 import com.asp0902.mobilegameassistant.capture.CaptureSession
@@ -30,8 +29,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.abs
-import kotlin.math.max
+import kotlin.math.round
 import javax.inject.Inject
 
 @HiltViewModel
@@ -82,10 +80,14 @@ class TrackingViewModel @Inject constructor(
                         shopAnalyzer.analyze(bitmap, runId)
                     }
                 }.onSuccess { result ->
-                    val artisans = ArtisansPathAdvisor.analyze(result.ocrBlocks.joinToString(" ") { it.text })
+                    val artisans = ArtisansPathAdvisor.analyze(
+                        result.ocrBlocks.joinToString(" ") { it.text },
+                        result.ocrBlocks,
+                        mutableArtisansAnalysis.value?.score,
+                    )
                     mutableArtisansAnalysis.value = artisans
                     val detail = result.heroDetail
-                    val hasStableArtisans = isArtisansStable(artisans, result.ocrBlocks)
+                    val hasStableArtisans = isArtisansStable(artisans)
                     if (artisans == null) resetArtisansStability()
                     val priorShop = lastShopAnalysis
                     val observed = if (detail != null && mutableDetailSlot.value != null && priorShop != null) {
@@ -105,7 +107,7 @@ class TrackingViewModel @Inject constructor(
                     val shopRecommendations = ruleEngine.recommend(tracked.analysis)
                     val runRecommendations = ruleEngine.recommendRunActions(tracked.analysis, tracked.progress.status)
                     mutableAnalysis.value = ShopAnalysisUiState.Result(tracked.analysis, shopRecommendations, runRecommendations, snapshotId, tracked.headerSources, runStatus = tracked.progress.status)
-                    val artisanTargets = if (hasStableArtisans) artisanTargets(artisans, result.ocrBlocks, result.viewport) else emptyList()
+                    val artisanTargets = if (hasStableArtisans) artisanTargets(artisans, result.viewport) else emptyList()
                     updateOverlay(artisans, shopRecommendations, runRecommendations, artisanTargets)
                     viewModelScope.launch(Dispatchers.IO) {
                         runRepository.save(tracked)
@@ -129,12 +131,8 @@ class TrackingViewModel @Inject constructor(
         run: List<RunRecommendation>,
         targets: List<RecommendationOverlayController.OverlayTarget> = emptyList(),
     ) {
-        val selectionConfirmed = isArtisanSelectionConfirmed(artisans)
         val text = when {
-            artisans != null -> buildString {
-                append("장인의 길 · 선택: ")
-                append(if (selectionConfirmed) artisans.recommendations.firstOrNull { it.action == ArtisansAction.SELECT }?.cardName else "후보 확인 필요")
-            }
+            artisans != null -> null
             shop.isNotEmpty() -> buildString {
                 append("명예의 결투\n")
                 shop.take(3).forEach { append("${it.slotIndex + 1}: ${it.action}\n") }
@@ -142,73 +140,61 @@ class TrackingViewModel @Inject constructor(
             }
             else -> null
         }?.trim()
-        if (text == null) overlayController.hide() else overlayController.show(text, targets)
+        if (text == null && targets.isEmpty()) {
+            overlayController.hide()
+            return
+        }
+        overlayController.show(text?.ifBlank { null }, targets)
     }
 
     private fun artisanTargets(
         artisans: ArtisansPathAnalysis?,
-        blocks: List<OcrBlock>,
         viewport: GameViewport?,
     ): List<RecommendationOverlayController.OverlayTarget> {
         val selected = artisans?.recommendations?.firstOrNull { it.action == ArtisansAction.SELECT } ?: return emptyList()
-        val targetCandidates = blocks.filter { block -> isExactCardTextMatch(block.text, selected.cardName) }
-        if (targetCandidates.isEmpty()) return emptyList()
-        val cardBand = candidateBand(blocks, artisans.recommendations.map { it.cardName }.toSet())
-        val fallbackY = targetCandidates.firstOrNull()?.centerY ?: return emptyList()
-        val centerY = cardBand?.let { (it.first + it.second) / 2f } ?: fallbackY
-        val block = targetCandidates.filter { candidate ->
-            cardBand?.let { candidate.centerY in it.first..it.second } != false
-        }.minByOrNull { abs(it.centerY - centerY) }
-            ?: targetCandidates.minByOrNull { abs(it.centerY - centerY) }
-            ?: return emptyList()
+        val slot = selected.slotIndex ?: return emptyList()
+        val sourceBounds = artisans.candidates.firstOrNull { it.slotIndex == slot }?.fullCardBounds ?: return emptyList()
+        if (sourceBounds.right <= sourceBounds.left || sourceBounds.bottom <= sourceBounds.top) return emptyList()
 
-        val mappedLeft = mapToViewportX(block.left, viewport)
-        val mappedRight = mapToViewportX(block.right, viewport)
-        val mappedTop = mapToViewportY(block.top, viewport)
-        val mappedBottom = mapToViewportY(block.bottom, viewport)
-        val blockWidth = (mappedRight - mappedLeft).coerceAtLeast(0f)
-        val blockHeight = (mappedBottom - mappedTop).coerceAtLeast(0f)
-        val targetWidth = max(blockWidth * 1.2f, 0.05f)
-        val targetHeight = max(blockHeight * 2.0f, 0.025f)
-        val centerX = (mappedLeft + mappedRight) / 2f
-        val centerY2 = (mappedTop + mappedBottom) / 2f
-        val halfWidth = targetWidth / 2f
-        val halfHeight = targetHeight / 2f
+        val mappedLeft = mapToViewportX(sourceBounds.left, viewport)
+        val mappedRight = mapToViewportX(sourceBounds.right, viewport)
+        val mappedTop = mapToViewportY(sourceBounds.top, viewport)
+        val mappedBottom = mapToViewportY(sourceBounds.bottom, viewport)
+        if (mappedLeft >= mappedRight || mappedTop >= mappedBottom) return emptyList()
+
+        val paddedLeft = (mappedLeft - 0.01f).coerceIn(0f, 1f)
+        val paddedRight = (mappedRight + 0.01f).coerceIn(0f, 1f)
+        val paddedTop = (mappedTop - 0.015f).coerceIn(0f, 1f)
+        val paddedBottom = (mappedBottom + 0.015f).coerceIn(0f, 1f)
         return listOf(
             RecommendationOverlayController.OverlayTarget(
-                left = (centerX - halfWidth).coerceIn(0f, 1f),
-                right = (centerX + halfWidth).coerceIn(0f, 1f),
-                top = (centerY2 - halfHeight).coerceIn(0f, 1f),
-                bottom = (centerY2 + halfHeight).coerceIn(0f, 1f),
+                left = paddedLeft,
+                right = paddedRight,
+                top = paddedTop,
+                bottom = paddedBottom,
                 action = RecommendationOverlayController.OverlayTarget.Action.SELECT,
             ),
         )
     }
 
-    private fun isExactCardTextMatch(ocrText: String, cardName: String): Boolean =
-        normalizeText(ocrText).let { normalized ->
-            val normalizedCard = normalizeText(cardName)
-            normalized == normalizedCard || normalized.startsWith(normalizedCard)
-        }
-
-    private fun normalizeText(text: String): String = text.replace(Regex("[^가-힣0-9]"), "")
-
     private fun isArtisanSelectionConfirmed(artisans: ArtisansPathAnalysis?): Boolean {
         if (artisans == null) return false
-        if (artisans.recommendations.size < 3) return false
-        if (artisans.round == null || artisans.score == null) return false
-        return artisans.recommendations.count { it.action == ArtisansAction.SELECT } == 1
+        if (artisans.candidates.size != 3) return false
+        if (artisans.recommendations.count { it.action == ArtisansAction.SELECT } != 1) return false
+        val selected = artisans.recommendations.first { it.action == ArtisansAction.SELECT }
+        val selectedCandidate = artisans.candidates.firstOrNull { it.slotIndex == selected.slotIndex } ?: return false
+        return selectedCandidate.fullCardBounds.right > selectedCandidate.fullCardBounds.left &&
+            selectedCandidate.fullCardBounds.bottom > selectedCandidate.fullCardBounds.top
     }
 
     private fun isArtisansStable(
         artisans: ArtisansPathAnalysis?,
-        blocks: List<OcrBlock>,
     ): Boolean {
         if (!isArtisanSelectionConfirmed(artisans)) {
             resetArtisansStability()
             return false
         }
-        val signature = artisanSelectionSignature(artisans!!, blocks) ?: run {
+        val signature = artisanSelectionSignature(artisans!!) ?: run {
             resetArtisansStability()
             return false
         }
@@ -221,37 +207,31 @@ class TrackingViewModel @Inject constructor(
         return artisansStableFrames >= 2
     }
 
-    private fun artisanSelectionSignature(artisans: ArtisansPathAnalysis, blocks: List<OcrBlock>): String? {
+    private fun artisanSelectionSignature(artisans: ArtisansPathAnalysis): String? {
         val selected = artisans.recommendations.firstOrNull { it.action == ArtisansAction.SELECT } ?: return null
-        val top = blocks.filter { isExactCardTextMatch(it.text, selected.cardName) }.minByOrNull { it.top } ?: return null
-        val bottom = blocks.filter { isExactCardTextMatch(it.text, selected.cardName) }.maxByOrNull { it.bottom } ?: return null
+        val selectedCandidate = artisans.candidates.firstOrNull { it.slotIndex == selected.slotIndex } ?: return null
         return buildString {
             append(artisans.round)
             append('|')
-            append(artisans.score)
+            append(artisans.candidates.joinToString(";") { "${it.slotIndex}:${it.name}" })
             append('|')
             append(selected.cardName)
             append('|')
-            append(artisans.recommendations.size)
+            append(selected.slotIndex)
             append('|')
-            append(top.centerY)
+            append(round(selectedCandidate.fullCardBounds.left * 2000f) / 2000f)
             append('|')
-            append(bottom.centerY)
+            append(round(selectedCandidate.fullCardBounds.top * 2000f) / 2000f)
+            append('|')
+            append(round(selectedCandidate.fullCardBounds.right * 2000f) / 2000f)
+            append('|')
+            append(round(selectedCandidate.fullCardBounds.bottom * 2000f) / 2000f)
         }
     }
 
     private fun resetArtisansStability() {
         lastArtisansSelectionSignature = null
         artisansStableFrames = 0
-    }
-
-    private fun candidateBand(blocks: List<OcrBlock>, names: Set<String>): Pair<Float, Float>? {
-        val normalizedNames = names.map { normalizeText(it) }.toSet()
-        val centers = blocks.filter { block -> normalizedNames.contains(normalizeText(block.text)) }.map { it.centerY }
-        if (centers.isEmpty()) return null
-        val top = centers.minOrNull() ?: return null
-        val bottom = centers.maxOrNull() ?: return null
-        return (top - 0.04f).coerceIn(0f, 1f) to (bottom + 0.04f).coerceIn(0f, 1f)
     }
 
     private fun mapToViewportX(value: Float, viewport: GameViewport?): Float {

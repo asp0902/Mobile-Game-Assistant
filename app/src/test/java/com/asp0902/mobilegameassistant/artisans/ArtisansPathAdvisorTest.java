@@ -1,9 +1,15 @@
 package com.asp0902.mobilegameassistant.artisans;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.asp0902.mobilegameassistant.analysis.OcrBlock;
+
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ArtisansPathAdvisorTest {
     @Test public void prefersConnectedHighValueChain() {
@@ -19,6 +25,42 @@ public class ArtisansPathAdvisorTest {
         assertEquals(3, analysis.getRecommendations().size());
         assertEquals(1, analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).count());
         assertTrue(analysis.getRecommendations().stream().anyMatch(it -> it.getCardName().equals("원소 수집장") && it.getAction() == ArtisansAction.SELECT));
+    }
+
+    @Test public void parsesScoreAndCandidatesFromSeparateBlocks() {
+        String text = "장인의 길 라운드 1/24 현재 포인트 광산 원소 수집장 연금술 공방";
+        List<OcrBlock> blocks = Arrays.asList(
+            new OcrBlock("현재 포인트", 0.32f, 0.05f, 0.58f, 0.09f),
+            new OcrBlock("51", 0.61f, 0.05f, 0.66f, 0.09f),
+            new OcrBlock("1/24", 0.02f, 0.03f, 0.20f, 0.09f),
+            new OcrBlock("1000포인트", 0.74f, 0.03f, 0.95f, 0.09f),
+            new OcrBlock("광산", 0.18f, 0.32f, 0.40f, 0.36f),
+            new OcrBlock("보유:1", 0.05f, 0.37f, 0.16f, 0.40f),
+            new OcrBlock("원소 수집장", 0.18f, 0.49f, 0.72f, 0.53f),
+            new OcrBlock("보유:1", 0.05f, 0.54f, 0.16f, 0.56f),
+            new OcrBlock("연금술 공방", 0.18f, 0.66f, 0.75f, 0.70f),
+            new OcrBlock("보유:0", 0.05f, 0.71f, 0.16f, 0.74f)
+        );
+
+        ArtisansPathAnalysis analysis = ArtisansPathAdvisor.INSTANCE.analyze(text, blocks, null);
+        assertEquals(Integer.valueOf(1), analysis.getRound());
+        assertEquals(Integer.valueOf(51), analysis.getScore());
+        assertEquals(3, analysis.getCandidates().size());
+        assertEquals(3, analysis.getRecommendations().size());
+        assertEquals("원소 수집장", analysis.getRecommendations().stream()
+            .filter(it -> it.getAction() == ArtisansAction.SELECT)
+            .findFirst()
+            .map(ArtisansRecommendation::getCardName)
+            .orElse(""));
+        assertEquals(0, analysis.getCandidates().get(0).getSlotIndex());
+        assertEquals(1, analysis.getCandidates().get(1).getSlotIndex());
+        assertEquals(2, analysis.getCandidates().get(2).getSlotIndex());
+        assertEquals(Integer.valueOf(1), analysis.getCandidates().get(0).getOwnedCount());
+        assertEquals(Integer.valueOf(1), analysis.getCandidates().get(1).getOwnedCount());
+        assertEquals(Integer.valueOf(0), analysis.getCandidates().get(2).getOwnedCount());
+        assertTrue(analysis.getCandidates().get(0).getFullCardBounds().getBottom() <= analysis.getCandidates().get(1).getFullCardBounds().getTop());
+        assertTrue(analysis.getCandidates().get(1).getFullCardBounds().getBottom() <= analysis.getCandidates().get(2).getFullCardBounds().getTop());
+        assertNotNull(analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).findFirst().get().getFullCardBounds());
     }
 
     @Test public void keepsOnlyOneSelectWhenMultipleCandidatesQualify() {

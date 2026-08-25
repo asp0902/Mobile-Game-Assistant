@@ -29,7 +29,7 @@ class RecommendationOverlayController @Inject constructor(
     private var label: TextView? = null
     private var effects: EffectView? = null
 
-    fun show(text: String, targets: List<OverlayTarget> = emptyList()) = mainHandler.post {
+    fun show(text: String?, targets: List<OverlayTarget> = emptyList()) = mainHandler.post {
         if (!Settings.canDrawOverlays(context)) return@post
         val overlayRoot = root ?: FrameLayout(context).also { created ->
             val effectView = EffectView(context)
@@ -39,21 +39,28 @@ class RecommendationOverlayController @Inject constructor(
                 .onSuccess { root = created }
                 .onFailure { return@post }
         }
-        val overlayLabel = label ?: TextView(context).also { created ->
-            created.setTextColor(Color.WHITE)
-            created.textSize = 14f
-            created.setPadding(24, 16, 24, 16)
-            created.background = GradientDrawable().apply {
-                setColor(0xDD1B2735.toInt())
-                cornerRadius = 20f
+        if (text.isNullOrBlank()) {
+            label?.let {
+                overlayRoot.removeView(it)
+                label = null
             }
-            overlayRoot.addView(created, FrameLayout.LayoutParams(-2, -2, Gravity.TOP or Gravity.END).apply {
-                topMargin = 160
-                rightMargin = 24
-            })
-            label = created
+        } else {
+            val overlayLabel = label ?: TextView(context).also { created ->
+                created.setTextColor(Color.WHITE)
+                created.textSize = 14f
+                created.setPadding(24, 16, 24, 16)
+                created.background = GradientDrawable().apply {
+                    setColor(0xDD1B2735.toInt())
+                    cornerRadius = 20f
+                }
+                overlayRoot.addView(created, FrameLayout.LayoutParams(-2, -2, Gravity.TOP or Gravity.END).apply {
+                    topMargin = 160
+                    rightMargin = 24
+                })
+                label = created
+            }
+            overlayLabel.text = text
         }
-        overlayLabel.text = text
         effects?.targets = targets
     }
 
