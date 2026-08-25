@@ -54,6 +54,7 @@ object ArtisansPathAdvisor {
         val recommendations = ensureSingleSelection(
             recognized.map { card -> recommend(card, recognized, text) },
             recognized,
+            text,
         )
         val reasons = buildList {
             add("확인 카드 ${recognized.size}개")
@@ -69,36 +70,56 @@ object ArtisansPathAdvisor {
         val hasInput = card.inputs.all(produced::contains)
         val feedsKnownCard = card.outputs.any(consumed::contains)
         val upgraded = Regex("${Regex.escape(card.name)}.{0,20}승급").containsMatchIn(text)
-        val score = (if (upgraded) 45 else 0) + (if (card.highValueOutput) 35 else 0) +
-            (if (hasInput) 25 else 0) + (if (feedsKnownCard) 20 else 0) + (if (card.inputs.isEmpty()) 5 else 0)
+        val score = score(card, recognized, text)
         return when {
             score >= 55 -> ArtisansRecommendation(card.name, ArtisansAction.SELECT, reason(card, upgraded, hasInput, feedsKnownCard))
             score >= 30 -> ArtisansRecommendation(card.name, ArtisansAction.CONSIDER, reason(card, upgraded, hasInput, feedsKnownCard))
-            else -> ArtisansRecommendation(card.name, ArtisansAction.SKIP, "현재 화면에서 입력 공급 또는 후속 소비처가 확인되지 않음")
+            else -> ArtisansRecommendation(card.name, ArtisansAction.SKIP, "현재 화면에서 입력 공급 또는 후단 소비처가 확인되지 않음")
         }
+    }
+
+    private fun score(card: ArtisansCard?, recognized: List<ArtisansCard>, text: String): Int {
+        if (card == null) return 0
+        val produced = recognized.flatMap { it.outputs }.toSet()
+        val consumed = recognized.flatMap { it.inputs }.toSet()
+        val hasInput = card.inputs.all(produced::contains)
+        val feedsKnownCard = card.outputs.any(consumed::contains)
+        val upgraded = Regex("${Regex.escape(card.name)}.{0,20}승급").containsMatchIn(text)
+        return (if (upgraded) 45 else 0) + (if (card.highValueOutput) 35 else 0) +
+            (if (hasInput && card.inputs.isNotEmpty()) 25 else 0) + (if (feedsKnownCard) 20 else 0) + (if (card.inputs.isEmpty()) 5 else 0)
     }
 
     private fun ensureSingleSelection(
         recommendations: List<ArtisansRecommendation>,
         recognized: List<ArtisansCard>,
+        text: String,
     ): List<ArtisansRecommendation> {
-        if (recommendations.any { it.action == ArtisansAction.SELECT }) return recommendations
-        val produced = recognized.flatMap { it.outputs }.toSet()
-        val consumed = recognized.flatMap { it.inputs }.toSet()
-        val best = recognized.maxByOrNull { card ->
-            when {
-                card.inputs.isNotEmpty() && card.inputs.all(produced::contains) -> 100
-                card.outputs.any(consumed::contains) -> 80
-                card.inputs.isEmpty() -> 40
-                card.highValueOutput -> 20
-                else -> 0
+        val selected = recommendations.filter { it.action == ArtisansAction.SELECT }
+        if (selected.isEmpty()) {
+            val best = recognized.maxByOrNull { card -> score(card, recognized, text) } ?: return recommendations
+            return recommendations.map {
+                if (it.cardName == best.name) it.copy(
+                    action = ArtisansAction.SELECT,
+                    reason = "현재 세 후보 중 생산망 연결 우선순위 1위 — ${it.reason}",
+                ) else it
             }
+        }
+        if (selected.size == 1) return recommendations
+        val best = selected.maxByOrNull { recommendation ->
+            val card = recognized.firstOrNull { it.name == recommendation.cardName }
+            score(card, recognized, text)
         } ?: return recommendations
         return recommendations.map {
-            if (it.cardName == best.name) it.copy(
-                action = ArtisansAction.SELECT,
-                reason = "현재 세 후보 중 생산망 연결 우선순위 1위 — ${it.reason}",
-            ) else it
+            if (it.cardName == best.cardName) {
+                it
+            } else if (it.action == ArtisansAction.SELECT) {
+                it.copy(
+                    action = ArtisansAction.CONSIDER,
+                    reason = "중복 SELECT 보정: ${it.reason}",
+                )
+            } else {
+                it
+            }
         }
     }
 

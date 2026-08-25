@@ -9,6 +9,7 @@ import com.asp0902.mobilegameassistant.analysis.HeroCorrectionRepository
 import com.asp0902.mobilegameassistant.analysis.HeroCorrectionApplier
 import com.asp0902.mobilegameassistant.analysis.HeroRecognitionCatalog
 import com.asp0902.mobilegameassistant.analysis.OcrBlock
+import com.asp0902.mobilegameassistant.analysis.GameViewport
 import com.asp0902.mobilegameassistant.analysis.ShopDetailReconciler
 import com.asp0902.mobilegameassistant.capture.CaptureSession
 import com.asp0902.mobilegameassistant.artisans.ArtisansPathAdvisor
@@ -29,6 +30,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.abs
+import kotlin.math.max
 import javax.inject.Inject
 
 @HiltViewModel
@@ -98,7 +101,7 @@ class TrackingViewModel @Inject constructor(
                     val shopRecommendations = ruleEngine.recommend(tracked.analysis)
                     val runRecommendations = ruleEngine.recommendRunActions(tracked.analysis, tracked.progress.status)
                     mutableAnalysis.value = ShopAnalysisUiState.Result(tracked.analysis, shopRecommendations, runRecommendations, snapshotId, tracked.headerSources, runStatus = tracked.progress.status)
-                    updateOverlay(artisans, shopRecommendations, runRecommendations, artisanTargets(artisans, result.ocrBlocks))
+                    updateOverlay(artisans, shopRecommendations, runRecommendations, artisanTargets(artisans, result.ocrBlocks, result.viewport))
                     viewModelScope.launch(Dispatchers.IO) {
                         runRepository.save(tracked)
                         runRepository.reconcilePurchases(runId, tracked.analysis)
@@ -140,26 +143,70 @@ class TrackingViewModel @Inject constructor(
     private fun artisanTargets(
         artisans: ArtisansPathAnalysis?,
         blocks: List<OcrBlock>,
+        viewport: GameViewport?,
     ): List<RecommendationOverlayController.OverlayTarget> {
-        val matches = artisans?.recommendations?.mapNotNull { recommendation ->
-            blocks.firstOrNull { it.text.contains(recommendation.cardName) }?.let { recommendation to it }
-        }?.sortedBy { it.second.centerY }.orEmpty()
-        return matches.mapIndexedNotNull { index, (recommendation, block) ->
-            if (recommendation.action != ArtisansAction.SELECT) return@mapIndexedNotNull null
-            val previousCenter = matches.getOrNull(index - 1)?.second?.centerY
-            val nextCenter = matches.getOrNull(index + 1)?.second?.centerY
+        val selected = artisans?.recommendations?.firstOrNull { it.action == ArtisansAction.SELECT } ?: return emptyList()
+        val targetCandidates = blocks.filter { block -> isExactCardTextMatch(block.text, selected.cardName) }
+        if (targetCandidates.isEmpty()) return emptyList()
+        val cardBand = candidateBand(blocks, artisans.recommendations.map { it.cardName }.toSet())
+        val fallbackY = targetCandidates.firstOrNull()?.centerY ?: return emptyList()
+        val centerY = cardBand?.let { (it.first + it.second) / 2f } ?: fallbackY
+        val block = targetCandidates.filter { candidate ->
+            cardBand?.let { candidate.centerY in it.first..it.second } != false
+        }.minByOrNull { abs(it.centerY - centerY) }
+            ?: targetCandidates.minByOrNull { abs(it.centerY - centerY) }
+            ?: return emptyList()
+
+        val mappedLeft = mapToViewportX(block.left, viewport)
+        val mappedRight = mapToViewportX(block.right, viewport)
+        val mappedTop = mapToViewportY(block.top, viewport)
+        val mappedBottom = mapToViewportY(block.bottom, viewport)
+        val blockWidth = (mappedRight - mappedLeft).coerceAtLeast(0f)
+        val blockHeight = (mappedBottom - mappedTop).coerceAtLeast(0f)
+        val targetWidth = max(blockWidth * 1.4f, 0.12f)
+        val targetHeight = max(blockHeight * 2.0f, 0.03f)
+        val centerX = (mappedLeft + mappedRight) / 2f
+        val centerY2 = (mappedTop + mappedBottom) / 2f
+        return listOf(
             RecommendationOverlayController.OverlayTarget(
-                left = .06f,
-                top = ((previousCenter?.let { (it + block.centerY) / 2f + .01f }) ?: (block.centerY - .07f)).coerceAtLeast(0f),
-                right = .94f,
-                bottom = ((nextCenter?.let { (it + block.centerY) / 2f - .01f }) ?: (block.centerY + .09f)).coerceAtMost(1f),
-                action = when (recommendation.action) {
-                    ArtisansAction.SELECT -> RecommendationOverlayController.OverlayTarget.Action.SELECT
-                    ArtisansAction.CONSIDER, ArtisansAction.CHECK -> RecommendationOverlayController.OverlayTarget.Action.CONSIDER
-                    ArtisansAction.SKIP -> RecommendationOverlayController.OverlayTarget.Action.SKIP
-                },
-            )
+                left = (centerX - targetWidth / 2f).coerceIn(0f, 1f),
+                right = (centerX + targetWidth / 2f).coerceIn(0f, 1f),
+                top = (centerY2 - targetHeight / 2f).coerceIn(0f, 1f),
+                bottom = (centerY2 + targetHeight / 2f).coerceIn(0f, 1f),
+                action = RecommendationOverlayController.OverlayTarget.Action.SELECT,
+            ),
+        )
+    }
+
+    private fun isExactCardTextMatch(ocrText: String, cardName: String): Boolean =
+        normalizeText(ocrText).let { normalized ->
+            val normalizedCard = normalizeText(cardName)
+            normalized == normalizedCard || normalized.startsWith(normalizedCard)
         }
+
+    private fun normalizeText(text: String): String = text.replace(Regex("[^가-힣0-9]"), "")
+
+    private fun candidateBand(blocks: List<OcrBlock>, names: Set<String>): Pair<Float, Float>? {
+        val normalizedNames = names.map { normalizeText(it) }.toSet()
+        val centers = blocks.filter { block -> normalizedNames.contains(normalizeText(block.text)) }.map { it.centerY }
+        if (centers.isEmpty()) return null
+        val top = centers.minOrNull() ?: return null
+        val bottom = centers.maxOrNull() ?: return null
+        return (top - 0.04f).coerceIn(0f, 1f) to (bottom + 0.04f).coerceIn(0f, 1f)
+    }
+
+    private fun mapToViewportX(value: Float, viewport: GameViewport?): Float {
+        if (viewport == null) return value
+        val width = viewport.right - viewport.left
+        if (width <= 0f) return value
+        return ((value - viewport.left) / width).coerceIn(0f, 1f)
+    }
+
+    private fun mapToViewportY(value: Float, viewport: GameViewport?): Float {
+        if (viewport == null) return value
+        val height = viewport.bottom - viewport.top
+        if (height <= 0f) return value
+        return ((value - viewport.top) / height).coerceIn(0f, 1f)
     }
 
     fun selectFormationTemplate(id: FormationTemplateId) {

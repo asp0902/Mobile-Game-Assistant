@@ -20,4 +20,10 @@ public class ArtisansPathAdvisorTest {
         assertEquals(1, analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).count());
         assertTrue(analysis.getRecommendations().stream().anyMatch(it -> it.getCardName().equals("원소 수집장") && it.getAction() == ArtisansAction.SELECT));
     }
+
+    @Test public void keepsOnlyOneSelectWhenMultipleCandidatesQualify() {
+        ArtisansPathAnalysis analysis = ArtisansPathAdvisor.INSTANCE.analyze("장인의 길 라운드 1/24 현재 포인트 51 광산 광석 제련소 장원 수레 원소 수집장 원소 제련소 연금술 공방");
+        assertEquals(5, analysis.getRecommendations().size());
+        assertEquals(1, analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).count());
+    }
 }
