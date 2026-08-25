@@ -52,6 +52,8 @@ fun TrackingScreen(
     heroChoices: List<HeroReference>,
     onStart: () -> Unit,
     onStop: () -> Unit,
+    overlayPermissionGranted: Boolean,
+    onEnableOverlay: () -> Unit,
     onTemplateSelected: (FormationTemplateId) -> Unit,
     onDetailSlotSelected: (Int) -> Unit,
     onHeroCorrected: (Long, Int, String) -> Unit,
@@ -83,7 +85,15 @@ fun TrackingScreen(
                 -> CircularProgressIndicator()
 
                 TrackingState.Tracking -> {
-                    Text("게임 화면에서 알림의 ‘AFK 분석’을 누르세요.")
+                    Text("화면 전환 후 자동 분석합니다. 게임 위 추천 배지를 확인하세요.")
+                    if (!overlayPermissionGranted) {
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = onEnableOverlay,
+                        ) {
+                            Text("게임 위 추천 표시 허용")
+                        }
+                    }
                     Button(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = onStop,

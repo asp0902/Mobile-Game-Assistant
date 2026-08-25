@@ -23,13 +23,14 @@ import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.asp0902.mobilegameassistant.R
+import com.asp0902.mobilegameassistant.overlay.RecommendationOverlayController
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MediaProjectionService : Service() {
     @Inject lateinit var captureSession: CaptureSession
+    @Inject lateinit var overlayController: RecommendationOverlayController
 
     private var mediaProjection: MediaProjection? = null
     private var virtualDisplay: VirtualDisplay? = null
@@ -40,6 +41,17 @@ class MediaProjectionService : Service() {
     private var isStopping = false
     private val mainHandler = Handler(Looper.getMainLooper())
     private val captureTimeout = Runnable { releaseImageReader() }
+    private val autoCapture = object : Runnable {
+        override fun run() {
+            if (!isStopping && mediaProjection != null) {
+                captureFrame()
+                mainHandler.postDelayed(this, AUTO_CAPTURE_INTERVAL_MS)
+            }
+        }
+    }
+    private var lastObservedSignature: IntArray? = null
+    private var lastPublishedSignature: IntArray? = null
+    private var stableFrames = 0
 
     private val projectionCallback = object : MediaProjection.Callback() {
         override fun onStop() {
@@ -60,7 +72,6 @@ class MediaProjectionService : Service() {
                 intent.parcelableIntent(EXTRA_RESULT_DATA),
             )
 
-            ACTION_CAPTURE -> captureFrame()
             ACTION_STOP -> stopTracking()
         }
         return START_NOT_STICKY
@@ -82,6 +93,10 @@ class MediaProjectionService : Service() {
             return
         }
 
+        isStopping = false
+        lastObservedSignature = null
+        lastPublishedSignature = null
+        stableFrames = 0
         captureSession.starting()
         startProjectionForeground()
 
@@ -105,6 +120,7 @@ class MediaProjectionService : Service() {
                 null,
             ) ?: error("VirtualDisplay를 만들 수 없습니다.")
             captureSession.tracking()
+            mainHandler.post(autoCapture)
         } catch (error: SecurityException) {
             stopTracking("화면 공유 권한이 만료되었습니다.")
         } catch (error: IllegalStateException) {
@@ -117,6 +133,8 @@ class MediaProjectionService : Service() {
         isStopping = true
 
         releaseImageReader()
+        mainHandler.removeCallbacks(autoCapture)
+        overlayController.hide()
 
         virtualDisplay?.release()
         virtualDisplay = null
@@ -157,7 +175,7 @@ class MediaProjectionService : Service() {
                     image.close()
                     releaseImageReader()
                 }
-                captureSession.publishFrame(bitmap)
+                publishIfStable(bitmap)
             }, mainHandler)
             virtualDisplay?.surface = reader.surface
             mainHandler.postDelayed(captureTimeout, CAPTURE_TIMEOUT_MS)
@@ -173,6 +191,29 @@ class MediaProjectionService : Service() {
         imageReader = null
         captureInProgress = false
     }
+
+    private fun publishIfStable(bitmap: Bitmap) {
+        val signature = signature(bitmap)
+        stableFrames = if (lastObservedSignature?.let { difference(it, signature) < STABLE_DIFFERENCE } != false) stableFrames + 1 else 0
+        lastObservedSignature = signature
+        val changedSinceAnalysis = lastPublishedSignature?.let { difference(it, signature) >= PUBLISHED_DIFFERENCE } ?: true
+        if (lastPublishedSignature == null || (stableFrames >= REQUIRED_STABLE_FRAMES && changedSinceAnalysis)) {
+            lastPublishedSignature = signature
+            captureSession.publishFrame(bitmap)
+        } else {
+            bitmap.recycle()
+        }
+    }
+
+    private fun signature(bitmap: Bitmap): IntArray = IntArray(64) { index ->
+        val x = (index % 8) * (bitmap.width - 1) / 7
+        val y = (index / 8) * (bitmap.height - 1) / 7
+        val color = bitmap.getPixel(x, y)
+        (android.graphics.Color.red(color) + android.graphics.Color.green(color) + android.graphics.Color.blue(color)) / 3
+    }
+
+    private fun difference(left: IntArray, right: IntArray): Float =
+        left.indices.sumOf { kotlin.math.abs(left[it] - right[it]) }.toFloat() / left.size
 
     private fun startProjectionForeground() {
         val notification = notification()
@@ -205,19 +246,11 @@ class MediaProjectionService : Service() {
             Intent(this, MediaProjectionService::class.java).setAction(ACTION_STOP),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
-        val analyzeIntent = PendingIntent.getService(
-            this,
-            1,
-            Intent(this, MediaProjectionService::class.java).setAction(ACTION_CAPTURE),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_menu_view)
             .setContentTitle("AFK 트래킹 중")
-            .setContentText("사용자가 요청한 화면 공유 세션입니다.")
+            .setContentText("화면 변화 감지 후 자동 분석 중")
             .setOngoing(true)
-            .addAction(0, "AFK 분석", analyzeIntent)
             .addAction(0, "트래킹 중지", stopIntent)
             .build()
     }
@@ -252,9 +285,12 @@ class MediaProjectionService : Service() {
         private const val CAPTURE_TIMEOUT_MS = 2_000L
         private const val ACTION_START = "com.asp0902.mobilegameassistant.START_TRACKING"
         private const val ACTION_STOP = "com.asp0902.mobilegameassistant.STOP_TRACKING"
-        private const val ACTION_CAPTURE = "com.asp0902.mobilegameassistant.CAPTURE_FRAME"
         private const val EXTRA_RESULT_CODE = "result_code"
         private const val EXTRA_RESULT_DATA = "result_data"
+        private const val AUTO_CAPTURE_INTERVAL_MS = 900L
+        private const val STABLE_DIFFERENCE = 5f
+        private const val PUBLISHED_DIFFERENCE = 3f
+        private const val REQUIRED_STABLE_FRAMES = 1
 
         fun start(context: Context, resultCode: Int, resultData: Intent) {
             ContextCompat.startForegroundService(
@@ -272,10 +308,5 @@ class MediaProjectionService : Service() {
             )
         }
 
-        fun capture(context: Context) {
-            context.startService(
-                Intent(context, MediaProjectionService::class.java).setAction(ACTION_CAPTURE),
-            )
-        }
     }
 }

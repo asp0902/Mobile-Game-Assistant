@@ -15,6 +15,7 @@ import com.asp0902.mobilegameassistant.artisans.ArtisansPathAnalysis
 import com.asp0902.mobilegameassistant.formation.FormationTemplate
 import com.asp0902.mobilegameassistant.formation.FormationTemplateId
 import com.asp0902.mobilegameassistant.formation.FormationTemplates
+import com.asp0902.mobilegameassistant.overlay.RecommendationOverlayController
 import com.asp0902.mobilegameassistant.rules.HonorDuelRuleEngine
 import com.asp0902.mobilegameassistant.rules.RunRecommendation
 import com.asp0902.mobilegameassistant.rules.ShopRecommendation
@@ -36,6 +37,7 @@ class TrackingViewModel @Inject constructor(
     private val heroCatalog: HeroRecognitionCatalog,
     private val correctionRepository: HeroCorrectionRepository,
     private val runRepository: HonorDuelRunRepository,
+    private val overlayController: RecommendationOverlayController,
 ) : ViewModel() {
     val state = captureSession.state
     val frame = captureSession.frame
@@ -70,11 +72,11 @@ class TrackingViewModel @Inject constructor(
                 mutableAnalysis.value = ShopAnalysisUiState.Analyzing
                 runCatching {
                     withContext(Dispatchers.Default) {
-                        val result = shopAnalyzer.analyze(bitmap, runId)
-                        result to ruleEngine.recommend(result)
+                        shopAnalyzer.analyze(bitmap, runId)
                     }
-                }.onSuccess { (result, recommendations) ->
-                    mutableArtisansAnalysis.value = ArtisansPathAdvisor.analyze(result.ocrBlocks.joinToString(" ") { it.text })
+                }.onSuccess { result ->
+                    val artisans = ArtisansPathAdvisor.analyze(result.ocrBlocks.joinToString(" ") { it.text })
+                    mutableArtisansAnalysis.value = artisans
                     val detail = result.heroDetail
                     val priorShop = lastShopAnalysis
                     val observed = if (detail != null && mutableDetailSlot.value != null && priorShop != null) {
@@ -91,12 +93,16 @@ class TrackingViewModel @Inject constructor(
                     lastRunState = tracked
                     if (tracked.analysis.shopItems.isNotEmpty()) lastShopAnalysis = tracked.analysis
                     val snapshotId = nextSnapshotId++
-                    mutableAnalysis.value = ShopAnalysisUiState.Result(tracked.analysis, ruleEngine.recommend(tracked.analysis), ruleEngine.recommendRunActions(tracked.analysis, tracked.progress.status), snapshotId, tracked.headerSources, runStatus = tracked.progress.status)
+                    val shopRecommendations = ruleEngine.recommend(tracked.analysis)
+                    val runRecommendations = ruleEngine.recommendRunActions(tracked.analysis, tracked.progress.status)
+                    mutableAnalysis.value = ShopAnalysisUiState.Result(tracked.analysis, shopRecommendations, runRecommendations, snapshotId, tracked.headerSources, runStatus = tracked.progress.status)
+                    updateOverlay(artisans, shopRecommendations, runRecommendations)
                     viewModelScope.launch(Dispatchers.IO) {
                         runRepository.save(tracked)
                         runRepository.reconcilePurchases(runId, tracked.analysis)
                     }
                 }.onFailure {
+                    overlayController.hide()
                     mutableAnalysis.value = ShopAnalysisUiState.Error("OCR 분석 실패: ${it.message ?: "알 수 없음"}")
                 }
             }
@@ -106,6 +112,26 @@ class TrackingViewModel @Inject constructor(
     fun requestTracking() = captureSession.awaitConsent()
 
     fun cancelRequest() = captureSession.idle("화면 공유가 취소되었습니다.")
+
+    private fun updateOverlay(
+        artisans: ArtisansPathAnalysis?,
+        shop: List<ShopRecommendation>,
+        run: List<RunRecommendation>,
+    ) {
+        val text = when {
+            artisans != null -> buildString {
+                append("장인의 길\n")
+                artisans.recommendations.take(2).forEach { append("${it.cardName}: ${it.action}\n") }
+            }
+            shop.isNotEmpty() -> buildString {
+                append("명예의 결투\n")
+                shop.take(3).forEach { append("${it.slotIndex + 1}: ${it.action}\n") }
+                run.firstOrNull()?.let { append(it.action) }
+            }
+            else -> null
+        }?.trim()
+        if (text == null) overlayController.hide() else overlayController.show(text)
+    }
 
     fun selectFormationTemplate(id: FormationTemplateId) {
         mutableTemplate.value = FormationTemplates.fromId(id)
@@ -125,7 +151,10 @@ class TrackingViewModel @Inject constructor(
             if (it.slotIndex == slotIndex) HeroCorrectionApplier.apply(it, hero) else it
         })
         lastShopAnalysis = corrected
-        mutableAnalysis.value = ShopAnalysisUiState.Result(corrected, ruleEngine.recommend(corrected), ruleEngine.recommendRunActions(corrected, current.runStatus), snapshotId, current.headerSources, runStatus = current.runStatus)
+        val shopRecommendations = ruleEngine.recommend(corrected)
+        val runRecommendations = ruleEngine.recommendRunActions(corrected, current.runStatus)
+        mutableAnalysis.value = ShopAnalysisUiState.Result(corrected, shopRecommendations, runRecommendations, snapshotId, current.headerSources, runStatus = current.runStatus)
+        updateOverlay(null, shopRecommendations, runRecommendations)
         viewModelScope.launch {
             correctionRepository.save(HeroCorrection(
                 runId, snapshotId, slotIndex, item.heroId, hero.id, hero.koreanName, item.portraitSignature,
@@ -149,15 +178,18 @@ class TrackingViewModel @Inject constructor(
             val sources = current.headerSources + (com.asp0902.mobilegameassistant.analysis.HeaderField.CURRENCY to ReconciliationSource.ACTION_PREDICTION)
             lastRunState = ReconciledHonorDuelState(runId, prediction.analysis, sources)
             lastShopAnalysis = prediction.analysis
+            val shopRecommendations = ruleEngine.recommend(prediction.analysis)
+            val runRecommendations = ruleEngine.recommendRunActions(prediction.analysis, lastRunState?.progress?.status ?: RunStatus.ACTIVE)
             mutableAnalysis.value = ShopAnalysisUiState.Result(
                 prediction.analysis,
-                ruleEngine.recommend(prediction.analysis),
-                ruleEngine.recommendRunActions(prediction.analysis, lastRunState?.progress?.status ?: RunStatus.ACTIVE),
+                shopRecommendations,
+                runRecommendations,
                 snapshotId,
                 sources,
                 "구매 예상 기록: ${item.heroName ?: heroId} ${action.quantity}장 / ${action.cost}",
                 lastRunState?.progress?.status ?: RunStatus.ACTIVE,
             )
+            updateOverlay(null, shopRecommendations, runRecommendations)
         }
     }
 }
