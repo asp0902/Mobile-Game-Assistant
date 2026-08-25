@@ -126,8 +126,7 @@ class TrackingViewModel @Inject constructor(
     ) {
         val text = when {
             artisans != null -> buildString {
-                append("장인의 길\n")
-                append("선택: ")
+                append("장인의 길 · 선택: ")
                 append(artisans.recommendations.firstOrNull { it.action == ArtisansAction.SELECT }?.cardName ?: "후보 확인 필요")
             }
             shop.isNotEmpty() -> buildString {
@@ -163,16 +162,18 @@ class TrackingViewModel @Inject constructor(
         val mappedBottom = mapToViewportY(block.bottom, viewport)
         val blockWidth = (mappedRight - mappedLeft).coerceAtLeast(0f)
         val blockHeight = (mappedBottom - mappedTop).coerceAtLeast(0f)
-        val targetWidth = max(blockWidth * 1.4f, 0.12f)
-        val targetHeight = max(blockHeight * 2.0f, 0.03f)
+        val targetWidth = max(blockWidth * 1.2f, 0.05f)
+        val targetHeight = max(blockHeight * 2.0f, 0.025f)
         val centerX = (mappedLeft + mappedRight) / 2f
         val centerY2 = (mappedTop + mappedBottom) / 2f
+        val halfWidth = targetWidth / 2f
+        val halfHeight = targetHeight / 2f
         return listOf(
             RecommendationOverlayController.OverlayTarget(
-                left = (centerX - targetWidth / 2f).coerceIn(0f, 1f),
-                right = (centerX + targetWidth / 2f).coerceIn(0f, 1f),
-                top = (centerY2 - targetHeight / 2f).coerceIn(0f, 1f),
-                bottom = (centerY2 + targetHeight / 2f).coerceIn(0f, 1f),
+                left = (centerX - halfWidth).coerceIn(0f, 1f),
+                right = (centerX + halfWidth).coerceIn(0f, 1f),
+                top = (centerY2 - halfHeight).coerceIn(0f, 1f),
+                bottom = (centerY2 + halfHeight).coerceIn(0f, 1f),
                 action = RecommendationOverlayController.OverlayTarget.Action.SELECT,
             ),
         )
