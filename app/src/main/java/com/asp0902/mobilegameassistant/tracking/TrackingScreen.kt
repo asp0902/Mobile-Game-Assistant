@@ -1,5 +1,7 @@
 package com.asp0902.mobilegameassistant.tracking
 
+import com.asp0902.mobilegameassistant.analysis.InitialFormationAction
+
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.rememberScrollState
@@ -165,6 +167,60 @@ private fun AnalysisSummary(
         ShopAnalysisUiState.Idle -> Text("AFK 분석을 누르면 상점 OCR을 시작합니다.")
         ShopAnalysisUiState.Analyzing -> Text("상점 분석 중")
         is ShopAnalysisUiState.Error -> Text(analysis.message)
+        ShopAnalysisUiState.HonorDuelStart -> {
+            Text("명예의 결투 시작 화면 인식 완료")
+            Text("지금 시작을 누르면 다음 화면을 자동으로 분석합니다.")
+        }
+        is ShopAnalysisUiState.HonorDuelInitialFormation -> {
+            val offers = analysis.offers
+            Text("명예의 결투 초기 진형 선택 화면")
+            if (offers.isEmpty()) {
+                Text("현재 화면에서 행렬 후보를 확인하지 못했습니다. OCR 좌표 재분석 후 다시 시도합니다.")
+            }
+            offers.forEach { offer ->
+                val artifact = offer.artifactName ?: "미확인 아티팩트"
+                val hidden = if (offer.isRandom) " (랜덤 후보)" else ""
+                val heroText = offer.heroSlots.joinToString(" / ") { hero ->
+                    hero.heroName ?: "미확인"
+                }
+                Text("카드 ${offer.slotIndex + 1}$hidden: $artifact${offer.artifactSource.takeIf { it != "UNMATCHED" }?.let { " ($it)" } ?: ""}")
+                                        Text("아티팩트 인식: ${(offer.artifactConfidence * 100).toInt()}% (${offer.artifactSource})")
+                        offer.heroSlots.forEach { hero ->
+                            val identity = hero.heroName ?: "미확인"
+                            val status = when (hero.status) {
+                                com.asp0902.mobilegameassistant.analysis.HeroRecognitionStatus.CONFIRMED -> "확정"
+                                com.asp0902.mobilegameassistant.analysis.HeroRecognitionStatus.NEEDS_CONFIRMATION -> "후보"
+                                else -> "미확인"
+                            }
+                            val rarity = when (hero.rarity) {
+                                com.asp0902.mobilegameassistant.analysis.HeroRarity.EPIC -> "에픽"
+                                com.asp0902.mobilegameassistant.analysis.HeroRarity.LEGENDARY -> "레전드"
+                                com.asp0902.mobilegameassistant.analysis.HeroRarity.MYTHIC -> "신화"
+                                else -> "등급 미확인"
+                            }
+                            Text("${hero.slotIndex + 1}: $identity / ${hero.faction ?: "진영 미확인"} / ${hero.roleHint ?: "직업 미확인"} / $rarity / $status ${(hero.confidence * 100).toInt()}%")
+                        }
+                if (offer.reasons.isNotEmpty()) Text(offer.reasons.joinToString(" · "))
+            }
+            Text("조건부 전략 비교 (개발 휴리스틱, 승률 아님)")
+            analysis.recommendations.forEach { recommendation ->
+                val action = when (recommendation.action) {
+                    InitialFormationAction.SELECT -> "SELECT"
+                    InitialFormationAction.CONSIDER -> "확인"
+                    InitialFormationAction.SKIP -> "SKIP"
+                }
+                Text("${recommendation.slotIndex + 1}번: $action (${recommendation.score?.toString() ?: "평가 보류"}) — ${recommendation.reason}")
+            }
+        }
+        is ShopAnalysisUiState.Labyrinth -> {
+            Text("이계의 미궁 선택 추천")
+            Text(analysis.message)
+        }
+        is ShopAnalysisUiState.UnsupportedScreen -> {
+            Text("현재 화면을 확인 중입니다.")
+            Text("화면: ${analysis.screenType}")
+            if (analysis.reasons.isNotEmpty()) Text(analysis.reasons.joinToString(" · "))
+        }
         is ShopAnalysisUiState.Result -> {
             val header = analysis.analysis.header
             Text(

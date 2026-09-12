@@ -2,12 +2,17 @@ package com.asp0902.mobilegameassistant.analysis
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 @Singleton
 class HonorDuelShopAnalyzer @Inject constructor(
@@ -16,8 +21,8 @@ class HonorDuelShopAnalyzer @Inject constructor(
 ) {
     private val recognizer = TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
 
-    fun analyze(bitmap: Bitmap, runId: Long? = null): HonorDuelShopAnalysis {
-        val result = Tasks.await(recognizer.process(InputImage.fromBitmap(bitmap, 0)))
+    suspend fun analyze(bitmap: Bitmap, runId: Long? = null): HonorDuelShopAnalysis {
+        val result = processText(InputImage.fromBitmap(bitmap, 0))
         val blocks = result.textBlocks.mapNotNull { block ->
             block.boundingBox?.let { box ->
                 OcrBlock(
@@ -38,11 +43,7 @@ class HonorDuelShopAnalyzer @Inject constructor(
             shopLevel = shopLevel,
             visibleSlotCount = countVisibleSlots(blocks, viewport),
         )
-        val screen = if (shopScreen.type == ScreenType.HONOR_DUEL_SHOP) {
-            shopScreen
-        } else {
-            HonorDuelScreenClassifier.classifyNonShop(allText, shopScreen)
-        }
+        val screen = HonorDuelScreenClassifier.classifyNonShop(allText, shopScreen)
         val header = HonorDuelHeaderParser.parse(blocks, allText, shopLevel)
         val rosterGauges = if (screen.type in OWNED_HERO_SCREENS) extractRosterGauges(bitmap, blocks, viewport) else emptyList()
         return HonorDuelShopAnalysis(
@@ -51,6 +52,11 @@ class HonorDuelShopAnalyzer @Inject constructor(
             screenReasons = screen.reasons,
             header = header,
             shopItems = if (screen.type == ScreenType.HONOR_DUEL_SHOP) extractSlots(bitmap, blocks, viewport, runId) else emptyList(),
+            initialFormation = if (screen.type == ScreenType.HONOR_DUEL_INITIAL_FORMATION_SELECTION) {
+                extractInitialFormation(bitmap, blocks, runId)
+            } else {
+                emptyList()
+            },
             ownedHeroGauges = rosterGauges,
             ownedHeroes = if (screen.type in OWNED_HERO_SCREENS) extractOwnedHeroes(bitmap, blocks, viewport, rosterGauges, runId) else emptyList(),
             ocrBlocks = blocks,
@@ -58,6 +64,17 @@ class HonorDuelShopAnalyzer @Inject constructor(
             heroDetail = if (screen.type == ScreenType.HERO_DETAIL_POPUP) HeroDetailPopupParser.parse(allText) else null,
         )
     }
+
+    private suspend fun processText(input: InputImage): com.google.mlkit.vision.text.Text =
+        suspendCancellableCoroutine { continuation ->
+            val task = recognizer.process(input)
+            task.addOnSuccessListener { text ->
+                if (continuation.isActive) continuation.resume(text)
+            }
+            task.addOnFailureListener { error ->
+                if (continuation.isActive) continuation.resumeWithException(error)
+            }
+        }
 
     private fun countVisibleSlots(blocks: List<OcrBlock>, viewport: GameViewport): Int = SHOP_SLOT_BOUNDS.count { bounds ->
         val frameBounds = viewport.toFrame(bounds)
@@ -168,10 +185,50 @@ class HonorDuelShopAnalyzer @Inject constructor(
             SlotBounds(left, .75f, left + .14f, .92f, .9f)
         }
     }
-}
 
+    private fun extractInitialFormation(
+        bitmap: Bitmap,
+        blocks: List<OcrBlock>,
+        runId: Long?,
+    ): List<InitialFormationOffer> {
+        val viewport = GameViewportDetector.detect(bitmap)
+        return InitialFormationLayout.cards(blocks, viewport).mapIndexed { index, card ->
+            val row = blocks.filter { card.bounds.contains(it.centerX, it.centerY) }
+            val text = row.sortedWith(compareBy<OcrBlock> { it.top }.thenBy { it.left }).joinToString(" ") { it.text }
+            val compact = InitialFormationKnowledge.compact(text)
+            val hidden = compact.contains("랜덤진형") || compact.contains("리스크UP") || compact.contains("물음표")
+            val (artifact, source) = if (hidden) null to "HIDDEN" else InitialFormationLayout.artifact(text)
+            val heroes = if (hidden) emptyList() else card.portraits.mapIndexed { position, bounds ->
+                val localText = row.filter {
+                    it.left >= bounds.left && it.right <= bounds.right &&
+                        it.top >= bounds.top && it.bottom <= bounds.bottom
+                }.joinToString(" ") { it.text }
+                val recognized = heroCatalog.recognizeInitialPortrait(bitmap, bounds, localText)
+                InitialFormationHeroSlot(
+                    slotIndex = position, heroId = recognized.heroId, heroName = recognized.koreanName,
+                    faction = recognized.faction,
+                    roleHint = InitialFormationKnowledge.hero(recognized.koreanName)?.role,
+                    confidence = recognized.confidence, status = recognized.status, bounds = bounds,
+                    sourceText = localText,
+                    rarity = when {
+                        localText.contains("에픽") -> HeroRarity.EPIC
+                        localText.contains("레전드") -> HeroRarity.LEGENDARY
+                        localText.contains("신화") -> HeroRarity.MYTHIC
+                        else -> HeroRarity.UNKNOWN
+                    },
+                )
+            }
+            InitialFormationOffer(index, artifact,
+                if (source == "OCR_MATCH") .95f else if (source == "TITLE_INFERENCE") .65f else 0f,
+                source, heroes, card.bounds, card.button, hidden,
+                listOf(if (hidden) "숨겨진 선택지" else "선택 버튼 좌표 기반 카드 분리"))
+        }
+    }
+}
 enum class ScreenType {
     ARTISANS_PATH_CARD_SELECTION,
+    HONOR_DUEL_START,
+    HONOR_DUEL_INITIAL_FORMATION_SELECTION,
     HONOR_DUEL_SHOP,
     HONOR_DUEL_HERO_MANAGEMENT,
     HONOR_DUEL_HERO_SELL,
@@ -179,6 +236,28 @@ enum class ScreenType {
     HONOR_DUEL_BATTLE_RESULT,
     HERO_DETAIL_POPUP,
     EQUIPMENT_DETAIL_POPUP,
+
+    // 이계의 미궁 (#39). 화면 어휘를 캡처에서 직접 확인한 것만 실제로 판별한다.
+    LABYRINTH_START,
+    LABYRINTH_HERO_SELECT,
+    LABYRINTH_BATTLE_DEPLOY,
+    LABYRINTH_HERO_DETAIL,
+    LABYRINTH_BATTLE_RESULT,
+    LABYRINTH_BATTLE_STATS,
+    LABYRINTH_PATH_SELECT,
+    LABYRINTH_RELIC_GATE,
+    LABYRINTH_CRYSTAL_GATE,
+    LABYRINTH_ITEM_GATE,
+    LABYRINTH_SIGIL_SELECT,
+    LABYRINTH_FITZ_SHOP,
+    LABYRINTH_EVENT_SELECT,
+    LABYRINTH_EXTRA_CHALLENGE,
+    LABYRINTH_BOSS_RESULT,
+    LABYRINTH_DEEP_ENTRY,
+    LABYRINTH_DEEP_BOSS_RESULT,
+    LABYRINTH_RUN_SETTLEMENT,
+    LABYRINTH_UNKNOWN,
+
     OTHER,
     UNKNOWN,
 }
@@ -193,6 +272,23 @@ object HonorDuelScreenClassifier {
     private val factions = listOf("레오프론", "와일더스", "그레이브본", "트라이브", "기타")
     private val roles = listOf("전사", "탱커", "사수", "마법사", "서포터", "레인저")
     private val knownEquipment = listOf("간이 활", "밀림 후드", "생엽", "침묵의 투구")
+    private val artisansCardKeywords = listOf(
+        "벌목장",
+        "나무집 노점",
+        "영롱한 트롤리",
+        "광산",
+        "광석 제련소",
+        "장원 수레",
+        "원소 수집장",
+        "원소 제련소",
+        "연금술 공방",
+        "농지",
+        "농장",
+        "주방",
+        "장식 공방",
+        "들판 이젤",
+        "장원 우물",
+    )
 
     fun classify(
         hasShopTitle: Boolean,
@@ -221,8 +317,55 @@ object HonorDuelScreenClassifier {
     }
 
     fun classifyNonShop(text: String, shopScreen: ScreenClassification): ScreenClassification {
+        // Detail panels take priority over any selection title still visible behind them.
+        if (text.contains("사정거리") && factions.any(text::contains) && roles.any(text::contains)) {
+            return ScreenClassification(ScreenType.HERO_DETAIL_POPUP, .95f, listOf("상세 팝업 우선"))
+        }
+        if (knownEquipment.any(text::contains)) {
+            return ScreenClassification(ScreenType.EQUIPMENT_DETAIL_POPUP, .9f, listOf("장비 상세 우선"))
+        }
+        if (text.contains("경험치") && (text.contains("24") || text.contains("46")) &&
+            InitialFormationKnowledge.artifactHeadlines.keys.any(text::contains)) {
+            return ScreenClassification(ScreenType.EQUIPMENT_DETAIL_POPUP, .95f, listOf("아티팩트 상세 패널: 후보 강조 중지"))
+        }
+        val compact = text.replace(Regex("\\s+"), "")
+        val normalized = compact.replace(Regex("[^가-힣A-Za-z0-9]"), "")
+        val hasStart = compact.contains("지금시작")
+        val hasTitle = compact.contains("명예의결투")
+        val hasInitialFormationTitle = normalized.contains("초기진형을선택하세요") || normalized.contains("초기진형선택")
+        val lobbySignals = listOf("시즌영웅", "대전기록", "누적포인트", "축복열쇠")
+            .filter(compact::contains)
+        if (hasStart && (hasTitle || lobbySignals.size >= 2)) {
+            return ScreenClassification(
+                ScreenType.HONOR_DUEL_START,
+                if (hasTitle) 0.95f else 0.85f,
+                listOf("지금 시작 버튼") + (if (hasTitle) listOf("명예의 결투 제목") else emptyList()) + lobbySignals,
+            )
+        }
+        if (hasInitialFormationTitle) {
+            return ScreenClassification(
+                ScreenType.HONOR_DUEL_INITIAL_FORMATION_SELECTION,
+                0.97f,
+                listOf("초기 진형 제목"),
+            )
+        }
+        if (looksLikeInitialFormationSelection(compact)) {
+            return ScreenClassification(
+                ScreenType.HONOR_DUEL_INITIAL_FORMATION_SELECTION,
+                0.91f,
+                listOf("초기 진형 화면 구조"),
+            )
+        }
         if (text.contains("장인의 길")) {
             return ScreenClassification(ScreenType.ARTISANS_PATH_CARD_SELECTION, 0.95f, listOf("장인의 길 제목"))
+        }
+        val artisanSignals = detectArtisansSignals(text)
+        if (artisanSignals.size >= 2) {
+            return ScreenClassification(
+                ScreenType.ARTISANS_PATH_CARD_SELECTION,
+                0.9f,
+                listOf("장인의 길 구조 신호") + artisanSignals,
+            )
         }
         val heroDetail = factions.any(text::contains) && roles.any(text::contains) && text.contains("사정거리")
         if (heroDetail) {
@@ -245,6 +388,66 @@ object HonorDuelScreenClassifier {
         }
         return shopScreen
     }
+
+    private fun detectArtisansSignals(text: String): List<String> {
+        val signals = mutableListOf<String>()
+        val compact = text.replace(" ", "")
+        if (containsRoundSignal(compact)) signals.add("라운드 패턴")
+        if (containsCurrentPointSignal(compact)) signals.add("현재 포인트")
+        if (containsDeckSignal(compact)) signals.add("카드 덱")
+        if (containsCheckpointSignal(compact)) signals.add("보상 컷")
+        if (containsRewardSelectionSignal(compact)) signals.add("보상 1개 선택")
+        if (containsArtisansCandidate(compact)) signals.add("장인의 길 후보")
+        return signals
+    }
+
+    private fun containsRoundSignal(text: String): Boolean {
+        return Regex("라운드\\s*(\\d+)\\s*/\\s*24").containsMatchIn(text) ||
+            Regex("(\\d+)\\s*/\\s*24").containsMatchIn(text)
+    }
+
+    private fun containsCurrentPointSignal(text: String): Boolean {
+        return Regex("현재\\s*포인트").containsMatchIn(text) || Regex("현재\\s*점수").containsMatchIn(text)
+    }
+
+    private fun containsDeckSignal(text: String): Boolean {
+        return Regex("카드\\s*덱").containsMatchIn(text)
+    }
+
+    private fun containsCheckpointSignal(text: String): Boolean {
+        return text.contains("1000포인트달성시") || text.contains("추가건물획득")
+    }
+
+    private fun containsRewardSelectionSignal(text: String): Boolean {
+        return text.contains("보상") && text.contains("선택")
+    }
+
+    private fun looksLikeInitialFormationSelection(compact: String): Boolean {
+        if (!compact.contains("선택")) return false
+        if (Regex("선택").findAll(compact).count() < 2) return false
+
+        val signals = mutableSetOf<String>()
+        if (compact.contains("초상화") || compact.contains("물음표")) {
+            signals.add("초상화/선택 카드")
+        }
+        if (compact.contains("영웅") || compact.contains("트롤리") || compact.contains("소환") || compact.contains("가면")) {
+            signals.add("카드 텍스트 단서")
+        }
+        if (compact.contains("재화") || Regex("\\b60\\b|\\b70\\b|\\b1000\\b").containsMatchIn(compact)) {
+            signals.add("가격/재화 단서")
+        }
+        if (compact.contains("진형") || compact.contains("리스크") || compact.contains("수익")) {
+            signals.add("진형/운용 단서")
+        }
+
+        return signals.size >= 2
+    }
+
+    private fun containsArtisansCandidate(text: String): Boolean {
+        return artisansCardKeywords.any { normalizedCard -> compactContains(text, normalizedCard) }
+    }
+
+    private fun compactContains(text: String, target: String): Boolean = text.contains(target.replace(" ", ""))
 }
 
 enum class ShopItemType {
@@ -401,6 +604,43 @@ data class SlotVisualEvidence @JvmOverloads constructor(
 }
 
 enum class HeroRarity { EPIC, LEGENDARY, MYTHIC, UNKNOWN }
+
+private data class InitialFormationArtifactRecognition(
+    val name: String?,
+    val confidence: Float,
+    val source: String,
+)
+
+data class InitialFormationHeroSlot(
+    val slotIndex: Int,
+    val heroId: String? = null,
+    val heroName: String? = null,
+    val faction: String? = null,
+    val roleHint: String? = null,
+    val confidence: Float = 0f,
+    val status: HeroRecognitionStatus = HeroRecognitionStatus.UNKNOWN,
+    val bounds: NormalizedRect,
+    val sourceText: String = "",
+    val rarity: HeroRarity = HeroRarity.UNKNOWN,
+)
+
+data class InitialFormationOffer(
+    val slotIndex: Int,
+    val artifactName: String? = null,
+    val artifactConfidence: Float = 0f,
+    val artifactSource: String = "UNMATCHED",
+    val heroSlots: List<InitialFormationHeroSlot> = emptyList(),
+    val rowBounds: NormalizedRect = NormalizedRect(0f, 0f, 0f, 0f),
+    val selectButtonBounds: NormalizedRect? = null,
+    val isRandom: Boolean = false,
+    val reasons: List<String> = emptyList(),
+)
+
+private data class InitialFormationRow(
+    val blocks: List<OcrBlock>,
+    val bounds: NormalizedRect,
+    val text: String,
+)
 
 data class HeroOfferClassification(
     val type: ShopItemType = ShopItemType.UNKNOWN,
@@ -580,4 +820,5 @@ data class HonorDuelShopAnalysis @JvmOverloads constructor(
     val heroDetail: HeroDetailPopup? = null,
     val ownedHeroGauges: List<OwnedHeroGaugeSlot> = emptyList(),
     val ownedHeroes: List<OwnedHeroState> = emptyList(),
+    val initialFormation: List<InitialFormationOffer> = emptyList(),
 )

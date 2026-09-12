@@ -76,13 +76,17 @@ object ArtisansPathAdvisor {
 
     fun analyze(text: String): ArtisansPathAnalysis? = analyze(text, emptyList())
 
-    fun analyze(text: String, blocks: List<OcrBlock>): ArtisansPathAnalysis? = analyze(text, blocks, null)
-
-    fun analyze(text: String, blocks: List<OcrBlock>, scoreHint: Int? = null): ArtisansPathAnalysis? {
+    @JvmOverloads
+    fun analyze(
+        text: String,
+        blocks: List<OcrBlock>,
+        scoreHint: Int? = null,
+        screenConfirmed: Boolean = false,
+    ): ArtisansPathAnalysis? {
         val candidates = parseCandidates(text, blocks)
         val hasArtisansSignal = text.contains("장인의 길")
         val recognized = candidates.mapNotNull { cardByName(it.name) }.toList()
-        if (!hasArtisansSignal && recognized.isEmpty()) return null
+        if (!screenConfirmed && !hasArtisansSignal && recognized.isEmpty()) return null
 
         val normalizedText = text.replace("\\s+".toRegex(), " ").trim()
         val round = parseRound(normalizedText)

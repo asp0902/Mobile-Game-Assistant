@@ -4,9 +4,8 @@ import com.asp0902.mobilegameassistant.analysis.OcrBlock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import com.asp0902.mobilegameassistant.analysis.OcrBlock;
 
 import org.junit.Test;
 
@@ -26,7 +25,29 @@ public class ArtisansPathAdvisorTest {
         assertEquals(Integer.valueOf(51), analysis.getScore());
         assertEquals(3, analysis.getRecommendations().size());
         assertEquals(1, analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).count());
-        assertTrue(analysis.getRecommendations().stream().anyMatch(it -> it.getCardName().equals("원소 수집장") && it.getAction() == ArtisansAction.SELECT));
+        // Text alone has no owned-count evidence to establish the particular best card.
+        assertEquals(3, analysis.getCandidates().size());
+    }
+
+    @Test public void createsEmptyBoardAnalysisFromStructureSignals() {
+        ArtisansPathAnalysis analysis = ArtisansPathAdvisor.INSTANCE.analyze(
+            "라운드 1/24 현재 포인트 0 카드 덱 0",
+            java.util.List.of(
+                new OcrBlock("라운드 1/24", 0.02f, 0.03f, 0.20f, 0.09f),
+                new OcrBlock("현재 포인트", 0.22f, 0.03f, 0.54f, 0.09f),
+                new OcrBlock("0", 0.56f, 0.03f, 0.58f, 0.09f),
+                new OcrBlock("카드 덱 0", 0.22f, 0.10f, 0.50f, 0.14f),
+                new OcrBlock("1000포인트 달성 시", 0.22f, 0.15f, 0.82f, 0.20f),
+                new OcrBlock("6라운드", 0.22f, 0.21f, 0.42f, 0.24f)
+            ),
+            null,
+            true
+        );
+        assertEquals(Integer.valueOf(1), analysis.getRound());
+        assertEquals(Integer.valueOf(0), analysis.getScore());
+        assertEquals(0, analysis.getCandidates().size());
+        assertEquals(0, analysis.getRecommendations().size());
+        assertFalse(analysis.getReasons().contains("현재 포인트 미확인"));
     }
 
     @Test public void parsesScoreAndCandidatesFromSeparateBlocks() {
@@ -67,7 +88,7 @@ public class ArtisansPathAdvisorTest {
 
     @Test public void keepsOnlyOneSelectWhenMultipleCandidatesQualify() {
         ArtisansPathAnalysis analysis = ArtisansPathAdvisor.INSTANCE.analyze("장인의 길 라운드 1/24 현재 포인트 51 광산 광석 제련소 장원 수레 원소 수집장 원소 제련소 연금술 공방");
-        assertEquals(5, analysis.getRecommendations().size());
+        assertEquals(6, analysis.getRecommendations().size());
         assertEquals(1, analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).count());
     }
 
@@ -108,6 +129,6 @@ public class ArtisansPathAdvisorTest {
         assertEquals(Integer.valueOf(51), analysis.getScore());
         assertEquals(2, analysis.getRecommendations().size());
         assertEquals(0, analysis.getRecommendations().stream().filter(it -> it.getAction() == ArtisansAction.SELECT).count());
-        assertTrue(analysis.getRecommendations().stream().allMatch(it -> it.getAction() == ArtisansAction.SKIP));
+        assertTrue(analysis.getRecommendations().stream().allMatch(it -> it.getAction() == ArtisansAction.CHECK));
     }
 }

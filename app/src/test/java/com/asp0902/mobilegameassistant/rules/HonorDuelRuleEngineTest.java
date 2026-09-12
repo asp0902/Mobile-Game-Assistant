@@ -121,7 +121,7 @@ public class HonorDuelRuleEngineTest {
     private static ShopItemState offer(int slot, String heroId, int quantity, int price) {
         return new ShopItemState(slot, quantity > 1 ? ShopItemType.HERO_BUNDLE : ShopItemType.HERO, price, null, .95f,
                 null, Collections.emptyList(), heroId, heroId, "레오프론", HeroRecognitionStatus.CONFIRMED,
-                quantity, HeroRarity.EPIC, false, null, null, null);
+                quantity, HeroRarity.EPIC, false, null, com.asp0902.mobilegameassistant.analysis.RecognitionSource.AUTO, null);
     }
 
     private static OwnedHeroState hero(String id, String name, int progress, boolean maxRank) {

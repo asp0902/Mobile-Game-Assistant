@@ -88,8 +88,43 @@ class HeroRecognitionCatalog @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) {
     private val learningData by lazy { loadLearningData() }
-    private val heroes by lazy { (loadManifest() + learningData.heroes + SCREEN_CONFIRMED_HEROES).distinctBy { it.koreanName } }
+    private val heroes by lazy {
+        val existing = (loadManifest() + learningData.heroes + SCREEN_CONFIRMED_HEROES).distinctBy { it.koreanName }
+        val verified = InitialFormationKnowledge.heroes.map { hero ->
+            HeroReference(existing.firstOrNull { it.koreanName == hero.name }?.id ?: hero.id,
+                hero.name, hero.faction, "hero_recognition/initial_formation/${hero.id}.png")
+        }
+        (verified + existing).distinctBy { it.koreanName }
+    }
     private val templates by lazy { heroes.mapNotNull(::template) }
+    private val formationTemplates by lazy {
+        heroes.mapNotNull { hero ->
+            hero.portraitAsset?.let { asset -> runCatching {
+                context.assets.open(asset).use(BitmapFactory::decodeStream)?.let { bitmap ->
+                    try { hero to FormationPortraitFingerprint.sample(bitmap.width, bitmap.height,
+                        NormalizedRect(0f, 0f, 1f, 1f), bitmap::getPixel) } finally { bitmap.recycle() }
+                }
+            }.getOrNull() }
+        }
+    }
+
+    fun recognizeInitialPortrait(bitmap: Bitmap, bounds: NormalizedRect, text: String): HeroRecognitionResult {
+        val byName = HeroIdentityResolver.resolveText(text, heroes, learningData.nameCorrections)
+        val signature = FormationPortraitFingerprint.sample(bitmap.width, bitmap.height, bounds, bitmap::getPixel)
+        val scores = formationTemplates.map { (hero, reference) ->
+            hero to FormationPortraitFingerprint.similarity(signature, reference)
+        }
+        val byImage = HeroIdentityResolver.resolveScores(scores).let {
+            if (it.heroId == null) it else it.copy(confidence = scores.maxOf { pair -> pair.second })
+        }
+        if (byName.status == HeroRecognitionStatus.CONFIRMED) {
+            if (byImage.status == HeroRecognitionStatus.CONFIRMED && byImage.heroId != byName.heroId) {
+                return HeroRecognitionResult(reasons = listOf("이름과 초상화 충돌: 확인 필요"))
+            }
+            return byName
+        }
+        return byImage
+    }
 
     fun recognize(
         bitmap: Bitmap,
@@ -146,17 +181,22 @@ class HeroRecognitionCatalog @Inject constructor(
         }
     }.getOrDefault(LearningHeroData())
 
-    private fun template(hero: HeroReference): HeroTemplate? = hero.portraitAsset?.let { asset ->
-        context.assets.open(asset).use(BitmapFactory::decodeStream)?.let { HeroTemplate(hero, signature(it, null)) }
-    }
+    private fun template(hero: HeroReference): HeroTemplate? = hero.portraitAsset?.let { asset -> runCatching {
+        context.assets.open(asset).use(BitmapFactory::decodeStream)?.let {
+            try { HeroTemplate(hero, signature(it, null)) } finally { it.recycle() }
+        }
+    }.getOrNull() }
 
     private fun signature(bitmap: Bitmap, bounds: NormalizedRect?): IntArray {
         val crop = bounds?.let { crop(bitmap, it) } ?: bitmap
         val scaled = Bitmap.createScaledBitmap(crop, 16, 16, true)
-        return IntArray(16 * 16) { index ->
+        val result = IntArray(16 * 16) { index ->
             val color = scaled.getPixel(index % 16, index / 16)
             (android.graphics.Color.red(color) + android.graphics.Color.green(color) + android.graphics.Color.blue(color)) / 3
         }
+        if (scaled !== crop) scaled.recycle()
+        if (crop !== bitmap) crop.recycle()
+        return result
     }
 
     private fun crop(bitmap: Bitmap, bounds: NormalizedRect): Bitmap {

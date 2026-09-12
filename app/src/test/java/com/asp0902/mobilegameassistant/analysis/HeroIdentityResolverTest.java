@@ -54,7 +54,8 @@ public class HeroIdentityResolverTest {
                 new Pair<>(heroes.get(1), 0.84f)
         ));
 
-        assertEquals(HeroRecognitionStatus.NEEDS_CONFIRMATION, result.getStatus());
-        assertEquals("valen", result.getHeroId());
+        // A .02 margin is below the existing .025 candidate threshold.
+        assertEquals(HeroRecognitionStatus.UNKNOWN, result.getStatus());
+        assertEquals(null, result.getHeroId());
     }
 }

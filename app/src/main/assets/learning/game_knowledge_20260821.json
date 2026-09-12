@@ -3,59 +3,284 @@
   "policy": {
     "language": "ko-KR",
     "maxPartySize": 5,
-    "priority": ["user_correction", "screen_confirmed", "ocr_or_vision", "inference"],
-    "preserve": ["source_media", "confidence", "battle_stats", "death_timeline"]
+    "priority": [
+      "user_correction",
+      "screen_confirmed",
+      "ocr_or_vision",
+      "inference"
+    ],
+    "preserve": [
+      "source_media",
+      "confidence",
+      "battle_stats",
+      "death_timeline"
+    ]
   },
   "nameCorrections": [
-    {"wrong": "류윈", "correct": "후긴"},
-    {"wrong": "휴윈", "correct": "후긴"},
-    {"wrong": "휴긴", "correct": "후긴"}
+    {
+      "wrong": "휴긴",
+      "correct": "후긴"
+    },
+    {
+      "wrong": "류윈",
+      "correct": "휴윈"
+    }
   ],
   "heroes": [
-    {"id": "galahad", "name": "갈라하드", "faction": "UNKNOWN"},
-    {"id": "semira", "name": "세미라", "faction": "그레이브본"},
-    {"id": "aurora", "name": "아로라", "faction": "UNKNOWN"},
-    {"id": "silvina", "name": "실벤", "faction": "레오프론"},
-    {"id": "wing", "name": "윙", "faction": "그레이브본"},
-    {"id": "palmer", "name": "팔라모르", "faction": "UNKNOWN"},
-    {"id": "cecia", "name": "세시아", "faction": "그레이브본"},
-    {"id": "bonnie", "name": "보니", "faction": "그레이브본"},
-    {"id": "remia", "name": "레미아", "faction": "UNKNOWN"},
-    {"id": "eddy", "name": "에디", "faction": "UNKNOWN"},
-    {"id": "arden", "name": "아든", "faction": "UNKNOWN"},
-    {"id": "soren", "name": "소렌", "faction": "UNKNOWN"},
-    {"id": "nerion", "name": "네리온", "faction": "그레이브본"},
-    {"id": "lyca", "name": "라이카", "faction": "UNKNOWN"},
-    {"id": "smokey_mirky", "name": "스모키와 미르키", "faction": "UNKNOWN"},
-    {"id": "queen", "name": "퀸", "faction": "와일더스"},
-    {"id": "hugin", "name": "후긴", "faction": "레오프론"},
-    {"id": "pandora", "name": "판도라", "faction": "UNKNOWN"},
-    {"id": "ulmus", "name": "울머스", "faction": "UNKNOWN"},
-    {"id": "daimon", "name": "데이먼", "faction": "그레이브본"},
-    {"id": "antandra", "name": "안탄드라", "faction": "UNKNOWN"},
-    {"id": "kai", "name": "카이", "faction": "UNKNOWN"},
-    {"id": "lucius", "name": "루시우스", "faction": "레오프론"},
-    {"id": "gerda", "name": "게르다", "faction": "UNKNOWN"},
-    {"id": "tudor", "name": "튜더", "faction": "UNKNOWN"},
-    {"id": "fay", "name": "페이", "faction": "레오프론"},
-    {"id": "niru", "name": "니루", "faction": "그레이브본"},
-    {"id": "luca", "name": "루카", "faction": "레오프론"},
-    {"id": "rowan", "name": "로완", "faction": "레오프론"},
-    {"id": "walker", "name": "워커", "faction": "레오프론"},
-    {"id": "hammie", "name": "해미", "faction": "레오프론"},
-    {"id": "valen", "name": "발렌", "faction": "레오프론"},
-    {"id": "chippy", "name": "치피", "faction": "레오프론"}
+    {
+      "id": "galahad",
+      "name": "갈라하드",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "semira",
+      "name": "세미라",
+      "faction": "그레이브본"
+    },
+    {
+      "id": "aurora",
+      "name": "아로라",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "silvina",
+      "name": "실벤",
+      "faction": "레오프론"
+    },
+    {
+      "id": "wing",
+      "name": "윙",
+      "faction": "그레이브본"
+    },
+    {
+      "id": "palmer",
+      "name": "팔라모르",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "cecia",
+      "name": "세시아",
+      "faction": "그레이브본"
+    },
+    {
+      "id": "bonnie",
+      "name": "보니",
+      "faction": "그레이브본"
+    },
+    {
+      "id": "remia",
+      "name": "레미아",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "eddy",
+      "name": "에디",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "arden",
+      "name": "아든",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "soren",
+      "name": "소렌",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "nerion",
+      "name": "네리온",
+      "faction": "그레이브본"
+    },
+    {
+      "id": "lyca",
+      "name": "라이카",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "smokey_mirky",
+      "name": "스모키와 미르키",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "queen",
+      "name": "퀸",
+      "faction": "와일더스"
+    },
+    {
+      "id": "hugin",
+      "name": "후긴",
+      "faction": "레오프론"
+    },
+    {
+      "id": "pandora",
+      "name": "판도라",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "ulmus",
+      "name": "울머스",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "daimon",
+      "name": "데이먼",
+      "faction": "그레이브본"
+    },
+    {
+      "id": "antandra",
+      "name": "안탄드라",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "kai",
+      "name": "카이",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "lucius",
+      "name": "루시우스",
+      "faction": "레오프론"
+    },
+    {
+      "id": "gerda",
+      "name": "게르다",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "tudor",
+      "name": "튜더",
+      "faction": "UNKNOWN"
+    },
+    {
+      "id": "fay",
+      "name": "페이",
+      "faction": "레오프론"
+    },
+    {
+      "id": "niru",
+      "name": "니루",
+      "faction": "그레이브본"
+    },
+    {
+      "id": "luca",
+      "name": "루카",
+      "faction": "레오프론"
+    },
+    {
+      "id": "rowan",
+      "name": "로완",
+      "faction": "레오프론"
+    },
+    {
+      "id": "walker",
+      "name": "워커",
+      "faction": "레오프론"
+    },
+    {
+      "id": "hammie",
+      "name": "해미",
+      "faction": "레오프론"
+    },
+    {
+      "id": "valen",
+      "name": "발렌",
+      "faction": "레오프론"
+    },
+    {
+      "id": "chippy",
+      "name": "치피",
+      "faction": "레오프론"
+    },
+    {
+      "id": "huwin",
+      "name": "휴윈",
+      "faction": "와일더스"
+    },
+    {
+      "id": "eiron",
+      "name": "에이론",
+      "faction": "와일더스"
+    }
   ],
   "modeConstraints": [
-    {"mode": "이계의 미궁", "fixedHeroes": ["신태일&아구몬", "매튜&파피몬"], "changeableSlots": 3},
-    {"mode": "영원의 탑", "allowedFaction": "그레이브본"},
-    {"mode": "천공의 시련: 빛의 탑", "allowedFaction": "레오프론", "excludedCandidates": ["소렌"]}
+    {
+      "mode": "이계의 미궁",
+      "fixedHeroes": [
+        "신태일&아구몬",
+        "매튜&파피몬"
+      ],
+      "changeableSlots": 3
+    },
+    {
+      "mode": "영원의 탑",
+      "allowedFaction": "그레이브본"
+    },
+    {
+      "mode": "천공의 시련: 빛의 탑",
+      "allowedFaction": "레오프론",
+      "excludedCandidates": [
+        "소렌"
+      ]
+    }
   ],
   "verifiedBaselines": [
-    {"mode": "천공의 시련: 의지의 탑", "stage": "1층", "result": "승리", "party": ["안탄드라", "고르단", "스모키와 미르키", "에디", "갈라하드"], "mainTank": "안탄드라", "mainDps": "갈라하드"},
-    {"mode": "천공의 시련: 빛의 탑", "stage": "1층", "result": "승리", "party": ["루시우스", "발렌", "후긴", "로완", "실벤"], "mainTank": "루시우스", "mainDps": "실벤"}
+    {
+      "mode": "천공의 시련: 의지의 탑",
+      "stage": "1층",
+      "result": "승리",
+      "party": [
+        "안탄드라",
+        "고르단",
+        "스모키와 미르키",
+        "에디",
+        "갈라하드"
+      ],
+      "mainTank": "안탄드라",
+      "mainDps": "갈라하드"
+    },
+    {
+      "mode": "천공의 시련: 빛의 탑",
+      "stage": "1층",
+      "result": "승리",
+      "party": [
+        "루시우스",
+        "발렌",
+        "후긴",
+        "로완",
+        "실벤"
+      ],
+      "mainTank": "루시우스",
+      "mainDps": "실벤"
+    }
   ],
   "failureKnowledge": [
-    {"mode": "이계의 미궁", "stage": "모험 2-10", "enemy": "빛나는 꽃의 여왕", "priority": ["first_aoe_survival", "second_aoe_survival", "energy_reduction_and_healing_denial", "dps"], "deaths": [{"event": "first_aoe", "heroes": ["퀸", "매튜&파피몬"]}, {"event": "second_aoe", "heroes": ["루시우스", "울머스"]}]}
+    {
+      "mode": "이계의 미궁",
+      "stage": "모험 2-10",
+      "enemy": "빛나는 꽃의 여왕",
+      "priority": [
+        "first_aoe_survival",
+        "second_aoe_survival",
+        "energy_reduction_and_healing_denial",
+        "dps"
+      ],
+      "deaths": [
+        {
+          "event": "first_aoe",
+          "heroes": [
+            "퀸",
+            "매튜&파피몬"
+          ]
+        },
+        {
+          "event": "second_aoe",
+          "heroes": [
+            "루시우스",
+            "울머스"
+          ]
+        }
+      ]
+    }
   ]
 }
