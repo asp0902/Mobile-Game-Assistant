@@ -258,42 +258,40 @@ object ArtisansPathAdvisor {
     private data class ParsedScore(val value: Int, val confidence: Float)
 
     private fun parseCurrentScore(text: String, blocks: List<OcrBlock>, round: Int?): ParsedScore? {
-        val candidate = parseScoreFromBlocks(blocks)
-        if (candidate != null && candidate.value != round) return candidate
-        return parseScoreFromSentence(text)?.takeIf { it.value != round } ?: if (candidate != null && round == null) candidate else null
+        val candidate = parseScoreFromBlocks(blocks, round)
+        if (candidate != null) return candidate
+        return parseScoreFromSentence(text, round)?.takeIf { it.value != round }
     }
 
-    private fun parseScoreFromBlocks(blocks: List<OcrBlock>): ParsedScore? {
+    private fun parseScoreFromBlocks(
+        blocks: List<OcrBlock>,
+        round: Int?,
+    ): ParsedScore? {
         if (blocks.isEmpty()) return null
         val anchors = blocks.filter { isCurrentPointAnchor(it.text) }
         if (anchors.isEmpty()) return null
         anchors.mapNotNull { parseStrictNumber(it.text) }.firstOrNull()?.let {
             return ParsedScore(it, SCORE_FROM_CANDIDATE)
         }
-        val scoreBlock = blocks
-            .filter { parseStrictNumber(it.text) != null }
-            .filter { block ->
-                val value = parseStrictNumber(block.text) ?: return@filter false
-                !isForbiddenScoreNumber(block.text, value) && !isAdjacentToForbiddenHint(block, blocks)
-            }
-            .mapNotNull { block ->
+        val score = groupAdjacentDigits(blocks)
+            .filter { !isForbiddenScoreNumber(it.text, it.value, round) && !isAdjacentToForbiddenHint(it, blocks) }
+            .mapNotNull { group ->
                 val distance = anchors.minOf { anchor ->
-                    abs(anchor.centerX - block.centerX) * 0.25f + abs(anchor.centerY - block.centerY)
+                    abs(anchor.centerX - group.centerX) * 0.25f + abs(anchor.centerY - group.centerY)
                 }
                 if (distance > 0.18f) return@mapNotNull null
-                val value = parseStrictNumber(block.text) ?: return@mapNotNull null
-                ParsedScoreCandidate(value, distance)
+                ParsedScoreCandidate(group.value, distance)
             }
             .minByOrNull { it.distance }
             ?.value
-        if (scoreBlock == null) return null
-        return ParsedScore(scoreBlock, SCORE_FROM_CANDIDATE)
+        if (score == null) return null
+        return ParsedScore(score, SCORE_FROM_CANDIDATE)
     }
 
-    private fun parseScoreFromSentence(text: String): ParsedScore? {
+    private fun parseScoreFromSentence(text: String, round: Int?): ParsedScore? {
         val pattern = Regex("(?:현재\\s*)?(?:점수|포인트|스코어)\\s*[:：]?\\s*([\\d,]+)")
         val value = pattern.find(text)?.groupValues?.getOrNull(1)?.replace(",", "")?.toIntOrNull() ?: return null
-        if (isForbiddenScoreNumber(value.toString(), value)) return null
+        if (isForbiddenScoreNumber(value.toString(), value, round)) return null
         return ParsedScore(value, SCORE_FROM_TEXT)
     }
 
@@ -302,7 +300,12 @@ object ArtisansPathAdvisor {
         return normalized.matches(Regex("\\d+"))
     }
 
-    private fun isForbiddenScoreNumber(text: String, value: Int): Boolean {
+    private fun isForbiddenScoreNumber(
+        text: String,
+        value: Int,
+        round: Int?,
+    ): Boolean {
+        if (value == round) return true
         if (value == 1000) return true
         if (text.contains("/")) return true
         if (text.contains("보유") && value in 0..9) return true
@@ -328,11 +331,60 @@ object ArtisansPathAdvisor {
         return trimmed.replace(",", "").toIntOrNull()
     }
 
-    private fun isAdjacentToForbiddenHint(block: OcrBlock, blocks: List<OcrBlock>): Boolean {
+    private fun groupAdjacentDigits(blocks: List<OcrBlock>): List<NumericGroup> {
+        val rows = groupByRows(blocks.filter { parseStrictNumber(it.text) != null })
+            .map { row -> row.sortedBy { it.centerX } }
+        val gapTolerance = 0.06f
+        return rows.flatMap { row ->
+            val groups = mutableListOf<MutableList<OcrBlock>>()
+            for (block in row) {
+                val last = groups.lastOrNull()
+                if (last == null || block.left - (last.last().right) > gapTolerance) {
+                    groups.add(mutableListOf(block))
+                } else {
+                    last.add(block)
+                }
+            }
+            groups.mapNotNull { group ->
+                if (group.isEmpty()) return@mapNotNull null
+                val joined = group.joinToString("") { parseStrictNumber(it.text)?.toString().orEmpty() }
+                val value = joined.toIntOrNull() ?: return@mapNotNull null
+                NumericGroup(
+                    text = joined,
+                    value = value,
+                    blocks = group,
+                    bounds = NormalizedRect(
+                        left = group.minOf { it.left },
+                        top = group.minOf { it.top },
+                        right = group.maxOf { it.right },
+                        bottom = group.maxOf { it.bottom },
+                    ),
+                )
+            }
+        }
+    }
+
+    private data class NumericGroup(
+        val text: String,
+        val value: Int,
+        val blocks: List<OcrBlock>,
+        val bounds: NormalizedRect,
+    ) {
+        val centerX: Float
+            get() = (bounds.left + bounds.right) / 2f
+        val centerY: Float
+            get() = (bounds.top + bounds.bottom) / 2f
+    }
+
+    private fun isAdjacentToForbiddenHint(
+        candidate: NumericGroup,
+        blocks: List<OcrBlock>,
+    ): Boolean {
         val forbidden = listOf("보유", "보유수", "덱", "덱수", "라운드", "카드", "보유 수", "덱 수")
         return blocks.any {
-            it != block &&
-                abs(it.centerY - block.centerY) <= 0.04f &&
+            it !in candidate.blocks &&
+                abs(it.centerY - candidate.centerY) <= 0.04f &&
+                abs(it.centerX - candidate.centerX) <= 0.08f &&
                 forbidden.any { forbiddenWord -> normalizeCardText(it.text).contains(forbiddenWord) }
         }
     }
