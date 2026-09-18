@@ -204,7 +204,7 @@ class TrackingViewModel @Inject constructor(
                     }
                 }.onFailure {
                     if (it is CancellationException || analysisId != analysisSequence.get()) return@onFailure
-                    overlayController.hide()
+                    overlayController.clearTargets()
                     mutableAnalysis.value = ShopAnalysisUiState.Error("OCR 분석 실패: ${it.message ?: "알 수 없음"}")
                 }
             }
@@ -232,7 +232,7 @@ class TrackingViewModel @Inject constructor(
             else -> null
         }?.trim()
         if (text == null && targets.isEmpty()) {
-            overlayController.hide()
+            overlayController.clearTargets()
             return
         }
         overlayController.show(text?.ifBlank { null }, targets)

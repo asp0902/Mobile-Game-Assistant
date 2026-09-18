@@ -12,10 +12,11 @@ import android.os.Looper
 import android.provider.Settings
 import android.view.Gravity
 import android.view.View
+import android.view.MotionEvent
+import android.view.ViewConfiguration
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.TextView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,7 +28,6 @@ class RecommendationOverlayController @Inject constructor(
     private val mainHandler = Handler(Looper.getMainLooper())
     private val windowManager = context.getSystemService(WindowManager::class.java)
     private var root: FrameLayout? = null
-    private var label: TextView? = null
     private var effects: EffectView? = null
     private var toggle: ImageButton? = null
     private val preferences = context.getSharedPreferences("tracker-overlay", Context.MODE_PRIVATE)
@@ -35,7 +35,7 @@ class RecommendationOverlayController @Inject constructor(
 
     fun show(text: String?, targets: List<OverlayTarget> = emptyList()) = mainHandler.post {
         if (!Settings.canDrawOverlays(context)) return@post
-        val overlayRoot = root ?: FrameLayout(context).also { created ->
+        root ?: FrameLayout(context).also { created ->
             val effectView = EffectView(context)
             created.addView(effectView, FrameLayout.LayoutParams(-1, -1))
             effects = effectView
@@ -43,29 +43,8 @@ class RecommendationOverlayController @Inject constructor(
                 .onSuccess { root = created }
                 .onFailure { return@post }
         }
-        if (text.isNullOrBlank()) {
-            label?.let {
-                overlayRoot.removeView(it)
-                label = null
-            }
-        } else {
-            val overlayLabel = label ?: TextView(context).also { created ->
-                created.setTextColor(Color.WHITE)
-                created.textSize = 14f
-                created.setPadding(24, 16, 24, 16)
-                created.background = GradientDrawable().apply {
-                    setColor(0xDD1B2735.toInt())
-                    cornerRadius = 20f
-                }
-                overlayRoot.addView(created, FrameLayout.LayoutParams(-2, -2, Gravity.TOP or Gravity.END).apply {
-                    topMargin = (96 * context.resources.displayMetrics.density).toInt()
-                    rightMargin = 24
-                })
-                label = created
-            }
-            overlayLabel.text = text
-        }
-        effects?.targets = targets
+        // Diagnostics stay in the app, never over the game's OCR input.
+        effects?.targets = targets.filter { it.action == OverlayTarget.Action.SELECT }
         ensureToggle()
         updateVisibility()
     }
@@ -81,8 +60,9 @@ class RecommendationOverlayController @Inject constructor(
             setPadding(inset, inset, inset, inset)
             background = GradientDrawable().apply {
                 setColor(0xEE1B2735.toInt())
-                cornerRadius = 12 * density
+                shape = GradientDrawable.OVAL
             }
+            clipToOutline = true
             setOnClickListener {
                 collapsed = !collapsed
                 preferences.edit().putBoolean("collapsed", collapsed).apply()
@@ -96,9 +76,52 @@ class RecommendationOverlayController @Inject constructor(
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.TRANSLUCENT,
         ).apply {
-            gravity = Gravity.TOP or Gravity.END
-            x = (12 * density).toInt()
-            y = (40 * density).toInt()
+            gravity = Gravity.TOP or Gravity.LEFT
+            x = preferences.getInt("x", context.resources.displayMetrics.widthPixels - width - (12 * density).toInt())
+            y = preferences.getInt("y", (40 * density).toInt())
+        }
+        fun clampPosition() {
+            val metrics = context.resources.displayMetrics
+            params.x = params.x.coerceIn(0, (metrics.widthPixels - params.width).coerceAtLeast(0))
+            params.y = params.y.coerceIn(0, (metrics.heightPixels - params.height - (48 * density).toInt()).coerceAtLeast(0))
+        }
+        clampPosition()
+        var downX = 0f
+        var downY = 0f
+        var startX = 0
+        var startY = 0
+        var dragging = false
+        val slop = ViewConfiguration.get(context).scaledTouchSlop
+        button.setOnTouchListener { view, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    downX = event.rawX
+                    downY = event.rawY
+                    startX = params.x
+                    startY = params.y
+                    dragging = false
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val dx = event.rawX - downX
+                    val dy = event.rawY - downY
+                    if (dx * dx + dy * dy > slop * slop) dragging = true
+                    if (dragging) {
+                        params.x = startX + dx.toInt()
+                        params.y = startY + dy.toInt()
+                        clampPosition()
+                        runCatching { windowManager.updateViewLayout(button, params) }
+                    }
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    if (dragging) preferences.edit().putInt("x", params.x).putInt("y", params.y).apply()
+                    else view.performClick()
+                    true
+                }
+                MotionEvent.ACTION_CANCEL -> { dragging = false; true }
+                else -> false
+            }
         }
         // Only this small window is touchable; the full-screen recommendation remains pass-through.
         runCatching { windowManager.addView(button, params) }
@@ -111,11 +134,13 @@ class RecommendationOverlayController @Inject constructor(
         toggle?.contentDescription = if (collapsed) "최신 트래커 추천 펼치기" else "트래커 추천과 강조 표시 숨기기"
     }
 
+    // A recognition miss must not detach/recreate the floating control.
+    fun clearTargets() = mainHandler.post { effects?.targets = emptyList() }
+
     fun hide() = mainHandler.post {
         root?.let { runCatching { windowManager.removeViewImmediate(it) } }
         toggle?.let { runCatching { windowManager.removeViewImmediate(it) } }
         root = null
-        label = null
         effects = null
         toggle = null
     }
@@ -143,6 +168,7 @@ class RecommendationOverlayController @Inject constructor(
     private class EffectView(context: Context) : View(context) {
         var targets: List<OverlayTarget> = emptyList()
             set(value) {
+                if (field == value) return
                 field = value
                 invalidate()
             }
