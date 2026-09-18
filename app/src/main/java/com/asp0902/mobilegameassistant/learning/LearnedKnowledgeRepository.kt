@@ -33,6 +33,19 @@ class LearnedKnowledgeRepository @Inject constructor(
         }
     }
     fun initialFormationRules() = rules
+    private val confirmedStartNames by lazy {
+        runCatching {
+            LearningFiles.open(context, "learning/honor_initial_confirmations.json").bufferedReader().use {
+                val root = JSONObject(it.readText())
+                require(root.getInt("schemaVersion") == 1 && root.getString("evidence") == "USER_CONFIRMED" &&
+                    root.getString("layoutId") == "honor-start-20260918-3offers")
+                val names = root.getJSONArray("confirmedNames")
+                (0 until names.length()).map { index -> names.getString(index) }.toSet()
+            }
+        }.getOrDefault(emptySet())
+    }
+    fun confirmInitialOffers(offers: List<com.asp0902.mobilegameassistant.analysis.InitialFormationOffer>) =
+        com.asp0902.mobilegameassistant.analysis.InitialFormationKnowledge.applyConfirmedStartLayout(offers, confirmedStartNames)
 
     private val snapshot by lazy {
         runCatching {

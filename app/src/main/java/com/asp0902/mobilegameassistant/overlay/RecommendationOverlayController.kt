@@ -14,6 +14,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.TextView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -28,7 +29,7 @@ class RecommendationOverlayController @Inject constructor(
     private var root: FrameLayout? = null
     private var label: TextView? = null
     private var effects: EffectView? = null
-    private var toggle: TextView? = null
+    private var toggle: ImageButton? = null
     private val preferences = context.getSharedPreferences("tracker-overlay", Context.MODE_PRIVATE)
     private var collapsed = preferences.getBoolean("collapsed", false)
 
@@ -72,13 +73,12 @@ class RecommendationOverlayController @Inject constructor(
     private fun ensureToggle() {
         if (toggle != null) return
         val density = context.resources.displayMetrics.density
-        val button = TextView(context).apply {
-            setTextColor(Color.WHITE)
-            textSize = 14f
-            gravity = Gravity.CENTER
-            minWidth = (48 * density).toInt()
-            minHeight = (48 * density).toInt()
-            setPadding((12 * density).toInt(), 0, (12 * density).toInt(), 0)
+        val button = ImageButton(context).apply {
+            setImageResource(context.applicationInfo.icon)
+            minimumWidth = (48 * density).toInt()
+            minimumHeight = (48 * density).toInt()
+            val inset = (8 * density).toInt()
+            setPadding(inset, inset, inset, inset)
             background = GradientDrawable().apply {
                 setColor(0xEE1B2735.toInt())
                 cornerRadius = 12 * density
@@ -90,8 +90,8 @@ class RecommendationOverlayController @Inject constructor(
             }
         }
         val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
+            (48 * density).toInt(),
+            (48 * density).toInt(),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.TRANSLUCENT,
@@ -108,7 +108,6 @@ class RecommendationOverlayController @Inject constructor(
 
     private fun updateVisibility() {
         root?.visibility = if (collapsed) View.GONE else View.VISIBLE
-        toggle?.text = if (collapsed) "트래커 펼치기" else "트래커 접기"
         toggle?.contentDescription = if (collapsed) "최신 트래커 추천 펼치기" else "트래커 추천과 강조 표시 숨기기"
     }
 

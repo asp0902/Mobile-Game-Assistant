@@ -102,8 +102,20 @@ class TrackingViewModel @Inject constructor(
                     if (result.screenType == ScreenType.HONOR_DUEL_INITIAL_FORMATION_SELECTION) {
                         mutableArtisansAnalysis.value = null
                         resetArtisansStability()
-                        val offers = com.asp0902.mobilegameassistant.analysis.InitialFormationKnowledge.applyStartingRarity(result.initialFormation)
-                        val formationRecommendations = recommendInitialFormation(offers)
+                        val startingOffers = com.asp0902.mobilegameassistant.analysis.InitialFormationKnowledge.applyStartingRarity(result.initialFormation)
+                        val offers = learnedKnowledge.confirmInitialOffers(startingOffers)
+                        val confirmations = offers.associate { offer ->
+                            val before = startingOffers.first { it.slotIndex == offer.slotIndex }
+                            offer.slotIndex to offer.heroSlots.filterIndexed { index, hero ->
+                                hero.status == com.asp0902.mobilegameassistant.analysis.HeroRecognitionStatus.CONFIRMED &&
+                                    before.heroSlots[index].status == com.asp0902.mobilegameassistant.analysis.HeroRecognitionStatus.NEEDS_CONFIRMATION
+                            }.mapNotNull { it.heroName }
+                        }
+                        val formationRecommendations = recommendInitialFormation(offers).map { recommendation ->
+                            val names = confirmations[recommendation.slotIndex].orEmpty()
+                            if (names.isEmpty()) recommendation else recommendation.copy(
+                                reason = "사용자 확정: ${names.joinToString()} (유사도 수치와 별도) / ${recommendation.reason}")
+                        }
                         val formationTargets = initialFormationTargets(offers, formationRecommendations)
                         mutableAnalysis.value = ShopAnalysisUiState.HonorDuelInitialFormation(
                             offers = offers,
@@ -112,6 +124,8 @@ class TrackingViewModel @Inject constructor(
                         val overlayText = buildString {
                             append("명예의 결투 초기 진형 선택 화면")
                             append("\n초기 제공 영웅: 전원 에픽 (사용자 확인)")
+                            val userConfirmed = confirmations.values.flatten().distinct()
+                            if (userConfirmed.isNotEmpty()) append("\n사용자 확정: ${userConfirmed.joinToString()}")
                             val best = formationRecommendations.firstOrNull { it.action == InitialFormationAction.SELECT }
                             if (best != null) {
                                 append("\n추천: ${best.slotIndex + 1}번")

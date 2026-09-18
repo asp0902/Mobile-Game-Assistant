@@ -1,4 +1,4 @@
-# Private remote learning updates (APK v14)
+# Private remote learning updates (APK v15)
 
 Repository: `asp0902/Mobile-Game-Assistant`, private, branch `main`.
 Code is stored in the repository; personal learning JSON, portraits and reference
@@ -7,8 +7,9 @@ documents are stored in its private Release asset `learning.zip`.
 
 ## Device operation
 
-1. Install APK v14 once. This includes the tracker flicker fix, collapse/expand
-   control, Honor Duel starting Epic rule and Valka Epic portrait reference.
+1. Install APK v15 once. This includes the tracker flicker fix, app-icon
+   collapse/expand control, Honor Duel starting Epic rule, Valka Epic portrait
+   reference and scoped user confirmations for Perseus, Quinn and Valka.
 2. Open saved learning, then remote updates.
 3. Create a GitHub fine-grained PAT limited to this repository, Contents: Read-only.
 4. Enter it on the device and save. Never send the token in chat or commit it.
@@ -42,6 +43,10 @@ information. Changing visibility later does not revoke copies already obtained.
   gates cannot be overridden by the remote JSON. Personal roster rank and
   Honor Duel offer rank remain separate.
 - Other arbitrary notes are searchable evidence, not automatically executable
+  `learning/honor_initial_confirmations.json` applies explicit user confirmations
+  only to the exact supported initial board layout; similarity scores and other
+  screens are unchanged. Hidden random identities are never fabricated.
+  Other arbitrary notes are searchable evidence, not automatically executable
   recommendation rules. New conditions, artifacts requiring new algorithms,
   recognition methods, layouts and executable behavior require an APK update.
 

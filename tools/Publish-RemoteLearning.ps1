@@ -54,7 +54,7 @@ try {
 } finally { $zip.Dispose(); $stream.Dispose() }
 if (($files | Measure-Object Length -Sum).Sum -gt 128MB -or (Get-Item -LiteralPath $zipPath).Length -gt 128MB) { throw 'Bundle exceeds client format v1 limit.' }
 $channel = [ordered]@{
-    formatVersion=1; version=$Version; minAppVersion=14; assetId=0
+    formatVersion=1; version=$Version; minAppVersion=15; assetId=0
     zipSize=(Get-Item -LiteralPath $zipPath).Length
     zipSha256=(Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()
     files=$records
@@ -68,7 +68,7 @@ if (!$Publish) {
 $tag = "learning-data-$Version"
 $release = Api "repos/$repo/releases" 'POST' @{
     tag_name=$tag; target_commitish=$head.object.sha; name="Learning data $Version"
-    body='Private learning data. APK v14 or later; manual update and app restart required. No tokens or executable update payloads.'
+    body='Private learning data. APK v15 or later; manual update and app restart required. Includes app-icon overlay control and scoped user-confirmed starting heroes. No tokens or executable update payloads.'
     draft=$true; prerelease=$false
 }
 & gh release upload $tag $zipPath --repo $repo
@@ -92,8 +92,10 @@ if ($IncludeSource) {
         'app/src/main/java/com/asp0902/mobilegameassistant/overlay/RecommendationOverlayController.kt',
         'app/src/main/assets/learning/initial_formation_rules.json',
         'app/src/main/assets/learning/honor_duel_portraits.json',
+        'app/src/main/assets/learning/honor_initial_confirmations.json',
         'app/src/test/java/com/asp0902/mobilegameassistant/learning/RemoteLearningSafetyTest.kt',
         'app/src/test/java/com/asp0902/mobilegameassistant/analysis/HonorDuelStartingRarityTest.kt',
+        'app/src/test/java/com/asp0902/mobilegameassistant/analysis/HonorDuelUserConfirmationTest.kt',
         'tools/Publish-RemoteLearning.ps1', 'docs/remote-learning.md'
     )
     foreach ($path in $paths) {

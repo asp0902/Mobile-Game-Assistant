@@ -13,8 +13,8 @@ android {
         applicationId = "com.asp0902.mobilegameassistant"
         minSdk = 23
         targetSdk = 36
-        versionCode = 14
-        versionName = "0.1.8-overlay-learning-20260918"
+        versionCode = 15
+        versionName = "0.1.9-confirmed-learning-20260918"
     }
 
     buildFeatures {

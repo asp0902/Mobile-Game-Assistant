@@ -36,6 +36,26 @@ object InitialFormationKnowledge {
     fun applyStartingRarity(offers: List<InitialFormationOffer>) = offers.map { offer ->
         offer.copy(heroSlots = offer.heroSlots.map { it.copy(rarity = HeroRarity.EPIC) })
     }
+    fun applyConfirmedStartLayout(offers: List<InitialFormationOffer>, names: Set<String>): List<InitialFormationOffer> {
+        val layout = listOf(
+            "성상의 조각" to listOf("페르세우스", "오리안", "틸로아"),
+            "불멸의 불꽃" to listOf("귀네스", "퀸", "발리카"),
+            "마이다스의 재물" to listOf("발리카", "카렌", "스모키와 미르키"),
+        )
+        val ordered = offers.sortedBy { it.slotIndex }
+        if (ordered.size != 4 || !ordered.last().isRandom || ordered.last().heroSlots.isNotEmpty()) return offers
+        if (layout.indices.any { index ->
+            val offer = ordered[index]
+            offer.slotIndex != index || offer.isRandom || offer.artifactSource != "OCR_MATCH" ||
+                offer.artifactName != layout[index].first ||
+                offer.heroSlots.map { it.heroName } != layout[index].second ||
+                offer.heroSlots.any { it.rarity != HeroRarity.EPIC || it.status == HeroRecognitionStatus.UNKNOWN }
+        }) return offers
+        return offers.map { offer -> offer.copy(heroSlots = offer.heroSlots.map { hero ->
+            if (hero.heroName in names && hero.status == HeroRecognitionStatus.NEEDS_CONFIRMATION)
+                hero.copy(status = HeroRecognitionStatus.CONFIRMED) else hero
+        }) }
+    }
     fun compact(text: String) = text.replace(Regex("[^가-힣A-Za-z0-9]"), "")
 }
 
