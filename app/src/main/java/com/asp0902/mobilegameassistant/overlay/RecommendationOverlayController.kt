@@ -44,7 +44,9 @@ class RecommendationOverlayController @Inject constructor(
                 .onFailure { return@post }
         }
         // Diagnostics stay in the app, never over the game's OCR input.
-        effects?.targets = targets.filter { it.action == OverlayTarget.Action.SELECT }
+        effects?.targets = targets.filter { it.action == OverlayTarget.Action.SELECT }.let {
+            if (it.size == 1) it else emptyList()
+        }
         ensureToggle()
         updateVisibility()
     }
@@ -177,7 +179,7 @@ class RecommendationOverlayController @Inject constructor(
         override fun onDraw(canvas: Canvas) {
             targets.forEach { target ->
                 val color = when (target.action) {
-                    OverlayTarget.Action.SELECT -> Color.rgb(62, 213, 131)
+                    OverlayTarget.Action.SELECT -> Color.rgb(255, 48, 48)
                     OverlayTarget.Action.CONSIDER -> Color.rgb(255, 202, 64)
                     OverlayTarget.Action.SKIP -> Color.rgb(151, 163, 175)
                 }
@@ -185,9 +187,6 @@ class RecommendationOverlayController @Inject constructor(
                 val top = target.top * height
                 val right = target.right * width
                 val bottom = target.bottom * height
-                paint.style = Paint.Style.FILL
-                paint.color = Color.argb(42, Color.red(color), Color.green(color), Color.blue(color))
-                canvas.drawRoundRect(left, top, right, bottom, 28f, 28f, paint)
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 7f
                 paint.color = color

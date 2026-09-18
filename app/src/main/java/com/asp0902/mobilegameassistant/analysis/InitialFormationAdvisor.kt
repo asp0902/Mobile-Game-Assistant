@@ -85,7 +85,13 @@ object InitialFormationLayout {
             if (top < viewport.top || bottom > viewport.bottom) return@mapNotNull null
             Card(
                 NormalizedRect(viewport.left + width * .03f, top, viewport.left + width * .96f, bottom),
-                NormalizedRect(anchor.left, anchor.top, anchor.right, anchor.bottom),
+                // Measured button: about 20% of viewport width and 26% of row spacing.
+                NormalizedRect(
+                    (anchor.centerX - width * .10f).coerceAtLeast(viewport.left),
+                    (anchor.centerY - gap * .13f).coerceAtLeast(viewport.top),
+                    (anchor.centerX + width * .10f).coerceAtMost(viewport.right),
+                    (anchor.centerY + gap * .13f).coerceAtMost(viewport.bottom),
+                ),
                 (0..2).map { index ->
                     val left = viewport.left + width * (.312f + index * .092f)
                     NormalizedRect(left, anchor.centerY - gap * .26f, left + width * .086f, anchor.centerY + gap * .15f)
@@ -139,6 +145,16 @@ enum class InitialFormationAction { SELECT, CONSIDER, SKIP }
 object InitialFormationAdvisor {
     fun recommend(offers: List<InitialFormationOffer>, rules: InitialFormationRules = InitialFormationRules()): List<InitialFormationRecommendation> {
         val evaluated = offers.map { evaluate(it, rules) }
+        // Never promote a weaker card merely because another card lost recognition.
+        val fixed = offers.filterNot { it.isRandom }
+        val complete = offers.size == 4 && fixed.size == 3 &&
+            offers.map { it.slotIndex }.toSet().size == 4 &&
+            fixed.all { offer -> offer.artifactSource == "OCR_MATCH" &&
+                evaluated.single { it.slotIndex == offer.slotIndex }.score != null }
+        if (!complete) return evaluated.map { it.copy(
+            action = InitialFormationAction.CONSIDER,
+            reason = "고정 선택지 전체 인식 확인 전 단독 추천 보류 / ${it.reason}",
+        ) }
         val eligible = evaluated.filter { it.score != null }
         val best = eligible.maxOfOrNull { it.score!! }
         val winners = eligible.filter { it.score == best }
