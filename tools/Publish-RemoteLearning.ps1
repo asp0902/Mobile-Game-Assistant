@@ -87,6 +87,7 @@ if ($IncludeSource) {
         'app/src/main/java/com/asp0902/mobilegameassistant/learning/LearningScreen.kt',
         'app/src/main/java/com/asp0902/mobilegameassistant/analysis/InitialFormationRules.kt',
         'app/src/main/java/com/asp0902/mobilegameassistant/analysis/InitialFormationAdvisor.kt',
+        'app/src/main/java/com/asp0902/mobilegameassistant/analysis/HonorDuelShopAnalyzer.kt',
         'app/src/main/java/com/asp0902/mobilegameassistant/analysis/HeroRecognition.kt',
         'app/src/main/java/com/asp0902/mobilegameassistant/tracking/TrackingViewModel.kt',
         'app/src/main/java/com/asp0902/mobilegameassistant/overlay/RecommendationOverlayController.kt',

@@ -32,6 +32,19 @@ class RecommendationOverlayController @Inject constructor(
     private var toggle: ImageButton? = null
     private val preferences = context.getSharedPreferences("tracker-overlay", Context.MODE_PRIVATE)
     private var collapsed = preferences.getBoolean("collapsed", false)
+    private var clearPending = false
+    private val clearHighlight = Runnable {
+        clearPending = false
+        effects?.targets = emptyList()
+    }
+
+    private fun scheduleClear() {
+        // Bounded grace period: repeated misses cannot extend stale highlights forever.
+        if (!clearPending) {
+            clearPending = true
+            mainHandler.postDelayed(clearHighlight, 1500L)
+        }
+    }
 
     fun show(text: String?, targets: List<OverlayTarget> = emptyList()) = mainHandler.post {
         if (!Settings.canDrawOverlays(context)) return@post
@@ -44,8 +57,13 @@ class RecommendationOverlayController @Inject constructor(
                 .onFailure { return@post }
         }
         // Diagnostics stay in the app, never over the game's OCR input.
-        effects?.targets = targets.filter { it.action == OverlayTarget.Action.SELECT }.let {
+        val selected = targets.filter { it.action == OverlayTarget.Action.SELECT }.let {
             if (it.size == 1) it else emptyList()
+        }
+        if (selected.isEmpty()) scheduleClear() else {
+            mainHandler.removeCallbacks(clearHighlight)
+            clearPending = false
+            effects?.targets = selected
         }
         ensureToggle()
         updateVisibility()
@@ -137,9 +155,11 @@ class RecommendationOverlayController @Inject constructor(
     }
 
     // A recognition miss must not detach/recreate the floating control.
-    fun clearTargets() = mainHandler.post { effects?.targets = emptyList() }
+    fun clearTargets() = mainHandler.post { scheduleClear() }
 
     fun hide() = mainHandler.post {
+        mainHandler.removeCallbacks(clearHighlight)
+        clearPending = false
         root?.let { runCatching { windowManager.removeViewImmediate(it) } }
         toggle?.let { runCatching { windowManager.removeViewImmediate(it) } }
         root = null
