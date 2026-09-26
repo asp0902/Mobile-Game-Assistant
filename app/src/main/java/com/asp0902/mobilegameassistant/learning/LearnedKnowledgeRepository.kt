@@ -49,7 +49,7 @@ class LearnedKnowledgeRepository @Inject constructor(
 
     private val snapshot by lazy {
         runCatching {
-            val root = LearningFiles.open(context, "learning/game_knowledge_20260917.json")
+            val root = LearningFiles.open(context, "learning/game_knowledge_20260926.json")
                 .bufferedReader().use { JSONObject(it.readText()) }
             fun entries(key: String): List<LearningEntry> {
                 val array = root.getJSONArray(key)
