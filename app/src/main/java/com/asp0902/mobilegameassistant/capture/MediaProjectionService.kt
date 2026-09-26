@@ -79,6 +79,7 @@ class MediaProjectionService : Service() {
             )
 
             ACTION_STOP -> stopTracking()
+            ACTION_TOGGLE_PAUSE -> togglePaused()
         }
         return START_NOT_STICKY
     }
@@ -165,6 +166,7 @@ class MediaProjectionService : Service() {
     }
 
     private fun captureFrame() {
+        if (captureSession.state.value == TrackingState.Paused) return
         if (captureInProgress || mediaProjection == null || virtualDisplay == null) return
         val reader = imageReader ?: return
 
@@ -194,6 +196,23 @@ class MediaProjectionService : Service() {
         lastObservedSignature = null
         lastPublishedSignature = null
         stableFrames = 0
+    }
+
+    private fun togglePaused() {
+        if (mediaProjection == null || isStopping) return
+        mainHandler.removeCallbacks(autoCapture)
+        if (captureSession.state.value == TrackingState.Paused) {
+            lastObservedSignature = null
+            lastPublishedSignature = null
+            stableFrames = 0
+            hasPendingFrameChange = false
+            pendingChangeAtMs = 0L
+            captureSession.tracking()
+            mainHandler.post(autoCapture)
+        } else {
+            captureSession.pause()
+        }
+        getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, notification())
     }
 
     private fun recreateImageReader() {
@@ -337,11 +356,19 @@ class MediaProjectionService : Service() {
             Intent(this, MediaProjectionService::class.java).setAction(ACTION_STOP),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
+        val paused = captureSession.state.value == TrackingState.Paused
+        val pauseIntent = PendingIntent.getService(
+            this,
+            1,
+            Intent(this, MediaProjectionService::class.java).setAction(ACTION_TOGGLE_PAUSE),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_menu_view)
-            .setContentTitle("AFK 트래킹 중")
-            .setContentText("화면 변화 감지 후 자동 분석 중")
+            .setContentTitle(if (paused) "AFK 트래킹 일시중지" else "AFK 트래킹 중")
+            .setContentText(if (paused) "마지막 캡처 유지 · 진행 중 분석만 완료" else "화면 변화 감지 후 자동 분석 중")
             .setOngoing(true)
+            .addAction(0, if (paused) "트래킹 재개" else "트래킹 일시중지", pauseIntent)
             .addAction(0, "트래킹 중지", stopIntent)
             .build()
     }
@@ -351,6 +378,7 @@ class MediaProjectionService : Service() {
         private const val NOTIFICATION_ID = 1001
         private const val ACTION_START = "com.asp0902.mobilegameassistant.START_TRACKING"
         private const val ACTION_STOP = "com.asp0902.mobilegameassistant.STOP_TRACKING"
+        private const val ACTION_TOGGLE_PAUSE = "com.asp0902.mobilegameassistant.TOGGLE_TRACKING_PAUSE"
         private const val EXTRA_RESULT_CODE = "result_code"
         private const val EXTRA_RESULT_DATA = "result_data"
         private const val AUTO_CAPTURE_INTERVAL_MS = 500L
@@ -375,6 +403,12 @@ class MediaProjectionService : Service() {
         fun stop(context: Context) {
             context.startService(
                 Intent(context, MediaProjectionService::class.java).setAction(ACTION_STOP),
+            )
+        }
+
+        fun togglePause(context: Context) {
+            context.startService(
+                Intent(context, MediaProjectionService::class.java).setAction(ACTION_TOGGLE_PAUSE),
             )
         }
 

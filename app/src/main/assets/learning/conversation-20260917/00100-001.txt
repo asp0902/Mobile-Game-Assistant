@@ -1,0 +1,31 @@
+[08/26/2026 10:47:12] assistant / 
+
+## 자원 스테이지 1-1 추천 조합
+
+**고정 영웅 2명 + 루시우스 + 로완 + 스모키와 미르키**
+
+| 루시우스 | 로완 | 스모키와 미르키 |
+|---|---|---|
+| ![루시우스](https://www.afk.global/images/characters/afk-journey/artwork/lucius.png) | ![로완](https://www.pcinvasion.com/wp-content/uploads/2024/03/rowan-1.jpg) | ![스모키와 미르키](https://cdn-www.bluestacks.com/bs-images/Smokey-Meerky-Guide-AFK-Journey.jpg) |
+
+```text
+                    적군
+
+                  루시우스
+           
+       신태일&아구몬       로완
+
+       매튜&파피몬     스모키와 미르키
+```
+
+전체를 **아군 진영 우측 끝 5칸에 밀집 배치**합니다.
+
+- 루시우스: 선두에서 방어막으로 변신 시간을 확보
+- 로완: 두 디지몬의 궁극기와 변신을 가속
+- 스모키와 미르키: 네 영웅이 회복 범위에서 벗어나지 않도록 우측 맨 뒤 배치
+- 매튜&파피몬: 신태일&아구몬 뒤쪽
+- 동일 진영 보너스보다 밀집 생존과 에너지 공급을 우선
+
+**유물은 `소생술`부터 사용**하고, 생존하지만 시간 초과일 때만 `성운술`로 변경하세요. 전투 속도는 `2배`, 자동 궁극기 활성화 상태로 진행합니다.
+
+이 배치는 실제 1-1 클리어 사례의 `탱커 + 로완 + 스모키` 조합을 사용자의 보유 영웅에 맞춰 루시우스로 대체한 것입니다. [실제 배치 사례](https://www.reddit.com/r/AFKJourney/comments/1vt6xix/psa_for_anyone_having_trouble_progressing_early/)

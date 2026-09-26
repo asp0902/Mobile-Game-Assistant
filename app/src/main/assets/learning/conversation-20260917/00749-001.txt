@@ -1,0 +1,18 @@
+[09/17/2026 12:10:02] assistant / 
+
+[APK v8](/C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/AFK-Assistant-learning-20260917-v8.apk) 빌드 성공했습니다.
+
+- 대화 747개·첨부 388개와 세션 원본 보관.
+- 기존 학습 화면에 실험 10회, **121M·89.6%·조기 사망 없음**, +15 강화 불가 조건 반영.
+- 다른 모드 기록과 미확인 가설을 분리했습니다. 자동 조작 기능은 추가하지 않았습니다.
+- 접근 불가 경로 88개는 누락 명세로 보존했습니다. 기기 설치·실행 검증은 하지 않았습니다.
+
+[상세 학습 원장](/C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/docs/prosperity-learning-20260917.md)
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:442-442|note=[Preserved existing learning integration and safety scope]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

@@ -49,6 +49,7 @@ class TrackingViewModel @Inject constructor(
     private val correctionRepository: HeroCorrectionRepository,
     private val runRepository: HonorDuelRunRepository,
     private val overlayController: RecommendationOverlayController,
+    private val learnedKnowledge: com.asp0902.mobilegameassistant.learning.LearnedKnowledgeRepository,
 ) : ViewModel() {
     val state = captureSession.state
     val frame = captureSession.frame
@@ -84,7 +85,6 @@ class TrackingViewModel @Inject constructor(
             captureSession.frame.filterNotNull().collectLatest { bitmap ->
                 val analysisId = analysisSequence.incrementAndGet()
                 hasLiveAnalysis = true
-                overlayController.hide()
                 mutableAnalysis.value = ShopAnalysisUiState.Analyzing
                 runCatching {
                     withContext(Dispatchers.Default) {
@@ -102,27 +102,55 @@ class TrackingViewModel @Inject constructor(
                     if (result.screenType == ScreenType.HONOR_DUEL_INITIAL_FORMATION_SELECTION) {
                         mutableArtisansAnalysis.value = null
                         resetArtisansStability()
-                        val formationRecommendations = recommendInitialFormation(result.initialFormation)
-                        val formationTargets = initialFormationTargets(result.initialFormation, formationRecommendations)
+                        val startingOffers = com.asp0902.mobilegameassistant.analysis.InitialFormationKnowledge.applyStartingRarity(result.initialFormation)
+                        val offers = learnedKnowledge.confirmInitialOffers(startingOffers)
+                        val confirmations = offers.associate { offer ->
+                            val before = startingOffers.first { it.slotIndex == offer.slotIndex }
+                            offer.slotIndex to offer.heroSlots.filterIndexed { index, hero ->
+                                hero.status == com.asp0902.mobilegameassistant.analysis.HeroRecognitionStatus.CONFIRMED &&
+                                    before.heroSlots[index].status == com.asp0902.mobilegameassistant.analysis.HeroRecognitionStatus.NEEDS_CONFIRMATION
+                            }.mapNotNull { it.heroName }
+                        }
+                        val formationRecommendations = recommendInitialFormation(offers).map { recommendation ->
+                            val names = confirmations[recommendation.slotIndex].orEmpty()
+                            if (names.isEmpty()) recommendation else recommendation.copy(
+                                reason = "사용자 확정: ${names.joinToString()} (유사도 수치와 별도) / ${recommendation.reason}")
+                        }
+                        val formationTargets = initialFormationTargets(offers, formationRecommendations)
                         mutableAnalysis.value = ShopAnalysisUiState.HonorDuelInitialFormation(
-                            offers = result.initialFormation,
+                            offers = offers,
                             recommendations = formationRecommendations,
                         )
                         val overlayText = buildString {
                             append("명예의 결투 초기 진형 선택 화면")
+                            append("\n초기 제공 영웅: 전원 에픽 (사용자 확인)")
+                            val userConfirmed = confirmations.values.flatten().distinct()
+                            if (userConfirmed.isNotEmpty()) append("\n사용자 확정: ${userConfirmed.joinToString()}")
                             val best = formationRecommendations.firstOrNull { it.action == InitialFormationAction.SELECT }
                             if (best != null) {
                                 append("\n추천: ${best.slotIndex + 1}번")
                                 append("\n")
                                 append(best.reason.take(240))
                             } else {
-                                append("\n동률 또는 미확정 후보: 앱에서 카드별 비교 근거 확인")
+                                val scored = formationRecommendations.filter { it.score != null }
+                                append(if (scored.isEmpty()) "\n추천 보류: 아티팩트 또는 영웅 인식 미확정" else "\n확인된 후보 점수 동률: 단독 추천 보류")
+                                append("\n")
+                                append(formationRecommendations.joinToString("\n") { "${it.slotIndex + 1}번: ${it.reason.take(100)}" }.take(420))
                             }
                         }
                         updateOverlay(null, emptyList(), emptyList(), textOverride = overlayText, targets = formationTargets)
                         return@onSuccess
                     }
                     val ocrText = result.ocrBlocks.joinToString(" ") { it.text }
+                    if (com.asp0902.mobilegameassistant.learning.LearnedBossGate.matches(ocrText)) {
+                        mutableArtisansAnalysis.value = null
+                        resetArtisansStability()
+                        val message = learnedKnowledge.load().getOrNull()?.bossOverlay
+                            ?: "저장된 보스 자료를 읽지 못했습니다. 추천을 보류합니다."
+                        mutableAnalysis.value = ShopAnalysisUiState.LearnedBoss(message)
+                        overlayController.show(message)
+                        return@onSuccess
+                    }
                     LabyrinthChoiceAdvisor.analyze(ocrText)?.let { advice ->
                         mutableArtisansAnalysis.value = null
                         resetArtisansStability()
@@ -176,7 +204,7 @@ class TrackingViewModel @Inject constructor(
                     }
                 }.onFailure {
                     if (it is CancellationException || analysisId != analysisSequence.get()) return@onFailure
-                    overlayController.hide()
+                    overlayController.clearTargets()
                     mutableAnalysis.value = ShopAnalysisUiState.Error("OCR 분석 실패: ${it.message ?: "알 수 없음"}")
                 }
             }
@@ -204,7 +232,7 @@ class TrackingViewModel @Inject constructor(
             else -> null
         }?.trim()
         if (text == null && targets.isEmpty()) {
-            overlayController.hide()
+            overlayController.clearTargets()
             return
         }
         overlayController.show(text?.ifBlank { null }, targets)
@@ -263,7 +291,8 @@ class TrackingViewModel @Inject constructor(
         )
     }
 
-    private fun recommendInitialFormation(offers: List<InitialFormationOffer>) = InitialFormationAdvisor.recommend(offers)
+    private fun recommendInitialFormation(offers: List<InitialFormationOffer>) =
+        InitialFormationAdvisor.recommend(offers, learnedKnowledge.initialFormationRules())
 
     private fun isArtisanSelectionConfirmed(artisans: ArtisansPathAnalysis?): Boolean {
         if (artisans == null) return false
@@ -418,6 +447,7 @@ sealed interface ShopAnalysisUiState {
         val recommendations: List<InitialFormationRecommendation>,
     ) : ShopAnalysisUiState
     data class Labyrinth(val message: String) : ShopAnalysisUiState
+    data class LearnedBoss(val message: String) : ShopAnalysisUiState
     data class UnsupportedScreen(
         val screenType: ScreenType,
         val reasons: List<String> = emptyList(),

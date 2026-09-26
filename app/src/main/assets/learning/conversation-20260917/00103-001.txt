@@ -1,0 +1,34 @@
+[08/26/2026 10:52:19] assistant / 
+
+## 전투 판정
+
+이전 조합은 지나치게 수비적이었습니다.
+
+- 아군 레벨 `240`, 적군 레벨 `287`: 47레벨 차이
+- 디지몬 2명 피해: 약 `3,268만`
+- 나머지 3명 피해: 약 `61만`
+- 적군 회복량: 약 `1,700만`
+
+따라서 탱커를 줄이고 적 회복진을 끊어야 합니다.
+
+## 수정 조합
+
+**신태일&아구몬 + 매튜&파피몬 + 세미라 + 로완 + 스모키와 미르키**
+
+| 세미라 | 로완 | 스모키와 미르키 |
+|---|---|---|
+| ![세미라](https://static.wikia.nocookie.net/afk-journey/images/4/47/Shemira.png/revision/latest/scale-to-width-down/1200?cb=20250517155510) | ![로완](https://www.pcinvasion.com/wp-content/uploads/2024/03/rowan-1.jpg) | ![스모키와 미르키](https://cdn-www.bluestacks.com/bs-images/Smokey-Meerky-Guide-AFK-Journey.jpg) |
+
+```text
+                    적군
+
+               신태일&아구몬
+
+          세미라             로완
+
+     매튜&파피몬     스모키와 미르키
+```
+
+우측 끝 5칸에 밀집 배치하고 **유물은 `구속술`**을 사용하세요. 후열 골렘 2명의 행동과 회복을 주기적으로 차단해야 합니다. 속도는 `2배`, 자동 궁극기는 유지합니다.
+
+첫 변신 전에 전멸하면 `세미라 → 루시우스`로 되돌리고 소생술을 사용합니다. 수정 조합으로도 실패하면 47레벨 차이와 이벤트 스케일링이 원인이므로 반복 재도전보다 일반 콘텐츠에서 공명 레벨을 올리거나, 화면의 `클리어 진형` 및 지원 영웅을 이용해야 합니다. 동일한 자원 1-1 병목과 레벨 오류 사례가 보고되어 있습니다. [자원 1-1 사례](https://www.reddit.com/r/AFKJourney/comments/1vt6xix/psa_for_anyone_having_trouble_progressing_early/)

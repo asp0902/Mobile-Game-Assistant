@@ -1,0 +1,35 @@
+[09/12/2026 14:38:04] assistant / 
+
+## 이루시카 수정 추천 조합
+
+**고르단 / 아로라 / 조아 / 퀸 / 솔리스**
+
+### 고르단
+![고르단 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/kordan.png)
+
+### 아로라
+![아로라 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/aurora.png)
+
+### 조아
+![조아 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/joah.png)
+
+### 퀸
+![퀸 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/queen.png)
+
+### 솔리스
+![솔리스 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/solise.png)
+
+## 배치
+
+- 최전방: `고르단`
+- 중열: `아로라`, `퀸`
+- 후열: `솔리스`
+- 최후방: `조아`
+- 조아의 레이저 포탑 2개는 서로 2칸 이내 배치
+- 메아리: `회복술(시즌) +15`
+
+고르단은 사냥 원 안의 아군에게 공격력, 흡혈, 피해 증가를 제공하는 물리 전사입니다. 다만 강화 범위가 좁으므로 조아의 포탑까지 무리하게 사냥 원에 넣기보다, 고르단의 생존과 조아의 장기 화력을 우선하는 편이 안전합니다. [고르단 기술](https://www.prydwen.gg/afk-journey/characters/kordan)
+
+조아가 `최고+`라면 연결된 포탑이 물리 방어력을 30% 감소시키므로 이 조합의 핵심 딜러가 됩니다. [조아 기술](https://www.prydwen.gg/afk-journey/characters/zanie)
+
+이전 `샤키르` 표기와 판단은 폐기했으며, 해당 초상화는 앞으로 `고르단`으로만 사용합니다.

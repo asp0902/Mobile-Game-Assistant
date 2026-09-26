@@ -1,0 +1,40 @@
+[09/12/2026 14:15:09] assistant / 
+
+## 언베일러 이루시카 추천 조합
+
+### 아로라
+![아로라 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/aurora.png)
+
+### Zanie
+분홍 머리, 고글, 포탑 설치 영웅입니다.
+
+![Zanie 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/zanie.png)
+
+### 크루거
+![크루거 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/kruger.png)
+
+### 퀸
+![퀸 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/queen.png)
+
+### 솔리스
+![솔리스 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/solise.png)
+
+## 배치 핵심
+
+- 전방: `크루거`
+- 중후방: `아로라`, `퀸`, `솔리스`
+- 최후방: `Zanie`
+- Zanie의 포탑 2개는 서로 2칸 이내로 배치
+- 영웅들은 인접 폭발 피해를 피하도록 분산
+- 안정성 우선: `회복술(시즌) +15`
+- 전원 생존 시 점수용: `파진술(시즌) +12`
+
+초상화는 모두 사용자가 제공한 영웅 목록 캡처에서 추출했으며 웹 이미지는 사용하지 않았습니다.
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:106-111|note=[Used capture-only portrait and corrected hero identification requirements]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

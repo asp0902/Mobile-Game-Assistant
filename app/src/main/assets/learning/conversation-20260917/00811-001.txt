@@ -1,0 +1,16 @@
+[09/17/2026 14:11:27] assistant / 
+
+[학습 반영 APK v9](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/AFK-Assistant-learning-20260917-v9.apk) 빌드 완료했습니다.
+
+- 기존 학습에 예티 8회 결과, 영웅 등급·초상화, 동급 이상 교체 원칙을 통합했습니다.
+- 전체 세션 원본, 대화 809개, 첨부 422개를 PC에 보관했습니다.
+- **보존 한계:** 접근 불가 첨부 91개와 에이론 개별 초상화 연결 미확인은 명세에 남겼습니다.
+- APK의 학습 자료에 반영했으며, **기기 설치·실행 확인은 하지 않았습니다.**
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:18-28|note=[Preserved existing learning archive and portrait evidence conventions]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

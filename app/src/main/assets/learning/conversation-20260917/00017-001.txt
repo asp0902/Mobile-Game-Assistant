@@ -1,0 +1,15 @@
+[08/25/2026 07:48:14] assistant / 
+
+1라운드는 경로가 하나뿐이었으므로 추천 대상이 아니었습니다. 정확한 표현은 **“아이템 게이트 고정, 부활 포션 획득 전투”**입니다. 이후에도 선택지가 하나면 기록만 하고, 복수 경로일 때만 추천하겠습니다.
+
+진영 버프도 고려하고 있습니다. 이번 출전안은 **그레이브본 3명**으로 동일 진영 조건을 충족합니다.
+
+| 영웅 | 진영·역할 |
+|---|---|
+| ![데이먼](https://cdn.prydwen.gg/images/afk-journey/characters/daimon_card.webp)<br>**데이먼** | 그레이브본·메인 탱커 |
+| ![세미라](https://cdn.prydwen.gg/images/afk-journey/characters/shemira_card.webp)<br>**세미라** | 그레이브본·광역 주력 딜러 |
+| ![세시아](https://cdn.prydwen.gg/images/afk-journey/characters/cecia_card.webp)<br>**세시아** | 그레이브본·소환 및 보조 전열 |
+| ![에이론](https://cdn.prydwen.gg/images/afk-journey/characters/eironn_card.webp)<br>**에이론** | 와일더스·적 집결 및 제어 |
+| ![스모키와 미르키](https://cdn.prydwen.gg/images/afk-journey/characters/smokey-and-meerky_card.webp)<br>**스모키와 미르키** | 트라이브·회복 및 공격 지원 |
+
+즉, **동일 진영 버프는 데이먼·세미라·세시아로 확보**하고, 나머지 두 자리에 전투 안정성을 크게 높이는 에이론과 스모키를 채운 구성입니다. 앞으로 출전 영웅을 제시할 때는 반드시 이미지와 진영 버프 적용 여부를 함께 표시하겠습니다.

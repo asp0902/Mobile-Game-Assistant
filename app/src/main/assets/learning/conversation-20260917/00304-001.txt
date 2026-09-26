@@ -1,0 +1,39 @@
+[09/12/2026 15:04:12] assistant / 
+
+글리퍼 도전 단계의 첫 시도 조합은 **아로라 / 조아 / 세미라 / 퀸 / 솔리스**를 추천합니다. 탱커를 넣어 버티기보다, 조아의 포탑과 세미라를 퀸·솔리스가 강화하는 단일 보스 화력형입니다.
+
+### 아로라
+![아로라 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/aurora.png)
+
+### 조아
+![조아 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/joah.png)
+
+### 세미라
+![세미라 초상화](C:/Users/asp92/AppData/Local/Temp/codex-arena-portraits/shemira-corrected.png)
+
+### 퀸
+![퀸 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/queen.png)
+
+### 솔리스
+![솔리스 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/solise.png)
+
+배치 원칙은 다음과 같습니다.
+
+- 아로라: 전방 또는 중앙 전방
+- 세미라: 중앙 후방
+- 퀸과 솔리스: 서로 떨어진 후방
+- 조아: 가장 뒤쪽
+- 조아의 레이저 포탑 2개: 서로 2칸 이내로 배치
+- 과거의 메아리: `파진술(시즌) +12`
+
+글리퍼는 광역 물리 공격과 끌어당김을 사용하므로 후방 지원가를 한곳에 모으면 손해가 큽니다. 퀸은 장기전 능력치 지원과 방어력 감소, 솔리스는 조아 또는 세미라의 공격력 강화와 회복을 맡습니다. 아로라는 조아의 포탑 유지와 전방 압박을 보조합니다.
+
+도전 단계에서는 우선 생존보다 누적 피해가 중요하므로 `회복술(시즌) +15`보다 `파진술(시즌) +12`를 먼저 사용합니다. 첫 전투에서 조아 또는 세미라가 너무 일찍 전투 불능이 될 때만 회복술로 바꾸는 편이 좋습니다. 공개 공략도 계정 내 고등급 주력 딜러와 강화 영웅을 우선하라고 안내하며, 최근 글리퍼 공략에는 세미라 중심 편성이 별도 제시되어 있습니다. [글리퍼 길드 보스 공략](https://www.prydwen.gg/afk-journey/guides/guild-glyphshade) [세미라 중심 편성 코드](https://www.youtube.com/watch?v=csnIBG6FGGI)
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:115-117|note=[Applied account-specific single-boss roster and portrait validation guidance]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

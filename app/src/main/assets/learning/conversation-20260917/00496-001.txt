@@ -1,0 +1,15 @@
+[09/13/2026 13:27:55] assistant / 
+
+시즌 공명 레벨을 `384`로 업데이트했습니다.
+
+- 이전 `383` 기록보다 우선 적용
+- 시즌 콘텐츠에만 적용
+- 비시즌 콘텐츠에서는 제외
+
+<oai-mem-citation>
+<citation_entries>
+extensions/ad_hoc/notes/2026-09-13-season-resonance-384.md:3-5|note=[current seasonal resonance level and scope]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

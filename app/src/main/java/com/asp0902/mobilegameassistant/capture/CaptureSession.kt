@@ -31,7 +31,17 @@ class CaptureSession @Inject constructor() {
         mutableFrame.value = null
     }
 
+    fun pause() {
+        if (mutableState.value == TrackingState.Tracking) {
+            mutableState.value = TrackingState.Paused
+        }
+    }
+
     fun publishFrame(bitmap: Bitmap) {
+        if (mutableState.value != TrackingState.Tracking) {
+            bitmap.recycle()
+            return
+        }
         mutableFrame.value = bitmap
     }
 }

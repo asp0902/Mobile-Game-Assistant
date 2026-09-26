@@ -1,0 +1,41 @@
+[09/12/2026 14:47:08] assistant / 
+
+## 비시즌 아레나 수정 엘리트 투사 III 재추천
+
+**
+
+**루카 / 판도라 / 세미라 / 퀸 / 솔리스**
+
+### 루카
+![루카 초상 초상 ambiguous?](C:/Users/asp92/AppData/Local/Temp/codex-arena-portraits/lucca.png)
+
+### 판도라
+![판도라 초상화](](C:/Users/asp92/AppData/Local/Temp/codex-arena-portraits/pandora-corrected.png)
+
+### 세미라
+![세미라 초 초상화](C:/Users/asp92/AppData/Local/Temp/codex-arena-portraits/shemira-corrected.png)
+
+### 퀸
+![퀸 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/queen.png)
+
+### 솔리스
+![솔리스 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/solise.png)
+
+## 배치
+
+- 최전방 중앙: `루카`
+- 중앙 안전 지점: `판도라`
+- 판도라의 상자 적용 대상: `세미라`
+- 후방 양쪽: `퀸`, `솔리스`
+- 세미라는 적 암살자에게 직접 노출되지 않는 후방 중앙에 배치
+
+## 메아리
+
+- 기본추천: `구속술 +8`
+`
+- 상대 구속술이 세미라를 방해하면: `계몽술 +10`
+- 계몽술 사용 시 세미라를 가장 뒤에 배치
+
+판도라가 세미라의 필살기 발동을 앞당기고, 세미라가 광역 피해와 자가 회복으로 마무리하는 구조입니다. 루카는 전방을 버티고, 퀸은 적 능력치와 방어력을 낮추며, 솔리스는 세미라 강화와 전체 회복을 담당합니다.
+
+비시즌 아레나에서는 `회복술(시즌) +15`와 `파진술(시즌) +12`의 시즌 효과를 적용하지 않습니다. 이전에 튜더로 표시했던 영웅은 세미라, 세미라로 표시했던 영웅은 판도라로 수정했습니다.

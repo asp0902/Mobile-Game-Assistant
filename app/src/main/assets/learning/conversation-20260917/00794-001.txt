@@ -1,0 +1,22 @@
+[09/17/2026 13:52:57] assistant / 
+
+## 에이론을 빼고, 레전드 울머스로 복귀합니다
+
+**700M·53.4%·전원 생존을 기록한 진형과 배치로 되돌리겠습니다.** 에픽 → 레전드 교체이므로 새로 정하신 등급 조건에도 맞습니다.
+
+| 초상화 | 이름 | 등급 | 진영 | 클래스 |
+|---|---|---|---|---|
+| ![울머스](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-244bad69-d799-4c26-9795-bd2c0a98afd4.png) | **울머스** | **레전드** | 와일더스 | 탱커 |
+| ![팔라모르](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-8fb22290-4c7b-4c1b-8462-749e5b83fd89.png) | 팔라모르 | 레전드 | 와일더스 | 레인저 |
+| ![아로라](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/app/src/main/assets/learning/portraits-20260917/aurora.png) | 아로라 | 신화+ | 반신 | 마법사 |
+| ![퀸](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-e0f243a1-c953-499f-9850-7d8756a2fc36.png) | 퀸 | 레전드 | 와일더스 | 서포터 |
+| ![솔리스](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-b6ac6fc2-cbd0-4b14-aea4-75c9fd46627d.png) | 솔리스 | 신화 | 와일더스 | 서포터 |
+
+### 배치
+- **울머스:** 현재 에이론이 있는 최전방 칸.
+- **나머지 네 영웅:** 700M 당시 위치 그대로.
+- **메아리:** 변경 없음.
+
+**복귀 확인만을 위해 전투를 다시 돌릴 필요는 없습니다.** 이미 해당 배치의 생존과 점수가 확인됐습니다.
+
+남은 **2회는 보류**하겠습니다. 현재 확보한 근거로는 동일·상위 등급 조건을 충족하면서 이 조합보다 나을 교체안을 뒷받침하기 어렵습니다. 등급 조건만 맞춘 임의 교체로 남은 횟수를 쓰게 하지는 않겠습니다.

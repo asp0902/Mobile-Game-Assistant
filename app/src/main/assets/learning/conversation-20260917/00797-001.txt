@@ -1,0 +1,39 @@
+[09/17/2026 13:56:35] assistant / 
+
+## 타 진영 후보: 신화 세미라 투입
+
+**700M 진형에서 팔라모르만 세미라로 교체**하겠습니다. 울머스를 유지해 앞선 에이론 교체 때처럼 전열 생존 구조를 바꾸지 않습니다.
+
+**레전드 팔라모르 → 신화 세미라**로, 동일·상위 등급 교체 조건을 충족합니다. 세미라의 신화 등급은 이전 확인 기록 기준입니다.
+
+| 초상화 | 이름 | 등급 | 진영 | 클래스 |
+|---|---|---|---|---|
+| ![울머스](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-244bad69-d799-4c26-9795-bd2c0a98afd4.png) | 울머스 | 레전드 | 와일더스 | 탱커 |
+| ![세미라](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/학습보관/20260917-210808/media/0158-shemira-corrected.png) | **세미라** | **신화** | **그레이브본** | **마법사** |
+| ![아로라](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/app/src/main/assets/learning/portraits-20260917/aurora.png) | 아로라 | 신화+ | 반신 | 마법사 |
+| ![퀸](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-e0f243a1-c953-499f-9850-7d8756a2fc36.png) | 퀸 | 레전드 | 와일더스 | 서포터 |
+| ![솔리스](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-b6ac6fc2-cbd0-4b14-aea4-75c9fd46627d.png) | 솔리스 | 신화 | 와일더스 | 서포터 |
+
+※ 세미라 초상화는 과거 사용자 자료에서 복구했습니다. 이미지의 340레벨을 현재 레벨로 적용하지 않습니다.
+
+### 세미라를 시험하는 이유
+
+세미라는 **기본 스킬에 상한이 있는 최대 HP 비례 진실 피해와 궁극기 기반 자가 회복**이 있어, 보스전 보조 딜러 후보가 됩니다. 신화+ 전용 보호막과 전용 +10 효과는 현재 사용할 수 없는 것으로 제외합니다. [세미라 스킬](https://www.prydwen.gg/afk-journey/characters/shemira)
+
+다만 **팔라모르의 142M 피해와 아로라 지원을 포기하는 교체**입니다. 세미라도 궁극기 의존도가 있어 예티의 침묵에 불리할 수 있으므로, 상위 등급이라는 이유만으로 개선을 보장하지 않습니다.
+
+### 배치·비교 방법
+
+- **울머스:** 기존 최전방 유지.
+- **세미라:** 팔라모르가 있던 근접 칸이 아니라, **울머스보다 뒤쪽의 빈 중·후열 칸**에 배치.
+- **아로라·퀸·솔리스와 메아리:** 700M 당시 설정 유지.
+
+**전체 피해 700M·53.4%를 넘는지가 채택 기준**입니다. 떨어지면 팔라모르 편성으로 복귀합니다. 이번 한 번을 사용하면 추가 소모가 없는 기준으로 **1회가 남습니다.**
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:322-322|note=[Used previously confirmed Shemira Mythic rank with freshness caveat]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

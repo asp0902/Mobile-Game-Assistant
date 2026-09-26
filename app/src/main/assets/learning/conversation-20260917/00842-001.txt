@@ -1,0 +1,43 @@
+[09/17/2026 14:54:06] assistant / 
+
+## 추천: 에디 → 아로라, 나머지 4명 유지
+
+첨부 화면의 마지막 편성은 **루시우스·후긴·로완·세미라·에디**입니다. 현재 조건은 **시즌 팬텀 141, 영웅 412레벨, 팬텀 26레벨, 메아리 +18**로 확인됩니다. 아레나의 240레벨·+10 조건은 적용하지 않습니다.
+
+이번에는 **레오프론 3명을 유지하면서 에디만 아로라로 교체**하는 비교안을 추천합니다. 아직 팬텀 141에서 검증된 조합은 아닙니다.
+
+### 추천 편성
+
+등급은 이전 사용자 확인 기록 기준이며, 이번 이미지의 테두리로 재판정하지 않았습니다.
+
+| 초상화 | 영웅 | 보유 등급 | 진영 · 직업 |
+|---|---|---|---|
+| ![루시우스](C:/Users/asp92/AppData/Local/Temp/afk-haunting-portraits/lucius-clear.png) | 루시우스 | 에픽 | 레오프론 · 탱커 |
+| ![후긴](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-25dbdea9-cd0c-4963-abab-99f81e05b214.png) | 후긴 | 레전드+〔이전 확인〕 | 레오프론 · 서포터 |
+| ![로완](C:/Users/asp92/AppData/Local/Temp/afk-portraits/rowan.png) | 로완 | 레전드 | 레오프론 · 서포터 |
+| ![세미라](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-697c132f-b212-4706-a170-f0c82ca61044.png) | 세미라 | 신화 | 그레이브본 · 마법사 |
+| ![아로라](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/app/src/main/assets/learning/portraits-20260917/aurora.png) | **아로라** | **신화+** | 반신 · 마법사 |
+
+### 현재 화면에서 변경할 위치
+
+1. **중앙 왼쪽 에디 자리 → 아로라**로 교체합니다.
+2. **최전방 루시우스, 왼쪽 후긴, 중앙 세미라, 오른쪽 뒤 로완은 그대로** 둡니다.
+3. **현재 메아리 +18도 유지**합니다. 영웅 교체와 배치·메아리 변경을 동시에 하지 않습니다.
+
+### 이렇게 추천하는 이유
+
+- **루시우스·후긴·로완**을 남겨 기존 레오프론 3명 기반 팬텀 구성을 보존합니다.
+- 교체는 **에디 레전드 → 아로라 신화+**로, 요청하신 동급 이상 교체 조건을 충족합니다.
+- 세미라는 다수 적 상대의 주력 후보로 유지합니다. 일반 스테이지 가이드도 다수 적 전투를 세미라의 강점으로 설명하지만, 이것이 팬텀 141 클리어를 보장하지는 않습니다. [세미라 가이드](https://www.prydwen.gg/afk-journey/characters/shemira)
+- 아로라의 다른 콘텐츠 성적은 참고일 뿐, **이번 스테이지에서 에디보다 우수하다는 확정 근거로 사용하지 않습니다.**
+
+**첫 시도 후에는 클리어 여부와 첫 사망 영웅·표시 시간만 알려주세요.** 전열 붕괴인지, 딜러 보호 문제인지 구분한 뒤 다음 한 가지를 조정하겠습니다.
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:332-333|note=[Previously confirmed ranks factions classes and user portrait sources]
+MEMORY.md:19-19|note=[Explicit user evidence overrides portrait frame inference]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

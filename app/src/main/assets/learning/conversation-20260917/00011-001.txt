@@ -1,0 +1,21 @@
+[08/25/2026 07:43:17] assistant / 
+
+난이도 5 출전 명단은 아래 10명을 추천합니다. 최소 레전드 등급에서도 기본 스킬 역할이 확실하고, 일반 층과 심층 보스를 모두 대응할 수 있는 구성입니다.
+
+| 주력 영웅 | 교체·예비 영웅 |
+|---|---|
+| ![데이먼](https://cdn.prydwen.gg/images/afk-journey/characters/daimon_card.webp)<br>**데이먼**<br>메인 탱커·보호막·보스 체력 비례 피해 | ![안탄드라](https://cdn.prydwen.gg/images/afk-journey/characters/antandra_card.webp)<br>**안탄드라**<br>예비 탱커·도발·아군 보호 |
+| ![팔라모르](https://cdn.prydwen.gg/images/afk-journey/characters/faramor_card.webp)<br>**팔라모르**<br>고정 피해·공격력 지원·회복 차단 | ![에이론](https://cdn.prydwen.gg/images/afk-journey/characters/eironn_card.webp)<br>**에이론**<br>적 집결·광역 제어·마법 방어 감소 |
+| ![세미라](https://cdn.prydwen.gg/images/afk-journey/characters/shemira_card.webp)<br>**세미라**<br>주력 광역 딜러·자체 회복·보스 대응 | ![세시아](https://cdn.prydwen.gg/images/afk-journey/characters/cecia_card.webp)<br>**세시아**<br>소환수 보조 탱킹·후방 딜링·제어 |
+| ![판도라](https://cdn.prydwen.gg/images/afk-journey/characters/pandora_card.webp)<br>**판도라**<br>세미라 즉시 궁극기 지원·디버프 | ![로완](https://cdn.prydwen.gg/images/afk-journey/characters/rowan_card.webp)<br>**로완**<br>에너지 공급·위기 순간 회복 |
+| ![스모키와 미르키](https://cdn.prydwen.gg/images/afk-journey/characters/smokey-and-meerky_card.webp)<br>**스모키와 미르키**<br>지속 회복·공격력 및 가속 지원 | ![휴윈](https://cdn.prydwen.gg/images/afk-journey/characters/hewynn_card.webp)<br>**휴윈**<br>전체 회복·약화 효과 해제 |
+
+### 권장 배치
+
+- 일반 층 안정 조합: `데이먼 / 에이론 / 세미라 / 세시아 / 스모키와 미르키`
+- 강한 단일 적·보스: `데이먼 / 팔라모르 / 세미라 / 판도라 / 스모키와 미르키`
+- 생존이 어려운 층: `데이먼 / 안탄드라 / 세미라 / 로완 / 휴윈`
+
+판도라는 가장 뒤에 배치한 세미라를 잠시 보호한 뒤 에너지 1,000과 공격력 증가를 제공하므로, 세미라가 후열 최후방에 오도록 배치하는 것이 핵심입니다. 팔라모르는 일반 전투와 보스전 모두에서 고정 피해와 공격력 지원을 제공하고, 데이먼은 보스 방어력을 우회하는 체력 기반 피해를 가집니다. [팔라모르 분석](https://www.prydwen.gg/afk-journey/characters/faramor), [데이먼 분석](https://www.prydwen.gg/afk-journey/characters/daimon), [세미라 분석](https://www.prydwen.gg/afk-journey/characters/shemira), [판도라 분석](https://www.prydwen.gg/afk-journey/characters/pandora)
+
+이후 패키징 자료가 첨부되면 실제 승급 상태, 전용 장비, 획득 유물과 기존 탐색 결과까지 합쳐 명단과 배치를 다시 최적화하겠습니다.

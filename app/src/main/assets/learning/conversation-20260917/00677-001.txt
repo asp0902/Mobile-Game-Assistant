@@ -1,0 +1,34 @@
+[09/17/2026 07:43:49] assistant / 
+
+**우선 추천은 울머스·라이카·휴윈·샤키탈리스·아로라, 메아리는 현재 장착한 파진술 +18입니다.** 두 반신을 공격 핵심으로 쓰고, 와일더스 3명으로 전열·회복·공격 지원을 구성하는 안입니다.
+
+### 출전 5명
+
+| 사용자 초상 | 영웅 | 진영 · 직업 | 배치 |
+|---|---|---|---|
+| ![울머스](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/app/src/main/assets/hero_recognition/portraits/hero_50094.png) | **울머스** | 와일더스 · 탱커 | 보스에 가장 가까운 중앙 |
+| ![라이카](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/app/src/main/assets/hero_recognition/portraits/hero_50130.png) | **라이카** | 와일더스 · 사수 | 중열 중앙 |
+| ![휴윈](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/app/src/main/assets/hero_recognition/portraits/hero_50098.png) | **휴윈** | 와일더스 · 서포터 | 후열 중앙 |
+| 초상 연결 `CHECK` | **샤키탈리스** | 반신 · 사수 | 중열 오른쪽 |
+| ![아로라](C:/Users/asp92/AppData/Local/Temp/afk-haunting-portraits/aurora.png) | **아로라** | 반신 · 마법사 | 중열 왼쪽 |
+
+현재 승급 등급은 모두 `CHECK`입니다. 테두리 색으로 추정하거나 전용 스킬 해금을 가정하지 않았습니다.
+
+```text
+              거대 골렘
+
+               울머스
+       아로라   라이카   샤키탈리스
+                휴윈
+```
+
+*방향을 나타낸 배치도입니다. 실제 육각 칸에서는 울머스만 가장 앞으로, 나머지는 그 뒤에 배치하세요.*
+
+### 선택 이유
+
+- **아로라 투입:** 현재 화면에서 미출전인 아로라를 넣어 공격 역할을 강화합니다.
+- **라이카:** 시작 에너지와 공격 속도 지원으로 공격진의 초반 전개를 보조합니다. [스킬 근거](https://www.prydwen.gg/afk-journey/characters/lyca)
+- **휴윈:** 전원 회복을 담당합니다. 미확인 전용 장비의 피해 감소 효과는 계산하지 않습니다. [스킬 근거](https://www.prydwen.gg/afk-journey/characters/hewynn)
+- **파진술 +18:** 제공하신 설명의 공격력 20%·에너지 회복을 유지합니다. 망령의 소굴용 실드·공포 논리는 이번 보스에 적용하지 않습니다.
+
+**이번 안은 출전 제한에 맞춘 첫 비교 조합이지, 검증된 최적 조합은 아닙니다.** 첨부된 보스 창에는 스킬 아이콘만 있어 실드·반사·특정 공격 요구 등의 상세 기믹은 아직 반영하지 못했습니다.

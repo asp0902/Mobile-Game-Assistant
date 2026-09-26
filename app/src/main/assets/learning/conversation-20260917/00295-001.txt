@@ -1,0 +1,46 @@
+[09/12/2026 14:51:06] assistant / 
+
+## 루카 기용 판단 수정
+
+`엘리트+ 루카`는 이번 편성에서 제외하는 것이 맞습니다.
+
+루카는 낮은 등급에서도 버티는 능력이 있지만, 현재 계정에는 더 높은 등급의 고르단이 있습니다. 아레나에서는 생존 능력뿐 아니라 공격력과 제어 저항에 영향을 주는 등급 차이도 크므로, 루카를 계속 우선한 이전 추천은 부적절했습니다.
+
+## 수정 추천 조합
+
+**고르단 / 세미라 / 판도라 / 퀸 / 솔리스**
+
+### 고르단
+![고르단 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/kordan.png)
+
+### 세미라
+![세미라 초상화](C:/Users/asp92/AppData/Local/Temp/codex-arena-portraits/shemira-corrected.png)
+
+### 판도라
+![판도라 초상화](C:/Users/asp92/AppData/Local/Temp/codex-arena-portraits/pandora-corrected.png)
+
+### 퀸
+![퀸 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/queen.png)
+
+### 솔리스
+![솔리스 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/solise.png)
+
+판도라 초상화는 이전 답변의 잘못된 이미지 문법을 수정했습니다.
+
+## 첨부된 맵 배치
+
+화면 아래쪽 아군 배치 구역을 기준으로 배치합니다.
+
+```text
+          [세미라] [고르단]
+[솔리스] [판도라] [퀸]
+```
+
+- `고르단`: 왼쪽 돌벽 위에 있는 두 칸 중 오른쪽 칸
+- `세미라`: 같은 두 칸 중 왼쪽 칸
+- `판도라`: 세미라 바로 아래, 돌벽 뒤쪽 칸
+- `퀸`: 판도라 오른쪽의 후방 칸
+- `솔리스`: 가장 왼쪽 아래의 안전한 후방 칸
+- 메아리: `구속술 +8`
+
+고르단이 오른쪽에서 먼저 적을 받아내고 세미라는 바로 옆에서 광역 피해를 누적합니다. 판도라가 세미라의 필살기 발동을 지원하며, 퀸과 솔리스는 돌벽 뒤에 보호해 장기전 유지력을 확보하는 배치입니다.

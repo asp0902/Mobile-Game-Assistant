@@ -1,0 +1,13 @@
+[08/26/2026 09:38:32] user / 
+
+# Files mentioned by the user:
+
+## Photo 1.jpg: C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/e3e226c8-dcfb-4f1e-b0a4-0601a29e4bb9/1-Photo-1.jpg
+
+## My request for Codex:
+
+영웅 소환 목록 변경 진행할지 유지할지 확인
+
+<image name=[Image #1] path="C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/e3e226c8-dcfb-4f1e-b0a4-0601a29e4bb9/1-Photo-1.jpg">
+
+</image>

@@ -13,8 +13,8 @@ android {
         applicationId = "com.asp0902.mobilegameassistant"
         minSdk = 23
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.1.0"
+        versionCode = 18
+        versionName = "0.1.12-button-bounds-20260918"
     }
 
     buildFeatures {

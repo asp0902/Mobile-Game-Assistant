@@ -1,0 +1,18 @@
+[09/18/2026 06:08:34] assistant / 
+
+파일이 모두 존재하는 것을 확인했습니다.
+
+**ChatGPT 새 채팅에 첨부할 핵심 파일**
+- [LEARNING.md](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/학습보관/20260918-000045/LEARNING.md)
+- [game_knowledge_20260917.json](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/학습보관/20260918-000045/game_knowledge_20260917.json)
+
+**추가 원문·첨부 목록**
+- [conversation.jsonl](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/학습보관/20260918-000045/conversation.jsonl)
+- [media-manifest.json](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/학습보관/20260918-000045/media-manifest.json)
+
+보관 폴더:
+```text
+C:\Users\asp92\OneDrive\바탕 화면\AFKː 새로운 여정\학습보관\20260918-000045
+```
+
+[APK v10](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/AFK-Assistant-learning-20260918-v10.apk)은 ChatGPT 학습용 첨부에 필요하지 않습니다.

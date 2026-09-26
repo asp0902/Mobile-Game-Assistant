@@ -1,0 +1,3 @@
+[08/25/2026 08:00:38] assistant / 
+
+현재 작업 폴더는 Git 저장소가 아니며 전달 ZIP만 있는 상태입니다. 패키지를 새 하위 폴더에 비파괴 압축 해제한 뒤 `README.md`, `HANDOFF.md`, `SOURCE_INDEX.md`, `manifest.json`을 완독해 실제 저장소 위치와 첫 구현 범위를 확정하겠습니다.

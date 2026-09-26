@@ -1,0 +1,36 @@
+[09/13/2026 06:50:32] assistant / 
+
+## 명칭 확인
+
+제공 이미지의 좌→우, 상→하 순서는 다음과 같습니다.
+
+`후긴, 로완, 카세디아, 실벤, 페이, 딜그레이`  
+`미라엘, 베라, 루시우스, 이브, 발렌, 워커`  
+`메린, 루카, 콜린, 조아, 해미, 치피`
+
+`콜린`은 이번 목록의 레오프론 영웅이며, 이전에 미보유로 확인한 `코린(Korin)`과는 별개로 처리합니다.
+
+## 상록수 전시관: 레오프론 제국 추천
+
+| 위치 | 영웅 | 소속 / 포지션 | 초상화 |
+|---|---|---|---|
+| 전열 | 루시우스 | 레오프론 / 탱커 | ![루시우스](C:\Users\asp92\AppData\Local\Temp\afk-portraits\lucius.png) |
+| 전열 | 후긴 | 레오프론 / 서포터 | ![후긴](C:\Users\asp92\AppData\Local\Temp\afk-portraits\hugin.png) |
+| 후열 | 카세디아 | 레오프론 / 마법사 | ![카세디아](C:\Users\asp92\AppData\Local\Temp\afk-portraits\cassadee.png) |
+| 후열 | 로완 | 레오프론 / 서포터 | ![로완](C:\Users\asp92\AppData\Local\Temp\afk-portraits\rowan.png) |
+| 후열 | 실벤 | 레오프론 / 명사수 | ![실벤](C:\Users\asp92\AppData\Local\Temp\afk-portraits\silven.png) |
+
+배치: `루시우스`를 가장 앞에 두고, `후긴` 바로 뒤 또는 대각선 뒤에 `실벤`을 배치하세요. `카세디아`와 `로완`은 반대편 후열에 둡니다.
+
+후긴의 버프, 로완의 에너지 지원, 카세디아의 광역 제어, 실벤의 단일 화력으로 구성한 5레오프론 조합입니다. 후긴이 초반에 자주 쓰러지면 전열 후긴을 `루카`로 교체하세요. 후긴은 서포터, 카세디아는 마법사, 실벤은 명사수, 루시우스는 탱커로 확인됩니다. [후긴](https://www.prydwen.gg/afk-journey/characters/hugin), [카세디아](https://www.prydwen.gg/afk-journey/characters/cassadee), [실벤](https://www.prydwen.gg/afk-journey/characters/silven), [루시우스](https://www.prydwen.gg/afk-journey/characters/lucius)
+
+과거의 메아리는 종류별 이름이 이번 자료에 없어 특정 이름을 단정하지 않겠습니다. 현재 모두 `+10`이므로, 전투 시작 보호·회복형 메아리를 우선 장착하세요.
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:24-24|note=[used user-provided portrait and row-column evidence rule]
+MEMORY.md:39-39|note=[used roster correction rule]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

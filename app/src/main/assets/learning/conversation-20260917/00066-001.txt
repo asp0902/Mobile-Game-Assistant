@@ -1,0 +1,39 @@
+[08/26/2026 09:02:26] user / 
+
+# Files mentioned by the user:
+
+## Photo 1.jpg: C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/647695bd-510f-4687-ac7e-f4601064103a/1-Photo-1.jpg
+
+## Photo 2.jpg: C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/647695bd-510f-4687-ac7e-f4601064103a/2-Photo-2.jpg
+
+## Photo 3.jpg: C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/647695bd-510f-4687-ac7e-f4601064103a/3-Photo-3.jpg
+
+## Photo 4.jpg: C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/647695bd-510f-4687-ac7e-f4601064103a/4-Photo-4.jpg
+
+## Photo 5.jpg: C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/647695bd-510f-4687-ac7e-f4601064103a/5-Photo-5.jpg
+
+## My request for Codex:
+
+초특가 기간 한정 패키지
+현재 같은 패키지가 2개 떠있는 상황
+구매 여부 추천
+
+<image name=[Image #1] path="C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/647695bd-510f-4687-ac7e-f4601064103a/1-Photo-1.jpg">
+
+</image>
+
+<image name=[Image #2] path="C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/647695bd-510f-4687-ac7e-f4601064103a/2-Photo-2.jpg">
+
+</image>
+
+<image name=[Image #3] path="C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/647695bd-510f-4687-ac7e-f4601064103a/3-Photo-3.jpg">
+
+</image>
+
+<image name=[Image #4] path="C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/647695bd-510f-4687-ac7e-f4601064103a/4-Photo-4.jpg">
+
+</image>
+
+<image name=[Image #5] path="C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/.codex-remote-attachments/01a037cf-2522-74c0-9787-cf38606eb2fa/647695bd-510f-4687-ac7e-f4601064103a/5-Photo-5.jpg">
+
+</image>

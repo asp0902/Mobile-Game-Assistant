@@ -1,0 +1,13 @@
+[09/17/2026 07:39:44] assistant / 
+
+**번창 파티의 전투 준비 화면과 규칙·적 스킬 설명 화면을 보내주세요.** 현재 자료와 검색만으로는 이 스테이지의 기믹과 시즌 효과 적용 여부를 확인하지 못했습니다.
+
+기존 보유 영웅·메아리 기록을 활용하되, **출전 5명과 정확한 배치, 메아리까지 초상화와 함께** 추천하겠습니다. 망령의 소굴 조합을 그대로 재사용하지 않겠습니다.
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:321-325|note=[reuse historical roster while preserving current-state uncertainty]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

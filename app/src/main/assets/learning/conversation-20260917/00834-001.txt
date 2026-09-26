@@ -1,0 +1,52 @@
+[09/17/2026 14:43:09] assistant / 
+
+[아레나1·2 결과와 사망 기록을 저장했습니다](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/학습보관/20260917-234155-infinite-arena/LEARNING.md). 관련 이미지 15개와 앱 학습 원본에도 반영했으며, **APK 재빌드는 하지 않았습니다.**
+
+## 아레나3 일반 추천
+**울머스·팔라모르·아로라·세미라·솔리스 유지, 분산 배치**로 시작하겠습니다. 아레나2 무한전 실패를 다른 적인 아레나3 일반전의 실패로 간주하지 않고, 이번 적에 맞춰 배치를 바꾸는 **미검증 첫 도전안**입니다.
+
+### 적 스킬에서 중요한 점
+- 클래스는 마법사지만 **공격 유형은 물리**입니다.
+- **금빛갈기 돌파:** 8초간 돌진하며 경로의 아군에게 에어본과 150% 피해.
+- **롤링 대쉬:** 주변 1칸에 180% 피해를 3회. 여러 아군이 붙어 맞는 상황을 피해야 합니다.
+- 네리온의 **익사 표식**, 고양이의 **처형**, 무한 모드의 **강화 규칙**은 이번 일반전에 적용하지 않습니다.
+
+### 출전 명단
+전원 **240레벨**, 아래 등급 유지입니다.
+
+| 사용자 초상화 | 이름 | 등급 | 진영 | 클래스 |
+|---|---|---|---|---|
+| ![울머스](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-244bad69-d799-4c26-9795-bd2c0a98afd4.png) | 울머스 | 레전드 | 와일더스 | 탱커 |
+| ![팔라모르](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-31b411eb-2ae0-41a5-b53f-2a9ec269065c.png) | 팔라모르 | 레전드+ | 와일더스 | 레인저 |
+| ![아로라](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/app/src/main/assets/learning/portraits-20260917/aurora.png) | 아로라 | 신화+ | 반신 | 마법사 |
+| ![세미라](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-697c132f-b212-4706-a170-f0c82ca61044.png) | 세미라 | 신화 | 그레이브본 | 마법사 |
+| ![솔리스](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-b6ac6fc2-cbd0-4b14-aea4-75c9fd46627d.png) | 솔리스 | 신화 | 와일더스 | 서포터 |
+
+### 배치 원칙
+```text
+                 적 진영
+
+          울머스
+                         팔라모르
+
+   세미라                         아로라
+
+                 솔리스
+```
+*상대 위치 예시이며 실제 타일 지정은 아닙니다.*
+
+- **울머스는 최전열**, 팔라모르는 다른 측면에서 한 줄 뒤에 둡니다.
+- **울머스 바로 뒤에 솔리스·딜러를 일렬로 세우지 않습니다.** 돌진 한 경로에 여러 명이 걸리는 위험을 줄이려는 배치입니다.
+- 후열 세 명은 가능한 한 서로 떨어뜨리고, 팔라모르의 인접 지원을 위해 억지로 밀집시키지 않습니다.
+- 돌진은 전열을 지나갈 수 있으므로 **울머스가 후열 피해를 전부 대신 받는다고 가정하지 않습니다.**
+
+**메아리는 현재 장착한 +10을 유지**합니다. 우선 영웅 하향 교체 없이 일반전 통과 여부를 확인하고, 실패할 때 첫 사망 대상에 맞춰 한 가지씩 조정하겠습니다.
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:19-24|note=[Preserved explicit account corrections and existing learning asset integration]
+MEMORY.md:320-320|note=[Required user portraits and confirmed hero metadata]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

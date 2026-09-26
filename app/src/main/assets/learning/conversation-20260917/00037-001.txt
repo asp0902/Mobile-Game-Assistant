@@ -1,0 +1,27 @@
+[08/25/2026 08:02:37] assistant / 
+
+## 난이도 5-3 결과
+
+전원 생존·HP 최대. 부활 포션 사용 불필요.
+
+| 영웅 | 피해 | 회복 | 피격 |
+|---|---:|---:|---:|
+| ![데이먼](<C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/이계의 미궁/Spark 전달용/AFK_Labyrinth_Professional_Handoff_20260825/core/AFK_hero_recognition_package_2026-08-20/AFK_hero_recognition_package_2026-08-20/portrait_card/50106_데이먼_portrait.png>)<br>데이먼 | **173K** | 0 | **115K** |
+| ![에이론](<C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/이계의 미궁/Spark 전달용/AFK_Labyrinth_Professional_Handoff_20260825/core/AFK_hero_recognition_package_2026-08-20/AFK_hero_recognition_package_2026-08-20/portrait_card/50130_라이카_portrait.png>)<br>에이론 | 43,755 | 0 | 39,529 |
+| ![스모키와 미르키](https://cdn.prydwen.gg/images/afk-journey/characters/smokey-and-meerky_card.webp)<br>스모키와 미르키 | 0 | **61,148** | 0 |
+| ![세시아](<C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/이계의 미궁/Spark 전달용/AFK_Labyrinth_Professional_Handoff_20260825/core/AFK_hero_recognition_package_2026-08-20/AFK_hero_recognition_package_2026-08-20/portrait_card/50100_세시아_portrait.png>)<br>세시아 | 30,018 | 0 | 0 |
+| ![세미라](<C:/Users/asp92/OneDrive/바탕 화면/AFKː 새로운 여정/이계의 미궁/Spark 전달용/AFK_Labyrinth_Professional_Handoff_20260825/core/AFK_hero_recognition_package_2026-08-20/AFK_hero_recognition_package_2026-08-20/portrait_card/50108_세미라_portrait.png>)<br>세미라 | **128K** | 0 | 21,762 |
+
+- 데이먼: 최고 피해·전열 피격 담당.
+- 세미라: 두 번째 주력 딜러.
+- 세시아: 이번 적 배치에서는 소환 피해 효율 하락. 교체 근거는 아님.
+- 스모키: 회복 61,148로 전원 최대 HP 유지.
+- 그레이브본 3인 버프 유지.
+
+## 선택 추천
+
+**우측 `피츠 상점` 선택.**
+
+현재 퓨어 크리스탈 `157` 보유. 이미 한 차례 크리스탈 문을 거쳤으므로, 초반에 유물로 전환하면 남은 12개 정규 층과 심층 전체에서 효과를 누릴 수 있습니다. `칼날`, 공격·에너지·생존 유물을 우선 검토하고 부활 포션은 현재 1개면 충분합니다.
+
+상점 진입 후 상품 화면 기준으로 실제 구매 여부를 결정하면 됩니다.

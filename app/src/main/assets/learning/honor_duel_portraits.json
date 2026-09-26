@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "startingRarity": {
+    "mode": "HONOR_DUEL_INITIAL_FORMATION_SELECTION",
+    "rarity": "EPIC",
+    "evidence": "USER_CONFIRMED",
+    "note": "명예의 결투 시작 시 모든 제공 영웅은 에픽. 개인 계정 및 이후 상점/승급에는 적용하지 않음."
+  },
+  "portraits": [
+    {
+      "heroId": "valka",
+      "name": "발리카",
+      "faction": "그레이브본",
+      "role": "전사",
+      "attackType": "물리",
+      "range": 1,
+      "mode": "HONOR_DUEL_INITIAL_FORMATION_SELECTION",
+      "rarity": "EPIC",
+      "evidence": "USER_CONFIRMED",
+      "portraitAsset": "learning/honor-valka-epic-20260918/valka-epic.png",
+      "source": "codex-clipboard-fb4a9c1a-ed9a-4572-a8cc-5e461137d71a.png",
+      "detailEvidence": "codex-clipboard-0a76a666-b40c-4aad-b3e7-5b498746e35c.png",
+      "inferOtherRanksFromThisPortrait": false
+    }
+  ]
+}

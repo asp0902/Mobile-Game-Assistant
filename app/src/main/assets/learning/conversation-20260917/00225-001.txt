@@ -1,0 +1,13 @@
+[09/09/2026 05:32:16] assistant / 
+
+수정된 1차 편성입니다.
+
+| 영웅 | 초상화 | 종족·진영 |
+|---|---|---|
+| 튜더 | ![튜더](C:/Users/asp92/AppData/Local/Temp/codex-formation-1-portraits/tudor.png) | 와일더스 |
+| 퀸 | ![퀸](C:/Users/asp92/AppData/Local/Temp/codex-formation-1-portraits/queen.png) | 와일더스 |
+| 에이론 | ![에이론](C:/Users/asp92/AppData/Local/Temp/codex-formation-1-portraits/eironn.png) | 와일더스 |
+| 팔라모르 | ![팔라모르](C:/Users/asp92/AppData/Local/Temp/codex-formation-1-portraits/palamor.png) | 와일더스 |
+| 스모키와 미르키 | ![스모키와 미르키](C:/Users/asp92/AppData/Local/Temp/codex-formation-1-portraits/smokey-and-meerky.png) | 트라이브 |
+
+와일더스 4명이라 `포이즌 스포아` 활성화 조건은 유지됩니다. 다만 기존 **브라이언 능력자 지정은 오인식에 근거했으므로 철회**하며, 실제 영웅 기준으로 능력자와 편성을 다시 평가해야 합니다.

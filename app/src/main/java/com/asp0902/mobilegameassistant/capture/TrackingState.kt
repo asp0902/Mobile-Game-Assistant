@@ -5,4 +5,5 @@ sealed interface TrackingState {
     data object AwaitingConsent : TrackingState
     data object Starting : TrackingState
     data object Tracking : TrackingState
+    data object Paused : TrackingState
 }

@@ -4,6 +4,7 @@ import com.asp0902.mobilegameassistant.analysis.InitialFormationAction
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -42,6 +44,7 @@ import com.asp0902.mobilegameassistant.rules.RunRecommendationAction
 import com.asp0902.mobilegameassistant.rules.HonorDuelEconomy
 import com.asp0902.mobilegameassistant.artisans.ArtisansAction
 import com.asp0902.mobilegameassistant.artisans.ArtisansPathAnalysis
+import com.asp0902.mobilegameassistant.analysis.HeroRarity
 
 @Composable
 fun TrackingScreen(
@@ -54,6 +57,7 @@ fun TrackingScreen(
     heroChoices: List<HeroReference>,
     onStart: () -> Unit,
     onStop: () -> Unit,
+    onTogglePause: () -> Unit,
     overlayPermissionGranted: Boolean,
     onEnableOverlay: () -> Unit,
     onTemplateSelected: (FormationTemplateId) -> Unit,
@@ -61,7 +65,12 @@ fun TrackingScreen(
     onHeroCorrected: (Long, Int, String) -> Unit,
     onHeroPurchaseRecorded: (Long, Int) -> Unit,
 ) {
-    Scaffold { padding ->
+    var showLearning by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+    if (showLearning) {
+        com.asp0902.mobilegameassistant.learning.LearningScreen(onBack = { showLearning = false })
+        return
+    }
+    Scaffold(containerColor = Color(0xFFF1EBDE)) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -73,6 +82,9 @@ fun TrackingScreen(
         ) {
             Text("AFK: 새로운 여정 트래커", style = MaterialTheme.typography.headlineSmall)
             Text(statusText(state))
+            Button(onClick = { showLearning = true }, modifier = Modifier.fillMaxWidth()) {
+                Text("학습 자료 · 메아리 / 보스 / 전투 기록")
+            }
 
             when (state) {
                 is TrackingState.Idle -> Button(
@@ -86,8 +98,16 @@ fun TrackingScreen(
                 TrackingState.Starting,
                 -> CircularProgressIndicator()
 
-                TrackingState.Tracking -> {
-                    Text("화면 전환 후 자동 분석합니다. 게임 위 추천 배지를 확인하세요.")
+                TrackingState.Tracking,
+                TrackingState.Paused -> {
+                    val paused = state == TrackingState.Paused
+                    Text(if (paused) "새 캡처를 멈췄습니다. 진행 중인 분석 완료 후 마지막 진단을 유지합니다." else "화면 전환 후 자동 분석합니다. 진단을 확인하려면 알림에서 먼저 일시중지하세요.")
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = onTogglePause,
+                    ) {
+                        Text(if (paused) "트래킹 재개" else "트래킹 일시중지")
+                    }
                     if (!overlayPermissionGranted) {
                         Button(
                             modifier = Modifier.fillMaxWidth(),
@@ -130,7 +150,16 @@ fun TrackingScreen(
                             }
                             template?.let { FormationOverlay(it, Modifier.fillMaxSize()) }
                         }
-                        AnalysisSummary(analysis, artisansAnalysis, detailSlot, heroChoices, onDetailSlotSelected, onHeroCorrected, onHeroPurchaseRecorded)
+                        Text("진단 내용을 길게 눌러 범위를 선택한 뒤 복사하세요.")
+                        SelectionContainer(modifier = Modifier.fillMaxWidth()) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                AnalysisSummary(analysis, artisansAnalysis, detailSlot, heroChoices, onDetailSlotSelected, onHeroCorrected, onHeroPurchaseRecorded)
+                            }
+                        }
                     }
                 }
             }
@@ -192,12 +221,7 @@ private fun AnalysisSummary(
                                 com.asp0902.mobilegameassistant.analysis.HeroRecognitionStatus.NEEDS_CONFIRMATION -> "후보"
                                 else -> "미확인"
                             }
-                            val rarity = when (hero.rarity) {
-                                com.asp0902.mobilegameassistant.analysis.HeroRarity.EPIC -> "에픽"
-                                com.asp0902.mobilegameassistant.analysis.HeroRarity.LEGENDARY -> "레전드"
-                                com.asp0902.mobilegameassistant.analysis.HeroRarity.MYTHIC -> "신화"
-                                else -> "등급 미확인"
-                            }
+                            val rarity = heroRarityLabel(hero.rarity)
                             Text("${hero.slotIndex + 1}: $identity / ${hero.faction ?: "진영 미확인"} / ${hero.roleHint ?: "직업 미확인"} / $rarity / $status ${(hero.confidence * 100).toInt()}%")
                         }
                 if (offer.reasons.isNotEmpty()) Text(offer.reasons.joinToString(" · "))
@@ -215,6 +239,11 @@ private fun AnalysisSummary(
         is ShopAnalysisUiState.Labyrinth -> {
             Text("이계의 미궁 선택 추천")
             Text(analysis.message)
+        }
+        is ShopAnalysisUiState.LearnedBoss -> {
+            Text("망령의 소굴 · 저장된 학습 참고")
+            Text(analysis.message)
+            Text("현재 계정·배치 자동 확인 아님. 학습 자료에서 원본 근거와 미확인 항목을 확인하세요.")
         }
         is ShopAnalysisUiState.UnsupportedScreen -> {
             Text("현재 화면을 확인 중입니다.")
@@ -257,7 +286,7 @@ private fun AnalysisSummary(
             val spendable = HonorDuelEconomy.state(analysis.analysis)
             analysis.analysis.ownedHeroes.forEach { hero ->
                 val gauge = hero.promotion
-                Text("보유 ${hero.slotIndex + 1}: ${hero.heroName ?: "UNKNOWN"} ${hero.rarity} " +
+                Text("보유 ${hero.slotIndex + 1}: ${hero.heroName ?: "UNKNOWN"} ${heroRarityLabel(hero.rarity)} " +
                     "${if (gauge.isMaxRank) "최대 등급" else "${gauge.progress ?: "?"}/${gauge.required ?: "?"}"} " +
                     "장비 ${hero.equipmentName ?: "없음"} 판매 +${hero.sellValue ?: "?"} (${(hero.confidence * 100).toInt()}%)")
             }
@@ -284,6 +313,15 @@ private fun AnalysisSummary(
             }
         }
     }
+}
+
+private fun heroRarityLabel(rarity: HeroRarity): String = when (rarity) {
+    HeroRarity.EPIC -> "에픽"
+    HeroRarity.EPIC_PLUS -> "에픽+"
+    HeroRarity.LEGENDARY -> "레전드"
+    HeroRarity.LEGENDARY_PLUS -> "레전드+"
+    HeroRarity.MYTHIC -> "신화"
+    HeroRarity.UNKNOWN -> "등급 미확인"
 }
 
 @Composable
@@ -313,4 +351,5 @@ private fun statusText(state: TrackingState): String = when (state) {
     TrackingState.AwaitingConsent -> "화면 공유 권한을 기다리는 중"
     TrackingState.Starting -> "트래킹을 시작하는 중"
     TrackingState.Tracking -> "트래킹 중"
+    TrackingState.Paused -> "트래킹 일시중지 · 마지막 화면 유지"
 }

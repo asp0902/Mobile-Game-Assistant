@@ -65,6 +65,7 @@ class MainActivity : ComponentActivity() {
                 heroChoices = viewModel.heroChoices(),
                 onStart = ::startTracking,
                 onStop = { MediaProjectionService.stop(this) },
+                onTogglePause = { MediaProjectionService.togglePause(this) },
                 overlayPermissionGranted = overlayPermissionGranted,
                 onEnableOverlay = ::requestOverlayPermission,
                 onTemplateSelected = viewModel::selectFormationTemplate,

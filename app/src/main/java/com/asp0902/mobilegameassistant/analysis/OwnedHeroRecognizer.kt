@@ -32,12 +32,7 @@ object OwnedHeroRecognizer {
         heroId = hero.heroId,
         heroName = hero.koreanName,
         faction = hero.faction,
-        rarity = when {
-            text.contains("신화") -> HeroRarity.MYTHIC
-            text.contains("레전드") -> HeroRarity.LEGENDARY
-            text.contains("에픽") -> HeroRarity.EPIC
-            else -> HeroRarity.UNKNOWN
-        },
+        rarity = HeroRarityParser.parse(text),
         promotion = gauge,
         equipmentName = equipment.firstOrNull(text::contains),
         // Screen text only. Do not derive sell value from rank, history, or equipment.

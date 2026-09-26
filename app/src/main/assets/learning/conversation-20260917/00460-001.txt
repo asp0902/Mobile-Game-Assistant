@@ -1,0 +1,20 @@
+[09/13/2026 07:04:02] assistant / 
+
+## 풍요의 신 세이툰 추천 진형
+
+세이툰은 장거리 마법 공격 단일 보스이므로, `실벤` 중심의 지속 화력과 보호·에너지 지원을 우선합니다.
+
+| 위치 | 영웅 | 소속 / 포지션 | 초상화 |
+|---|---|---|---|
+| 전열 중앙 | 루시우스 | 레오프론 / 탱커 | ![루시우스](C:\Users\asp92\AppData\Local\Temp\afk-portraits\lucius.png) |
+| 전열 측면 | 후긴 | 레오프론 / 서포터 | ![후긴](C:\Users\asp92\AppData\Local\Temp\afk-portraits\hugin.png) |
+| 후열 | 로완 | 레오프론 / 서포터 | ![로완](C:\Users\asp92\AppData\Local\Temp\afk-portraits\rowan.png) |
+| 후열 | 카세디아 | 레오프론 / 마법사 | ![카세디아](C:\Users\asp92\AppData\Local\Temp\afk-portraits\cassadee.png) |
+| 가장 뒤 | 실벤 | 레오프론 / 명사수 | ![실벤](C:\Users\asp92\AppData\Local\Temp\afk-portraits\silven.png) |
+
+- `실벤`은 가장 뒤, 이동하지 않는 칸에 배치합니다.
+- `루시우스`가 보스 정면 피해를 받고, 후긴·로완이 실벤의 공격과 궁극기 회전을 지원합니다.
+- 생존은 충분하지만 제한 시간 내 화력이 부족하면 `루시우스 → 페이`로 교체합니다.
+- 전열이 먼저 무너지면 `카세디아 → 루카`로 교체합니다.
+
+꿈의 세계는 보스별 기믹에 따라 조합을 조정해야 하며, 현재 캡처에는 세이툰 스킬 상세가 열려 있지 않아 위 진형을 첫 시도용으로 권합니다. [꿈의 세계 보스 가이드](https://www.prydwen.gg/afk-journey/guides/dream-realm)

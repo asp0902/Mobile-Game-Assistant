@@ -1,0 +1,16 @@
+[09/09/2026 08:32:01] assistant / 
+
+정정 반영:
+
+- 기존 `그윈네스` 표기: `매튜&파피몬`
+- 기존 `콘테스` 표기: `판도라`
+- 기존 `엘리야와 라일라` 표기: `아로라`
+- `솔리스`: 기존 식별이 맞음
+
+### 실제 콘테스
+![콘테스](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/contess.png)
+
+### 솔리스
+![솔리스](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/solise.png)
+
+현재 제공된 캡처에서는 실제 `그윈네스`와 `엘리야와 라일라`가 확인되지 않습니다. 따라서 두 영웅을 보유한 것으로 전제했던 기존 변형된 예티 조합은 재수정이 필요합니다.

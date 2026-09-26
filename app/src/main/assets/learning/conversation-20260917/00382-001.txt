@@ -1,0 +1,17 @@
+[09/13/2026 05:52:02] assistant / 
+
+보유 영웅 정보 갱신:
+
+- 고르단: `레전드+ → 신화`
+- 윙: `레전드 → 레전드+`
+- 카렌: `에픽+ → 레전드`
+
+세 초상화와 이름·등급 매칭을 사용자 확인 정보로 반영했습니다. 이후 추천에서는 사용자 제공 초상화 기반 매칭만 사용하고, 불확실한 경우 `CHECK`로 표시하겠습니다.
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:38-46|note=[AFK portrait and rank verification rules used]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

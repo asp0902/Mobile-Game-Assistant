@@ -1,0 +1,37 @@
+[09/13/2026 07:38:14] assistant / 
+
+메모 저장을 정상적으로 완료했고, 파일이 비어 있지 않은 것도 확인했습니다.
+
+- [통합 학습 메모](C:/Users/asp92/.codex/memories/extensions/ad_hoc/notes/2026-09-13-afk-consolidated-user-learning.md)
+- [GPT-5.3 Codex Spark용 상세 프롬프트](C:/Users/asp92/AppData/Local/Temp/afk-spark-apk-handoff-20260913.md)
+
+통합 메모에는 다음 내용이 포함되어 있습니다.
+
+- 현재 보유 영웅, 등급, 진영, 포지션 및 한국어 명칭
+- `Odie → 에디`, `코린 ≠ 콜린` 교정
+- 사용자 제공 초상화와 원본 경로
+- 초상화 정체성 인식과 배경·프레임·등급 인식을 분리하는 규칙
+- 시즌 공명·직업 장비·과거의 메아리·팬텀 레벨
+- 오렐리안 활성화 및 최후방 계약 대상 규칙
+- 세이툰의 7개 원본 캡처와 세부 스킬
+- 시즌/비시즌 콘텐츠 분리
+- 웹 초상화 사용 금지와 불확실한 결과의 `CHECK` 처리
+- 기존 빈 메모가 새 통합 메모로 대체되었다는 기록
+
+Spark 프롬프트에는 실제 APK 구조를 먼저 추적하고, `HeroRecognition`, `OwnedHeroRecognizer`, 학습 JSON, 영웅 매니페스트 등 기존 경로에 통합하도록 지시했습니다. 특히 `에픽+`와 `레전드+`가 기본 등급으로 축약되지 않도록 파서·열거형·테스트를 점검하고, 테스트·lint·APK 빌드·기기 검증·커밋·푸시 결과를 각각 분리 보고하도록 작성했습니다.
+
+현재 APK 자체는 수정하지 않았으며, Spark에게 전달할 구현 프롬프트까지 준비된 상태입니다.
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:38-47|note=[portrait evidence rules, nonseason boundaries, roster and phantom context]
+MEMORY.md:108-127|note=[Mobile-Game-Assistant architecture and prior implementation context]
+extensions/ad_hoc/notes/2026-09-13-odie-arden-damian-rank-update.md:3-10|note=[Edi naming and current rank corrections]
+extensions/ad_hoc/notes/2026-09-13-lineup-presentation-requirement.md:3-9|note=[formation portrait and CHECK requirements]
+</citation_entries>
+<rollout_ids>
+01a037cf-2522-74c0-9787-cf38606eb2fa
+01a03799-fc3d-76a0-a218-a2b8e16f88d0
+01a0771e-f963-7032-bf08-de81dde2a0a9
+</rollout_ids>
+</oai-mem-citation>

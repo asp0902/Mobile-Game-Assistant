@@ -1,0 +1,21 @@
+[09/13/2026 06:06:29] assistant / 
+
+## 상록수 전시관 Lv.213 추천 진형
+
+앞줄:
+- **좌측: 토란** | 그레이브본 · 탱커  
+  ![토란](/C:/Users/asp92/AppData/Local/Temp/afk-thoran-portrait.png)
+- **우측: 신태일&아구몬** | 차원 · 전사  
+  ![신태일&아구몬](/C:/Users/asp92/AppData/Local/Temp/afk-taichi-agumon-portrait.png)
+
+뒷줄:
+- **중앙: 매튜&파피몬** | 차원 · 마법사  
+  ![매튜&파피몬](/C:/Users/asp92/AppData/Local/Temp/afk-matt-papimon-portrait.png)
+- **토란 뒤: 퀸** | 와일더스 · 서포터  
+  ![퀸](/C:/Users/asp92/AppData/Local/Temp/afk-quinn-portrait.png)
+- **신태일&아구몬 뒤: 판도라** | 소속·직업 `CHECK`  
+  ![판도라](/C:/Users/asp92/AppData/Local/Temp/afk-pandora-portrait.png)
+
+토란이 첫 피해를 받고, 신태일&아구몬이 전방 압박을 맡습니다. 매튜&파피몬과 판도라는 후열에서 안전하게 화력을 내고, 퀸은 토란 뒤에 두어 생존 지원을 받게 하세요.
+
+판도라의 소속·직업은 이번 화면에 이름·정보가 보이지 않아 확정하지 않았습니다.

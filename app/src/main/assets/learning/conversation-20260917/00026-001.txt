@@ -1,0 +1,24 @@
+[08/25/2026 07:56:14] assistant / 
+
+## 난이도 5-2 전투 결과
+
+출전 영웅 5명 모두 생존했으며 **HP도 전부 최대 상태**입니다.
+
+| 영웅 | 가한 피해 | 회복 | 받은 피해 |
+|---|---:|---:|---:|
+| ![데이먼](https://cdn.prydwen.gg/images/afk-journey/characters/daimon_card.webp)<br>데이먼 | 85,835 | 0 | 26,364 |
+| ![에이론](https://cdn.prydwen.gg/images/afk-journey/characters/eironn_card.webp)<br>에이론 | 36,749 | 0 | 12,695 |
+| ![스모키와 미르키](https://cdn.prydwen.gg/images/afk-journey/characters/smokey-and-meerky_card.webp)<br>스모키와 미르키 | 0 | 21,762 | 22,243 |
+| ![세시아](https://cdn.prydwen.gg/images/afk-journey/characters/cecia_card.webp)<br>세시아 | **약 161K** | 0 | 52,604 |
+| ![세미라](https://cdn.prydwen.gg/images/afk-journey/characters/shemira_card.webp)<br>세미라 | 26,986 | 0 | 21,762 |
+
+- 세시아가 전체 영웅 피해의 약 52%를 담당했습니다. `칼날`의 공격 속도 증가와 세시아·미스터 칼라일의 궁합이 좋게 나타났습니다.
+- 데이먼은 두 번째 피해량을 기록하며 전열 역할을 유지했습니다.
+- 스모키의 회복량은 21,762였지만 전투 종료 시 전원 최대 HP이므로 유지력 문제는 없습니다.
+- 현재 상태: `칼날 1/2`, 전투력 `165K(+2.5%)`, 부활 포션 `1개`.
+
+## 선택 추천
+
+**좌측 `퓨어 크리스탈의 문`을 선택하세요.**
+
+이미 부활 포션 1개를 보유하고 전원이 최대 HP이므로 두 번째 포션의 즉시 가치는 낮습니다. 퓨어 크리스탈은 이후 피츠 상점에서 전투 강화 상품을 구매해 남은 일반 층과 심층 미궁까지 지속적인 이득을 줄 수 있습니다.

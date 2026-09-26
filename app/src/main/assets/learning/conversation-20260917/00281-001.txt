@@ -1,0 +1,36 @@
+[09/12/2026 14:29:49] assistant / 
+
+## 이루시카 재추천 조합
+
+**샤키르 / 아로라 / 조아 / 퀸 / 솔리스**
+
+### 샤키르
+![샤키르 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/shakir.png)
+
+### 아로라
+![아로라 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/aurora.png)
+
+### 조아
+![조아 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/joah.png)
+
+### 퀸
+![퀸 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/queen.png)
+
+### 솔리스
+![솔리스 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/solise.png)
+
+## 배치
+
+- 전방 중앙: `샤키르`
+- 중열: `아로라`, `퀸`
+- 후열: `솔리스`
+- 최후방: `조아`
+- 조아의 레이저 포탑 2개는 서로 2칸 이내
+- 영웅끼리는 이루시카의 인접 폭발 피해를 고려해 분산
+- 메아리: `회복술(시즌) +15`
+
+조아의 연결된 포탑은 물리 방어력을 최대 30% 감소시키므로 이루시카의 비물리 피해 감소 기믹과 잘 맞습니다. 샤키르는 물리 공격을 보완하며, 아로라·퀸·솔리스는 소환물 강화, 능력치 지원, 회복을 담당합니다. [조아 기술 정보](https://www.prydwen.gg/afk-journey/characters/zanie), [이루시카 기믹](https://afk-journey.fandom.com/wiki/Illucia_the_Unveiler)
+
+`루카`는 생존력이 높지만 꿈의 세계 평가와 공격 기여도가 낮아 주력 조합에서는 제외했습니다. [루카 평가](https://www.prydwen.gg/afk-journey/characters/lucca)
+
+이 조합은 보유 캡처 기반 추천이며 실제 전투 점수는 아직 검증되지 않았습니다.

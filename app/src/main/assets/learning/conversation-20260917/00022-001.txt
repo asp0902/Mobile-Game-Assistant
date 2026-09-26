@@ -1,0 +1,22 @@
+[08/25/2026 07:54:24] assistant / 
+
+## 난이도 5-1 결과 기록
+
+전투 후 **출전 영웅 5명의 HP는 모두 100%**입니다. 부활 포션이나 영웅 교체가 필요한 상태가 아닙니다. 하단 에너지 바는 스모키와 미르키가 가장 낮고, 나머지 영웅은 비교적 많이 보존했습니다.
+
+| 영웅 | 가한 피해 | 회복 | 받은 피해 |
+|---|---:|---:|---:|
+| ![데이먼](https://cdn.prydwen.gg/images/afk-journey/characters/daimon_card.webp)<br>데이먼 | 약 162K | 0 | 약 161K |
+| ![에이론](https://cdn.prydwen.gg/images/afk-journey/characters/eironn_card.webp)<br>에이론 | 42,819 | 0 | 46,683 |
+| ![스모키와 미르키](https://cdn.prydwen.gg/images/afk-journey/characters/smokey-and-meerky_card.webp)<br>스모키와 미르키 | 0 | **72,980** | 0 |
+| ![세시아](https://cdn.prydwen.gg/images/afk-journey/characters/cecia_card.webp)<br>세시아 | **84,519** | 0 | 0 |
+| ![세미라](https://cdn.prydwen.gg/images/afk-journey/characters/shemira_card.webp)<br>세미라 | 77,262 | 0 | 43,525 |
+
+### 결과 해석
+
+- 데이먼이 최고 피해와 전체 피격의 약 64%를 동시에 담당했습니다. 메인 탱커 역할이 정상적으로 작동했습니다.
+- 세시아는 피해를 받지 않으면서 두 번째로 높은 84,519 피해를 기록했습니다. 후방 배치와 미스터 칼라일 소환이 효과적이었습니다.
+- 스모키와 미르키가 72,980을 회복해 전투 종료 시 전원 최대 HP를 확보했습니다.
+- 에이론의 핵심 기여인 집결·행동 방해는 피해 통계에 나타나지 않으므로 낮은 피해량만으로 성능을 판단하면 안 됩니다.
+- 그레이브본 3인 `데이먼·세시아·세미라`의 동일 진영 버프도 정상 적용된 전투입니다.
+- 현재 부활 포션은 그대로 보존합니다.

@@ -1,0 +1,17 @@
+[09/17/2026 14:51:48] assistant / 
+
+아레나3 결과까지 **기록과 스크린샷 10장, 재개용 메모를 저장했습니다.**
+
+- 일반 6/6, 무한 8처치
+- 48초 세미라·솔리스, 33초 팔라모르 사망
+- 무한 특별 규칙: 두 번째 갱신 적 공격력 +50%, 피해 50회 면역
+
+추후 **꿈의 추격** 진행 시 참고하되, 모드별 규칙은 구분하겠습니다. APK는 변경하지 않았습니다.
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:24-24|note=[Archive location and persistence convention]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

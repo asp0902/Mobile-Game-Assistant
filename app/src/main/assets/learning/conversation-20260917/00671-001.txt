@@ -1,0 +1,21 @@
+[09/17/2026 07:28:24] assistant / 
+
+[학습 반영 APK](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/AFK-Assistant-learning-20260917.apk)를 빌드했습니다.
+
+- 대화 **669개**, 첨부 **322개**, 원본 세션 보존 및 기억 업데이트.
+- 앱에 **9종 메아리·5회 전투 기록·정정 사항·미실험 추천·원문 열람** 반영.
+- 망령의 소굴 화면에 저장된 보스 참고 안내 연결.
+
+**과거 파일 경로 83개는 접근 불가**하여 [누락 포함 보존 목록](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/학습보관/20260917-162624/media-manifest.json)에 기록했습니다. 완전 복구를 주장하지 않습니다.
+
+빌드는 성공했으며, **기기 설치·실행 검증은 하지 않았습니다.**
+
+<oai-mem-citation>
+<citation_entries>
+rollout_summaries/2026-08-25T07-25-17-upfk-afk_journey_labyrinth_difficulty_5_round_1.md:1-3|note=[original session archive location]
+rollout_summaries/2026-08-25T07-25-17-upfk-afk_journey_labyrinth_difficulty_5_round_1.md:48-59|note=[corrected encounter classification and preserved untested status]
+</citation_entries>
+<rollout_ids>
+01a037cf-2522-74c0-9787-cf38606eb2fa
+</rollout_ids>
+</oai-mem-citation>

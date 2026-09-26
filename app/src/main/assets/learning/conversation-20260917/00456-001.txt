@@ -1,0 +1,26 @@
+[09/13/2026 07:00:06] assistant / 
+
+## 팬텀 도전 기본 조합: 레오프론 방어-가속형
+
+| 위치 | 영웅 | 소속 / 포지션 | 초상화 |
+|---|---|---|---|
+| 전열 | 루시우스 | 레오프론 / 탱커 | ![루시우스](C:\Users\asp92\AppData\Local\Temp\afk-portraits\lucius.png) |
+| 전열 | 후긴 | 레오프론 / 서포터 | ![후긴](C:\Users\asp92\AppData\Local\Temp\afk-portraits\hugin.png) |
+| 후열 | 카세디아 | 레오프론 / 마법사 | ![카세디아](C:\Users\asp92\AppData\Local\Temp\afk-portraits\cassadee.png) |
+| 후열 | 로완 | 레오프론 / 서포터 | ![로완](C:\Users\asp92\AppData\Local\Temp\afk-portraits\rowan.png) |
+| 후열 | 실벤 | 레오프론 / 명사수 | ![실벤](C:\Users\asp92\AppData\Local\Temp\afk-portraits\silven.png) |
+
+배치 핵심은 `실벤`을 가장 뒤에 두고, `루시우스`가 첫 피해를 받게 하는 것입니다. 후긴의 보호·공격 버프와 로완의 에너지 지원으로 실벤과 카세디아의 자동 궁극기 회전을 보조합니다.
+
+팬텀 도전의 레오프론형 구성에서도 후긴·로완 중심의 방어 및 에너지 운영이 사용됩니다. [Phantimal Stages 가이드](https://www.prydwen.gg/afk-journey/guides/afk-progression-teams)
+
+현재 스테이지의 적 진형·실패 화면이 없으므로 이 조합은 범용 첫 시도입니다. 전열이 먼저 무너지면 `후긴 → 루카`로 교체하세요.
+
+<oai-mem-citation>
+<citation_entries>
+MEMORY.md:34-34|note=[used prior nonseason content context]
+MEMORY.md:40-40|note=[excluded season-only mechanics from nonseason recommendation]
+</citation_entries>
+<rollout_ids>
+</rollout_ids>
+</oai-mem-citation>

@@ -3,6 +3,7 @@ package com.asp0902.mobilegameassistant.analysis
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.asp0902.mobilegameassistant.learning.LearningFiles
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONObject
 import javax.inject.Inject
@@ -94,13 +95,41 @@ class HeroRecognitionCatalog @Inject constructor(
             HeroReference(existing.firstOrNull { it.koreanName == hero.name }?.id ?: hero.id,
                 hero.name, hero.faction, "hero_recognition/initial_formation/${hero.id}.png")
         }
-        (verified + existing).distinctBy { it.koreanName }
+        val base = (verified + existing).distinctBy { it.koreanName }
+        // Keep existing IDs: saved corrections and purchase records refer to them.
+        val corrected = learningData.heroes.filter { it.faction != "UNKNOWN" }.map { learned ->
+            val previous = base.firstOrNull { it.koreanName == learned.koreanName }
+            learned.copy(id = previous?.id ?: learned.id,
+                portraitAsset = learned.portraitAsset ?: previous?.portraitAsset)
+        }
+        (corrected + base).distinctBy { it.koreanName }
     }
     private val templates by lazy { heroes.mapNotNull(::template) }
     private val formationTemplates by lazy {
-        heroes.mapNotNull { hero ->
+        val supplemental = runCatching {
+            LearningFiles.list(context, "hero_recognition/initial_formation_20260918").mapNotNull { file ->
+                val identity = InitialFormationKnowledge.heroes.firstOrNull { file.removeSuffix(".png") == it.id }
+                heroes.firstOrNull { it.koreanName == identity?.name }?.copy(
+                    portraitAsset = "hero_recognition/initial_formation_20260918/$file")
+            }
+        }.getOrDefault(emptyList())
+        val epicStartReferences = runCatching {
+            LearningFiles.open(context, "learning/honor_duel_portraits.json").bufferedReader().use { reader ->
+                val registry = JSONObject(reader.readText())
+                require(registry.getInt("schemaVersion") == 1)
+                val entries = registry.getJSONArray("portraits")
+                (0 until entries.length()).mapNotNull { index ->
+                    val entry = entries.getJSONObject(index)
+                    if (entry.getString("mode") != "HONOR_DUEL_INITIAL_FORMATION_SELECTION" ||
+                        entry.getString("rarity") != "EPIC" || entry.getString("evidence") != "USER_CONFIRMED") null
+                    else heroes.firstOrNull { it.koreanName == entry.getString("name") }?.copy(
+                        portraitAsset = entry.getString("portraitAsset"))
+                }
+            }
+        }.getOrDefault(emptyList())
+        (heroes + supplemental + epicStartReferences).mapNotNull { hero ->
             hero.portraitAsset?.let { asset -> runCatching {
-                context.assets.open(asset).use(BitmapFactory::decodeStream)?.let { bitmap ->
+                LearningFiles.open(context, asset).use(BitmapFactory::decodeStream)?.let { bitmap ->
                     try { hero to FormationPortraitFingerprint.sample(bitmap.width, bitmap.height,
                         NormalizedRect(0f, 0f, 1f, 1f), bitmap::getPixel) } finally { bitmap.recycle() }
                 }
@@ -113,7 +142,7 @@ class HeroRecognitionCatalog @Inject constructor(
         val signature = FormationPortraitFingerprint.sample(bitmap.width, bitmap.height, bounds, bitmap::getPixel)
         val scores = formationTemplates.map { (hero, reference) ->
             hero to FormationPortraitFingerprint.similarity(signature, reference)
-        }
+        }.groupBy { it.first.id }.values.map { candidates -> candidates.maxBy { it.second } }
         val byImage = HeroIdentityResolver.resolveScores(scores).let {
             if (it.heroId == null) it else it.copy(confidence = scores.maxOf { pair -> pair.second })
         }
@@ -152,7 +181,7 @@ class HeroRecognitionCatalog @Inject constructor(
 
     fun heroChoices(): List<HeroReference> = heroes.sortedBy { it.koreanName }
 
-    private fun loadManifest(): List<HeroReference> = context.assets.open("hero_recognition/hero_manifest.csv")
+    private fun loadManifest(): List<HeroReference> = LearningFiles.open(context, "hero_recognition/hero_manifest.csv")
         .bufferedReader()
         .readLines()
         .drop(1)
@@ -161,14 +190,23 @@ class HeroRecognitionCatalog @Inject constructor(
             if (values.size < 11) null else HeroReference(values[0], values[1], values[7], "hero_recognition/portraits/${values[0]}.png")
         }
 
-    private fun loadLearningData(): LearningHeroData = runCatching {
-        context.assets.open("learning/game_knowledge_20260821.json").bufferedReader().use { reader ->
+    private fun loadLearningData(): LearningHeroData {
+        val snapshots = listOf("learning/game_knowledge_20260917.json", "learning/game_knowledge_20260821.json").map { asset ->
+            runCatching { readLearningData(asset) }.getOrDefault(LearningHeroData())
+        }
+        return LearningHeroData(snapshots.flatMap { it.heroes }.distinctBy { it.koreanName },
+            snapshots.flatMap { it.nameCorrections }.distinctBy { it.first })
+    }
+
+    private fun readLearningData(asset: String): LearningHeroData =
+        LearningFiles.open(context, asset).bufferedReader().use { reader ->
             val root = JSONObject(reader.readText())
             LearningHeroData(
                 heroes = root.getJSONArray("heroes").let { list ->
                     (0 until list.length()).map { index ->
                         list.getJSONObject(index).let { hero ->
-                            HeroReference(hero.getString("id"), hero.getString("name"), hero.getString("faction"))
+                            HeroReference(hero.getString("id"), hero.getString("name"), hero.getString("faction"),
+                                hero.optString("portraitAsset").takeIf { it.isNotBlank() && it != "null" })
                         }
                     }
                 },
@@ -179,10 +217,9 @@ class HeroRecognitionCatalog @Inject constructor(
                 },
             )
         }
-    }.getOrDefault(LearningHeroData())
 
     private fun template(hero: HeroReference): HeroTemplate? = hero.portraitAsset?.let { asset -> runCatching {
-        context.assets.open(asset).use(BitmapFactory::decodeStream)?.let {
+        LearningFiles.open(context, asset).use(BitmapFactory::decodeStream)?.let {
             try { HeroTemplate(hero, signature(it, null)) } finally { it.recycle() }
         }
     }.getOrNull() }

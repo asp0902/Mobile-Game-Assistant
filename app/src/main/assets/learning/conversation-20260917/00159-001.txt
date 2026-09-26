@@ -1,0 +1,4 @@
+[08/26/2026 14:29:39] user / 
+
+"C:\Users\asp92\OneDrive\바탕 화면\AFKː 새로운 여정\Mobile-Game-Assistant\app\build\outputs\apk\debug\app-debug.apk"
+현재 기기에 설치되어 있는 apk인데, 해당 apk에는 이계의 미궁 컨텐츠에서 선택지를 추천하는 기능이 포함되어 있지 않은지 확인

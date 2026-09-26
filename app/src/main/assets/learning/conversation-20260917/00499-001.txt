@@ -1,0 +1,48 @@
+[09/13/2026 13:29:48] assistant / 
+
+시즌 빛의 탑은 레오프론 영웅만 출전하므로 5명 모두 같은 진영이 되어 `공격력·HP +22%` 버프와 오렐리안 팬텀이 함께 활성화됩니다.
+
+### 추천 진형
+
+| 배치 | 영웅 | 진영 / 포지션 / 등급 |
+|---|---|---|
+| 전열 중앙 | 루시우스 | 레오프론 / 탱커 / 에픽 |
+| 전열 측면 | 발렌 | 레오프론 / 전사 / `CHECK` |
+| 중후열 | 후긴 | 레오프론 / 서포터 / 레전드+ |
+| 후열 중앙 | 로완 | 레오프론 / 서포터 / 레전드 |
+| 유일한 최후방 | 실벤 | 레오프론 / 사수 / `CHECK` |
+
+![루시우스](C:\Users\asp92\AppData\Local\Temp\afk-portraits\lucius.png)
+![발렌](C:\Users\asp92\OneDrive\바탕 화면\AFKː 새로운 여정\Mobile-Game-Assistant\app\src\test\assets\golden\honor-duel\hero-valen.png)
+![후긴](C:\Users\asp92\AppData\Local\Temp\afk-portraits\hugin.png)
+![로완](C:\Users\asp92\AppData\Local\Temp\codex-clipboard-160f9794-f4f5-49b2-893f-4eae69fccedf.png)
+![실벤](C:\Users\asp92\AppData\Local\Temp\afk-portraits\silven.png)
+
+```text
+            루시우스
+       발렌
+
+  후긴        로완
+
+                    실벤
+       오렐리안
+```
+
+- 루시우스가 주 공격을 받고, 발렌은 정면이 아닌 측면에서 광역 공격을 시작합니다. 발렌은 생존력이 약한 근접 전사이므로 루시우스보다 앞으로 보내면 안 됩니다. [Valen guide](https://www.prydwen.gg/afk-journey/characters/valen/)
+- 실벤은 유일한 최후방으로 두어 후긴의 지원과 오렐리안의 최후방 계약을 받게 합니다. [Silven guide](https://www.prydwen.gg/afk-journey/characters/silven)
+- 오렐리안은 실벤보다 한 칸 앞의 후열 측면에 배치합니다.
+
+### 과거의 메아리
+
+기본 추천은 **`계몽술 +10`**입니다.
+
+최후방 실벤의 공격속도를 올리고 제어 면역을 부여하므로, 실벤을 주력 딜러로 사용하는 배치와 직접 맞물립니다.
+
+교체 기준:
+
+- 실벤이 적에게 접근하기도 전에 제압됨: `구속술 +8`
+- 루시우스가 먼저 쓰러짐: `철벽술 +10`
+- 전열과 후열이 광역 피해로 함께 무너짐: `회복술 +17`
+- 생존에는 문제가 없지만 시간 초과: `계몽술 +10` 유지
+
+발렌과 실벤의 현재 등급은 사용자 확인 자료가 부족하여 `CHECK`로 표시했습니다.

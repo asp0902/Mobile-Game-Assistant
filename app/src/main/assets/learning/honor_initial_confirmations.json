@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "layoutId": "honor-start-20260918-3offers",
+  "evidence": "USER_CONFIRMED",
+  "confirmedNames": ["페르세우스", "퀸", "발리카"],
+  "scope": "초기 1~3번 카드의 아티팩트 OCR_MATCH와 영웅 이름·순서·에픽 등급이 모두 일치하고 4번이 숨겨진 랜덤일 때만 후보를 사용자 확정으로 처리",
+  "observedSimilarity": {"페르세우스": 0.85, "퀸": 0.86, "발리카": 0.86},
+  "confidenceNotOverwritten": true,
+  "otherScreensUnaffected": true,
+  "personalAccountRankUnaffected": true
+}

@@ -1,0 +1,56 @@
+[09/12/2026 14:43:41] assistant / 
+
+## 비시즌 아레나 범용 추천
+
+**튜더 / 에이론 / 세미라 / 퀸 / 솔리스**
+
+### 튜더
+![튜더 초상화](C:/Users/asp92/AppData/Local/Temp/codex-arena-portraits/thador.png)
+
+### 에이론
+![에이론 초상화](C:/Users/asp92/AppData/Local/Temp/codex-arena-portraits/eironn.png)
+
+### 세미라
+![세미라 초상화](C:/Users/asp92/AppData/Local/Temp/codex-arena-portraits/shemira.png)
+
+### 퀸
+![퀸 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/queen.png)
+
+### 솔리스
+![솔리스 초상화](C:/Users/asp92/AppData/Local/Temp/codex-dream-yeti-portraits/solise.png)
+
+## 배치
+
+```text
+        튜더
+   에이론     퀸
+   솔리스   세미라
+```
+
+- 튜더: 최전방에서 버 initial energy before final. I need not include weird English. Let's rewrite:
+- 튜더: 최전방 탶? Need correct. 
+Need final clean. Let's continue from scratch in final? We are in final compose. Ensure no errors.
+Could include arena map hex isn't exactly text. Use relative.
+- 튜더 front
+- Eironn one back central
+- Queen on magic circle tile if map has
+- Solise and Shemira spread rear; Shemira not rearmost under enemy confinement? Actually Confining targets two rear enemies, so Shemira would get CC. Maybe hide Shemira middle and Queen/Solise rear as bait? Diagram shows Shemira rear. Let's adjust:
+```
+         튜더
+    에이론   솔리스
+      세미라   퀸
+```
+Still rear. Enemy Confining hits Shemira+Queen. Not ideal. Could use Enlightening on Shemira as counter. But main artifact Confining doesn't protect. For defense, maybe put Solise + Queen rearmost, Shemira middle. Then:
+front Thador
+mid Eironn Shemira
+rear Queen Solise.
+Eironn ult start, Shemira protected. Good.
+Need perhaps Thador provides initial energy and debuff; source. 
+Need recommendation selection:
+- default Confining +8
+- enemy Confining/CC and Shemira interrupted: Enlightening +10, place Shemira rearmost to receive effect.
+- Season recovery +15 does not apply because nonseason. cite Fandom.
+
+Need caveat if enemy Lily May. "If opponent has Lily May, Eironn opener countered; replace Eironn with Niru/Bryon if owned/ascended." But user owns Eironn only? They likely own Niru from roster. Could mention no portrait because substitution, but prior asks portraits for recommended combination only. Fine.
+
+Need no memory cite. sources links. Let's craft clean.

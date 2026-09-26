@@ -1,0 +1,17 @@
+[09/12/2026 15:25:16] assistant / 
+
+### 시즌 영원의 탑 기본 진형
+
+| 전방 | 전방 | 후방 | 후방 | 후방 |
+|---|---|---|---|---|
+| 토란 | 세미라 | 니루 | 캐롤라이나 | 세시아 |
+| ![토란](C:/Users/asp92/AppData/Local/Temp/codex-eternal-tower-portraits/thoran.png) | ![세미라](C:/Users/asp92/AppData/Local/Temp/codex-eternal-tower-portraits/semira.png) | ![니루](C:/Users/asp92/AppData/Local/Temp/codex-eternal-tower-portraits/niru.png) | ![캐롤라이나](C:/Users/asp92/AppData/Local/Temp/codex-eternal-tower-portraits/carolina.png) | ![세시아](C:/Users/asp92/AppData/Local/Temp/codex-eternal-tower-portraits/cecia.png) |
+
+- 팬텀: `네크로 드래곤 Lv.18`
+- 능력자: 후방의 `세미라`
+- 메아리: 기본 `파진술(시즌) +16`
+- 토란은 가장 먼저 적을 받는 칸, 세미라는 토란 바로 뒤 칸에 둡니다.
+- 세시아와 캐롤라이나는 서로 떨어뜨려 광역 피해를 분산합니다.
+- 니루는 세미라와 가까운 후방에 배치합니다. 니루-세미라 조합은 세미라의 생존과 지속 화력에 유리합니다. [조합 참고](https://www.prydwen.gg/afk-journey/guides/arena-teams)
+
+초상화는 모두 이번에 제공한 그레이브본 목록 캡처에서 분리했습니다. 토란은 탱커, 세시아는 원거리 딜러, 니루는 서포터 역할로 분류됩니다. [영웅 역할 정보](https://afk-journey.fandom.com/wiki/Module%3ACard/heroes)

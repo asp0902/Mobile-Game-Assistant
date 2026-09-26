@@ -1,0 +1,24 @@
+[09/17/2026 08:09:26] assistant / 
+
+**이번에는 울머스를 빼고 샤키탈리스를 다시 넣겠습니다. 데미안·휴윈은 유지하고, 파진술 +18을 사용하세요.**
+
+### 변경 조합
+
+| 초상 | 영웅 | 진영 · 직업 |
+|---|---|---|
+| ![아로라](C:/Users/asp92/AppData/Local/Temp/afk-haunting-portraits/aurora.png) | 아로라 | 반신 · 마법사 |
+| ![샤키탈리스](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/app/src/main/assets/learning/portraits-20260917/shakitalis.png) | **샤키탈리스** | 반신 · 사수 |
+| ![라이카](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/app/src/main/assets/hero_recognition/portraits/hero_50130.png) | 라이카 | 와일더스 · 사수 |
+| ![데미안](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/app/src/main/assets/learning/portraits-20260917/damian.png) | 데미안 | 와일더스 · 서포터 |
+| ![휴윈](C:/Users/asp92/OneDrive/바탕%20화면/AFKː%20새로운%20여정/Mobile-Game-Assistant/app/src/main/assets/hero_recognition/portraits/hero_50098.png) | 휴윈 | 와일더스 · 서포터 |
+
+현재 승급 등급은 모두 `CHECK`입니다.
+
+### 배치와 목적
+- **나머지 네 명은 현재 자리 유지.**
+- 샤키탈리스는 울머스의 최전방 칸이 아니라 **데미안·휴윈 가까운 후열 빈칸**에 배치합니다.
+- 데미안의 추가 회복을 남긴 상태에서 샤키탈리스의 화력을 다시 확보하는 **탱커 없는 공격형 실험**입니다.
+
+골렘의 세 스킬은 전체 공격이므로 탱커로 대신 맞을 수 없습니다. 다만 **울머스를 빼면 일반 공격의 대상과 아군 생존이 달라질 위험**이 있습니다. 후열 배치도 전체 공격을 피하게 해주지는 않습니다.
+
+**다음 1회만 이 조합으로 비교하세요.** 기준은 최고 **105M·77.4%**이며, 샤키탈리스가 이전의 **남은 45초 사망**보다 오래 버티면서 총피해까지 늘어나는지를 보겠습니다.

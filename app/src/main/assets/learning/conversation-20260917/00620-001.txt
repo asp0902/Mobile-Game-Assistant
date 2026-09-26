@@ -1,0 +1,7 @@
+[09/16/2026 04:41:16] assistant / 
+
+로완과 에디의 초상화를 아래 캡처로 변경합니다. 이후 추천에도 이 이미지를 사용하겠습니다.
+
+| 로완 · 레오프론 · 서포터 | 에디 · 트라이브 · 사수 |
+|---|---|
+| ![로완](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-2d74d6e7-011f-4db3-9f73-319d87585c80.png) | ![에디](C:/Users/asp92/AppData/Local/Temp/codex-clipboard-aaf75c3e-a7d3-4112-acbb-f16d8ec66614.png) |

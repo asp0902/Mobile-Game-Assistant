@@ -1,0 +1,15 @@
+[08/26/2026 09:32:19] assistant / 
+
+## 결론: **초대장 56장 모두 보존**
+
+성능 기준으로 보라시아 픽업은 건너뛰는 것을 추천합니다.
+
+- 40장 사용 시 명함 1장은 확정되지만 실전 핵심은 `신화+`, 권장 전용 장비는 `+10`
+- 미보유 기준 신화+까지 S급 본체 총 6장이 필요
+- 현재 픽업 가능 횟수는 4회라 전부 뽑아도 핵심 단계에 도달하지 못함
+- 최신 평가는 일반·AFK `B`, PvP·꿈의 세계 `C`이며 적 밀집과 준비 시간이 필요한 틈새 영웅
+- 픽업 종료 후 전체 영웅 모집과 에픽 모집에 편입되므로 지금 확보할 필요도 낮음
+
+[Prydwen 보라시아 평가](https://www.prydwen.gg/afk-journey/characters/voracia), [승급 필요 본체 수](https://d2ankz0m1a0dsp.cloudfront.net/afk-journey/guides/ascension-info/), [픽업 종료 후 일반 모집 편입 안내](https://www.reddit.com/r/AFKJourney/comments/1vhvc1u/voracia_now_available/)
+
+애정·도감 목적이면 **40장으로 명함 1장만 확보하고 즉시 중단**. 성능 목적이면 **0장 사용**이 최선입니다.

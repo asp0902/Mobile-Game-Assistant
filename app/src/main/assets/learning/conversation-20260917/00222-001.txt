@@ -1,0 +1,13 @@
+[09/09/2026 05:29:17] assistant / 
+
+## 1차 편성
+
+| 영웅 | 사용자 첨부 이미지에서 추출한 초상화 | 종족·진영 |
+|---|---|---|
+| 타도르 | ![타도르](C:/Users/asp92/AppData/Local/Temp/codex-formation-1-portraits/thador.png) | 와일더스 |
+| 벨라라 | ![벨라라](C:/Users/asp92/AppData/Local/Temp/codex-formation-1-portraits/velara.png) | 와일더스 |
+| 브라이언 | ![브라이언](C:/Users/asp92/AppData/Local/Temp/codex-formation-1-portraits/bryon.png) | 와일더스 |
+| 파라모르 | ![파라모르](C:/Users/asp92/AppData/Local/Temp/codex-formation-1-portraits/faramor.png) | 와일더스 |
+| 스모키와 미르키 | ![스모키와 미르키](C:/Users/asp92/AppData/Local/Temp/codex-formation-1-portraits/smokey-and-meerky.png) | 트라이브 |
+
+와일더스 영웅 4명이므로 **포이즌 스포아 팬텀**이 활성화되며, 팬텀의 능력자는 **브라이언**으로 지정합니다. 모든 초상화는 사용자가 첨부한 영웅 목록 화면에서 직접 추출했습니다.

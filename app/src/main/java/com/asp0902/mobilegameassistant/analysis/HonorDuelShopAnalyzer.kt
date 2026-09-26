@@ -210,19 +210,45 @@ class HonorDuelShopAnalyzer @Inject constructor(
                     roleHint = InitialFormationKnowledge.hero(recognized.koreanName)?.role,
                     confidence = recognized.confidence, status = recognized.status, bounds = bounds,
                     sourceText = localText,
-                    rarity = when {
-                        localText.contains("에픽") -> HeroRarity.EPIC
-                        localText.contains("레전드") -> HeroRarity.LEGENDARY
-                        localText.contains("신화") -> HeroRarity.MYTHIC
-                        else -> HeroRarity.UNKNOWN
-                    },
+                    rarity = HeroRarityParser.parse(localText),
                 )
             }
             InitialFormationOffer(index, artifact,
                 if (source == "OCR_MATCH") .95f else if (source == "TITLE_INFERENCE") .65f else 0f,
-                source, heroes, card.bounds, card.button, hidden,
+                source, heroes, card.bounds, detectSelectionButton(bitmap, card.button), hidden,
                 listOf(if (hidden) "숨겨진 선택지" else "선택 버튼 좌표 기반 카드 분리"))
         }
+    }
+
+    private fun detectSelectionButton(bitmap: Bitmap, estimated: NormalizedRect): NormalizedRect? {
+        val left = ((estimated.left - .025f) * bitmap.width).toInt().coerceIn(0, bitmap.width - 1)
+        val right = ((estimated.right + .025f) * bitmap.width).toInt().coerceIn(left + 1, bitmap.width)
+        val top = ((estimated.top - .012f) * bitmap.height).toInt().coerceIn(0, bitmap.height - 1)
+        val bottom = ((estimated.bottom + .012f) * bitmap.height).toInt().coerceIn(top + 1, bitmap.height)
+        val columns = IntArray(right - left)
+        val rows = IntArray(bottom - top)
+        for (y in top until bottom) for (x in left until right) {
+            val pixel = bitmap.getPixel(x, y)
+            val red = pixel shr 16 and 255
+            val green = pixel shr 8 and 255
+            val blue = pixel and 255
+            if (green > 80 && green > red * 1.12f && green > blue * 1.10f) {
+                columns[x - left]++
+                rows[y - top]++
+            }
+        }
+        val xs = columns.indices.filter { columns[it] >= rows.size * .30f }
+        val ys = rows.indices.filter { rows[it] >= columns.size * .40f }
+        if (xs.isEmpty() || ys.isEmpty()) return null
+        val width = xs.last() - xs.first() + 1
+        val height = ys.last() - ys.first() + 1
+        if (width < bitmap.width * .12f || height < bitmap.height * .02f) return null
+        return NormalizedRect(
+            (left + xs.first()).toFloat() / bitmap.width,
+            (top + ys.first()).toFloat() / bitmap.height,
+            (left + xs.last() + 1).toFloat() / bitmap.width,
+            (top + ys.last() + 1).toFloat() / bitmap.height,
+        )
     }
 }
 enum class ScreenType {
@@ -603,7 +629,7 @@ data class SlotVisualEvidence @JvmOverloads constructor(
     }
 }
 
-enum class HeroRarity { EPIC, LEGENDARY, MYTHIC, UNKNOWN }
+enum class HeroRarity { EPIC, EPIC_PLUS, LEGENDARY, LEGENDARY_PLUS, MYTHIC, UNKNOWN }
 
 private data class InitialFormationArtifactRecognition(
     val name: String?,
@@ -659,11 +685,7 @@ object HeroOfferClassifier {
             ?.drop(1)?.firstOrNull { it.isNotBlank() }?.toIntOrNull()
         val trial = text.contains("체험 카드") || visual.hasTrialCardBadge
         val equipmentName = equipment.firstOrNull(text::contains).takeIf { visual.hasEquipmentBadge || text.contains("체험 카드") }
-        val explicitRarity = when {
-            text.contains("레전드") -> HeroRarity.LEGENDARY
-            text.contains("에픽") -> HeroRarity.EPIC
-            else -> HeroRarity.UNKNOWN
-        }
+        val explicitRarity = HeroRarityParser.parse(text)
         val legendaryTrial = trial && price == 12 && visual.redBackgroundRatio >= .08f &&
             (visual.hasEquipmentBadge || equipmentName != null)
         val rarity = if (legendaryTrial) HeroRarity.LEGENDARY else explicitRarity
@@ -696,11 +718,7 @@ object HeroDetailPopupParser {
 
     fun parse(text: String): HeroDetailPopup = HeroDetailPopup(
         heroName = names.firstOrNull(text::contains),
-        rarity = when {
-            text.contains("레전드") -> HeroRarity.LEGENDARY
-            text.contains("에픽") -> HeroRarity.EPIC
-            else -> HeroRarity.UNKNOWN
-        },
+        rarity = HeroRarityParser.parse(text),
         isTrialCard = text.contains("체험 카드"),
         equipmentName = equipment.firstOrNull(text::contains),
         confidence = if (text.contains("사정거리")) .95f else 0f,

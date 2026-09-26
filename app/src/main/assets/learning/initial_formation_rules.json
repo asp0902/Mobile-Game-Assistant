@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "weights": {
+    "healer": 2,
+    "support": 1,
+    "statueLightbearer": 1,
+    "flame": 2,
+    "midas": 4,
+    "midasTankHealer": 2,
+    "springPerWilder": 2,
+    "springSustain": 1,
+    "goblinCassadia": 2
+  },
+  "artifactReasons": {},
+  "disabledArtifacts": []
+}
