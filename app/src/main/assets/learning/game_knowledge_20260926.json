@@ -1,0 +1,759 @@
+{
+  "schemaVersion": 1,
+  "snapshotDate": "2026-09-26",
+  "season": {
+    "name": "달빛의 장막",
+    "nameEn": "Veil of Memories",
+    "patch": "1.8.1",
+    "startDate": "2026-09-23",
+    "endDate": "2027-01",
+    "endDateConfidence": "CHECK"
+  },
+  "account": {
+    "asOf": "2026-09-26",
+    "seasonResonance": {
+      "current": 309,
+      "evidence": "USER_CONFIRMED",
+      "note": "당일 308 → 309"
+    },
+    "classEquipment": {
+      "evidence": "USER_CONFIRMED",
+      "supporter": 291,
+      "mage": 296,
+      "warrior": 293,
+      "ranger": 293,
+      "marksman": 298,
+      "tank": 293
+    },
+    "synergies": {
+      "gloriousWarrior": {
+        "bonus": 60,
+        "evidence": "USER_CONFIRMED"
+      }
+    },
+    "phantomContracts": {
+      "evidence": "USER_CONFIRMED",
+      "growen": {
+        "level": 10,
+        "faction": "Lightbearer"
+      },
+      "nasareth": {
+        "level": 10,
+        "faction": "Wilder"
+      },
+      "materialCube": {
+        "level": 11,
+        "faction": "Celestial+Demonic"
+      },
+      "crystalScarab": {
+        "level": 9,
+        "faction": "Mauler"
+      },
+      "plagueCrawler": {
+        "level": 9,
+        "faction": "Graveborn"
+      }
+    },
+    "phantomMaterials": {
+      "evidence": "USER_CONFIRMED",
+      "coreShards": 1190,
+      "resetCoupons": 5,
+      "shadowEchoes": 0
+    }
+  },
+  "accountUpdates": [
+    {
+      "date": "2026-09-26",
+      "type": "seasonChange",
+      "note": "20260917 스냅샷 값(공명 416, 장비 390대)은 이전 시즌. 새 시즌 시작으로 공명 309, 각 장비 290대로 리셋됨",
+      "evidence": "USER_CONFIRMED"
+    },
+    {
+      "date": "2026-09-26",
+      "type": "phantomContractActivation",
+      "note": "팬텀 계약 시스템 도입됨. 시즌 팬텀 도전 콘텐츠에서 해당 진영 3명 출전 시 활성화 확인",
+      "evidence": "USER_CONFIRMED"
+    }
+  ],
+  "echoes": [
+    {
+      "id": "brightTouchArt",
+      "name": "명촉술",
+      "level": 13,
+      "nextLevelResonance": 325,
+      "stats": {
+        "attackPower": "6.3%",
+        "hp": "7.2%",
+        "vigor": 9
+      },
+      "effect": "전투 시작 시 가장 앞 아군을 따라다니는 촛불, 매초 주변 1칸 아군 회복(따라다니는 아군 공격력 50%). 대상 사망 시 가장 가까운 아군으로 이동, 치료량 영구 20% 감소(최대 3회).",
+      "enhancements": [
+        {
+          "level": 14,
+          "stats": "공 7%, HP 8%, 활력 10",
+          "resonanceRequired": 325
+        },
+        {
+          "level": 25,
+          "effect": "치료 100%"
+        },
+        {
+          "level": 30,
+          "effect": "전투 3초부터 12초마다 6초간 범위 +1칸, 범위 내 아군 주는 피해 +16%·받는 피해 −16%"
+        }
+      ],
+      "evidence": "USER_CONFIRMED"
+    },
+    {
+      "id": "brightTacticsArt",
+      "name": "광조술",
+      "level": 13,
+      "nextLevelResonance": 325,
+      "stats": {
+        "attackPower": "6.3%",
+        "hp": "10.8%",
+        "haste": 4.5
+      },
+      "effect": "전투 3초부터 12초마다 6초간 아군 전체 공격력 버프(현재 14%), 관통 +10, 공격 속도 +20.",
+      "enhancements": [
+        {
+          "level": 14,
+          "stats": "공 7%, HP 12%, 급속 5",
+          "resonanceRequired": 325
+        },
+        {
+          "level": 15,
+          "effect": "16%"
+        },
+        {
+          "level": 20,
+          "effect": "18%"
+        },
+        {
+          "level": 25,
+          "effect": "20%"
+        },
+        {
+          "level": 30,
+          "effect": "스킬 시전 시 아군 흡혈 +20"
+        }
+      ],
+      "evidence": "USER_CONFIRMED"
+    },
+    {
+      "id": "nebulaArt",
+      "name": "성운술",
+      "level": 10,
+      "stats": {
+        "haste": 4.8,
+        "hp": "10.2%"
+      },
+      "effect": "아군 궁극기 일정 횟수 시전 시 적군 피해 + 공격 속도 감소. 강화 시 피해 증가, 필요 횟수 감소",
+      "evidence": "USER_CONFIRMED"
+    }
+  ],
+  "phantoms": [
+    {
+      "id": "secretMoonGrowen",
+      "name": "비밀의 은월 그로웬",
+      "faction": "Lightbearer",
+      "class": "Mage",
+      "attackType": "Magic",
+      "range": 20,
+      "abilitySide": "front",
+      "globalBonus": {
+        "hp": "1.02%",
+        "attack": "1.0%",
+        "physicalDefense": "0.43%",
+        "magicalDefense": "0.43%",
+        "attackSpeed": "0.3"
+      },
+      "ultimate": {
+        "name": "월영 강림",
+        "description": "시작 잔월, 아군 궁 4회 → 만월(일반 공격 관통, 1칸 직선 120%). 액티브: 밀집 지역 2초 달그림자, 0.25초마다 1칸 30% + 결박. 만월: 종료 후 3칸 너비 낫 150% 고정.",
+        "enhancements": [
+          {
+            "level": 20,
+            "note": "내용 미확인",
+            "confidence": "CHECK"
+          }
+        ]
+      },
+      "skills": [
+        {
+          "slot": 2,
+          "name": "월광의 칼날",
+          "cooldown": 10,
+          "description": "적 2명 180%, 만월 시 대상+1칸 230%",
+          "enhancements": [
+            {
+              "level": 3,
+              "levelNumber": 30,
+              "values": "200%/250%"
+            }
+          ]
+        },
+        {
+          "slot": 3,
+          "name": "달의 능력",
+          "description": "능력자 에너지 회복 효율 +10%, 만월 시 추가 +10%·공격력 +15%",
+          "unlockedAt": 80,
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 90,
+              "description": "그로웬·능력자 궁 피해 +20%, 월광의 칼날이 능력자 회복(공 90%) + 에너지 50"
+            }
+          ]
+        },
+        {
+          "slot": 4,
+          "name": "달빛의 고리",
+          "cooldown": 12,
+          "unlockedAt": 110,
+          "description": "적 전체 250%, 8초 에너지 회복 −20%, 만월 시 에너지 −100",
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 120,
+              "values": "300%"
+            }
+          ]
+        }
+      ],
+      "evidence": "USER_CONFIRMED"
+    },
+    {
+      "id": "darkQueenNasareth",
+      "name": "어둠의 여왕 나사레스",
+      "faction": "Wilder",
+      "class": "Warrior",
+      "attackType": "Physical",
+      "range": 1,
+      "abilitySide": "rear",
+      "globalBonus": {
+        "hp": "1.37%",
+        "attack": "1.0%",
+        "physicalDefense": "0.28%",
+        "magicalDefense": "0.28%",
+        "vigor": "0.3"
+      },
+      "ultimate": {
+        "name": "제사 의식",
+        "description": "밀집 지역 진입, 실드 600%, 4초 제어 면역, 0.25초마다 2칸 16% 고정 + 공·물방·마방 영구 −1%(최대 16%), 최대 시 영구 허약",
+        "enhancements": [
+          {
+            "level": 2,
+            "levelNumber": 20,
+            "values": "20%"
+          },
+          {
+            "level": 3,
+            "levelNumber": 40,
+            "description": "허약 적 감소 효과 +20%, 이 스킬 받는 피해 +50%"
+          }
+        ]
+      },
+      "skills": [
+        {
+          "slot": 2,
+          "name": "검은 달의 심판",
+          "cooldown": 10,
+          "range": 2,
+          "description": "전방 3칸 250% + 자신 실드 250%, 허약 적 +100%/+100%",
+          "enhancements": [
+            {
+              "level": 3,
+              "levelNumber": 30,
+              "values": "300%"
+            }
+          ]
+        },
+        {
+          "slot": 3,
+          "name": "제물의 능력",
+          "range": 3,
+          "unlockedAt": 80,
+          "description": "능력자가 능력치 감소 적에게 주피 +15%, 나사레스 실드 획득 시 능력자 동일 실드",
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 90,
+              "description": "능력치 감소량의 10%를 자신 능력치로(기본 능력치 초기값 15%, 기타 15 상한)"
+            }
+          ]
+        },
+        {
+          "slot": 4,
+          "name": "종말의 휩쓸기",
+          "cooldown": 15,
+          "range": 2,
+          "unlockedAt": 110,
+          "description": "부채꼴 200% + 넘어뜨림 2초, 허약 적 +100%·+2초",
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 120,
+              "values": "250%"
+            }
+          ]
+        }
+      ],
+      "evidence": "USER_CONFIRMED"
+    },
+    {
+      "id": "crystalScarab",
+      "name": "크리스탈 스카라브",
+      "faction": "Mauler",
+      "class": "Ranger",
+      "attackType": "Physical",
+      "range": 1,
+      "abilitySide": "front",
+      "globalBonus": {
+        "hp": "1.02%",
+        "attack": "1.5%",
+        "criticalChance": "0.3",
+        "physicalDefense": "0.28%",
+        "magicalDefense": "0.28%"
+      },
+      "ultimate": {
+        "name": "환상의 결정탄",
+        "description": "공중 무적, 적 전원에게 오브(대상+1칸 300%, 중복 100%), 크리스탈 표식 8초. 표식 적이 최대 HP 30% 초과 손실 또는 현재 HP 30% 미만 → 파괴 120% + 기절 3초",
+        "enhancements": [
+          {
+            "level": 2,
+            "levelNumber": 20,
+            "values": "350%/120%"
+          },
+          {
+            "level": 3,
+            "levelNumber": 40,
+            "description": "초기 에너지 +500, 파괴 시 +80% 고정"
+          }
+        ]
+      },
+      "skills": [
+        {
+          "slot": 2,
+          "name": "날개 그림자",
+          "cooldown": 10,
+          "range": 1,
+          "description": "시작 시 자기 열+양옆 열 비늘 가루 8초(적 실명, 아군 이속 +50%). 액티브 230% + 에어본",
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 10,
+              "values": "240%"
+            },
+            {
+              "level": 3,
+              "levelNumber": 30,
+              "values": "250%"
+            }
+          ]
+        },
+        {
+          "slot": 3,
+          "name": "미혹의 능력",
+          "range": 3,
+          "unlockedAt": 80,
+          "description": "능력자 받피 −15%, 비늘 가루 동안 능력자·스카라브 급속 +25·안정, 능력자에게 처음 맞은 적 표식",
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 90,
+              "description": "처치 참여 시 둘 다 비늘 가루 8초 재부착"
+            }
+          ]
+        },
+        {
+          "slot": 4,
+          "name": "대지의 가시",
+          "cooldown": 15,
+          "range": 1,
+          "unlockedAt": 110,
+          "description": "전방 3칸 에어본 + 200% + 넘어뜨림 1초",
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 120,
+              "values": "250%"
+            }
+          ]
+        }
+      ],
+      "evidence": "USER_CONFIRMED"
+    },
+    {
+      "id": "plagueCrawler",
+      "name": "역병 크리퍼",
+      "faction": "Graveborn",
+      "class": "Tank",
+      "attackType": "Magic",
+      "range": 20,
+      "abilitySide": "front",
+      "globalBonus": {
+        "hp": "1.02%",
+        "attack": "1.5%",
+        "defenseOverpenetration": "0.3",
+        "physicalDefense": "0.28%",
+        "magicalDefense": "0.28%"
+      },
+      "ultimate": {
+        "name": "초강력 진흙 폭탄",
+        "description": "적 전원 8발, 80% + 진흙 범벅 8초(급속 −15, 초당 25%), 중복 40%",
+        "enhancements": [
+          {
+            "level": 2,
+            "levelNumber": 20,
+            "effect": "초당 30%"
+          },
+          {
+            "level": 3,
+            "levelNumber": 40,
+            "description": "누적 12초 초과 시 받는 지속 피해 영구 +15%"
+          }
+        ]
+      },
+      "skills": [
+        {
+          "slot": 2,
+          "name": "진흙 늪",
+          "cooldown": 15,
+          "description": "밀집 지역 반경 1칸 6초, 이속 −30%, 초당 40%",
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 10,
+              "effect": "45%"
+            },
+            {
+              "level": 3,
+              "levelNumber": 30,
+              "effect": "60%"
+            }
+          ]
+        },
+        {
+          "slot": 3,
+          "name": "부패의 능력",
+          "range": 3,
+          "unlockedAt": 80,
+          "description": "시작 시 능력자 실드 300% + 재생 진흙 갑옷 10초(근접 피해 +10%, 초당 실드 +50%, 상한 700%)",
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 90,
+              "description": "갑옷 능력자가 진흙 범벅 적 근접 타격 시 갑옷 초기화 + 능력자 물·마방 +20%, 적 진흙 범벅 초기화 + 물·마방 −20%"
+            }
+          ]
+        },
+        {
+          "slot": 4,
+          "name": "진흙 분열",
+          "cooldown": 25,
+          "unlockedAt": 110,
+          "description": "기본 능력치 50% 분신, 직선 왕복, 독 흔적 4초(초당 40%, 물·마방 −15%)",
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 120,
+              "effect": "50%"
+            }
+          ]
+        }
+      ],
+      "evidence": "USER_CONFIRMED"
+    },
+    {
+      "id": "dualSealCube",
+      "name": "이중 봉인의 큐브(물질의 큐브)",
+      "faction": "Celestial+Demonic",
+      "class": "Support",
+      "attackType": "Magic",
+      "range": 20,
+      "abilitySide": "dualAbility",
+      "abilitySideNote": "물질 큐브 앞 1명 + 권능 큐브 뒤 1명",
+      "globalBonus": {
+        "hp": "0.92%",
+        "attack": "1.0%",
+        "haste": "0.48",
+        "physicalDefense": "0.38%",
+        "magicalDefense": "0.38%"
+      },
+      "ultimate": {
+        "name": "암석 봉인",
+        "description": "권능의 큐브 소환(모든 스킬 사용). 물질 → 가장 앞 적 300% + 기절 3초, 권능 → 가장 뒤 적 300% + 기절 3초",
+        "enhancements": [
+          {
+            "level": 2,
+            "levelNumber": 20,
+            "values": "330%"
+          },
+          {
+            "level": 3,
+            "levelNumber": 40,
+            "description": "암석 봉인 대상 물·마방 −30% 10초, 기류 봉인 대상 공격력 −30% 10초"
+          }
+        ]
+      },
+      "skills": [
+        {
+          "slot": 2,
+          "name": "보호의 인장",
+          "cooldown": 12,
+          "range": 1,
+          "description": "물질 → 적 전체 250%, 권능 → 아군 전체 HP 250% 회복",
+          "enhancements": [
+            {
+              "level": 3,
+              "levelNumber": 30,
+              "values": "280%"
+            }
+          ]
+        },
+        {
+          "slot": 3,
+          "name": "봉인의 능력",
+          "range": 3,
+          "unlockedAt": 80,
+          "description": "물질 능력자와 연관 유닛 기본 능력치 +12%, 주변 2칸 적이 물질 능력자에게 주피 −20%. 권능 능력자 급속 +20, 물질 능력자 주변 2칸 적에게 주피 +20%",
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 90,
+              "description": "둘 다 생존 시 상대 능력치 증가분 60% 추가"
+            }
+          ]
+        },
+        {
+          "slot": 4,
+          "name": "세뇌의 힘",
+          "cooldown": 15,
+          "range": 1,
+          "unlockedAt": 110,
+          "description": "물질 능력자 생존 → 모래 소용돌이 5초(2칸 급속 −20, 이속 −50%, 초당 50%), 권능 능력자 생존 → 회오리바람 돌진(0.25초마다 80%)",
+          "enhancements": [
+            {
+              "level": 2,
+              "levelNumber": 120,
+              "values": "60%/100%"
+            }
+          ]
+        }
+      ],
+      "evidence": "USER_CONFIRMED"
+    }
+  ],
+  "phantomSystemRules": {
+    "evidence": "USER_CONFIRMED",
+    "confirmedContext": "Season Phantom Challenge (시즌 팬텀 도전)",
+    "activationCondition": "같은 진영 영웅 3명 출전 시 해당 진영 팬텀 활성. 반신과 악마는 합산해 1진영으로 계산",
+    "placementPhase": "준비 단계에서 팬텀 위치 변경 가능. 전투 시작 후 함께 전투",
+    "scalingStats": "팬텀 능력치는 출전 영웅 레벨·등급 연동",
+    "abilityUser": "팬텀 특정 레벨 도달 시 팬텀 앞 또는 뒤(팬텀별 상이) 아군 1명이 '능력자'로 지정되어 특수 효과 수여",
+    "seasonResets": "시즌 종료 시 초기화. 레벨 리셋 시 재료 전액 환급, 3일 1회 무료, 이후 팬텀 리셋 쿠폰. 레벨 교환 기능 있음(리셋 쿠폰 사용, 세부 조건 미확인)",
+    "materials": {
+      "coreShards": "팬텀 코어 결정: 임의 진영 레벨업용",
+      "shadowEchoes": "그림자의 잔향: 레벨 상한 돌파용, 획득처 천공의 시련"
+    },
+    "levelUpCosts": {
+      "lv9_to_10": "코어 140 + 잔향 25",
+      "lv10_to_11": "코어 150",
+      "lv11_to_12": "코어 150"
+    },
+    "commonLevelStructure": {
+      "skillEnhance": [
+        20,
+        30,
+        40
+      ],
+      "phantomMastery": [
+        50,
+        60,
+        70,
+        100
+      ],
+      "phantomMasteryBonuses": "자신만 HP·방어 +8/16/24/32%, 공격력 +4/8/12/16%",
+      "abilityUnlock": 80,
+      "abilityEnhance": 90,
+      "fifthSkill": [
+        110,
+        120
+      ]
+    }
+  },
+  "battleLog": [
+    {
+      "date": "2026-09-26",
+      "stage": "Season Phantom Challenge 87",
+      "status": "Defeat (4 attempts, all losses)",
+      "enemyPower": "3021K",
+      "enemyLevel": "303~304",
+      "rewards": {
+        "seasonExp": "7800/hour",
+        "gold": "15223/hour",
+        "maxLevel": 330
+      },
+      "enemies": [
+        {
+          "name": "해적 선장(Pirate Captain)",
+          "faction": "Graveborn",
+          "damage": "2019K",
+          "healing": "5.3M"
+        },
+        {
+          "name": "아탈리아(Ataliah)",
+          "faction": "Celestial",
+          "class": "Ranger",
+          "level": 304,
+          "range": 1,
+          "damage": "7491K",
+          "damageReceived": 0,
+          "note": "누적 피해 최다 적 추적(궁·2스킬 돌진 중 무적), 사망 후 디바인 스피어로 공격력 −35% 상태로 계속 공격, 3스킬 제어 면역·받피 −60%·회복"
+        },
+        {
+          "name": "라멘티스(Ramentis)",
+          "faction": "Demonic",
+          "class": "Marksman",
+          "range": 7,
+          "damage": "19277K",
+          "damageReceived": "1.7M"
+        },
+        {
+          "name": "카짐(Kazim)",
+          "faction": "Mauler",
+          "class": "Marksman",
+          "range": 7,
+          "damage": "7010K",
+          "damageReceived": 0,
+          "note": "시작 10초 활공(무적·선택 불가), 에어본 적 급강하 440% + 사냥감 표식, 활공 종료 시 표식 대상 400% + 기절 3초, 바람의 결계로 적 급속 +30(표식당 +10, 3스택)"
+        },
+        {
+          "name": "플루스토(Phlustro)",
+          "faction": "Demonic",
+          "damage": "4501K"
+        }
+      ],
+      "attempts": [
+        {
+          "number": 1,
+          "formation": [
+            "신태일&아구몬",
+            "아로라",
+            "로란 대제",
+            "칸티아스",
+            "매튜&파피몬"
+          ],
+          "phantom": {
+            "name": "이중 봉인의 큐브",
+            "level": 10
+          },
+          "echo": "성운술+10",
+          "allyDamage": "10.2M",
+          "allyHealing": "2.2M",
+          "enemyDamage": "40.8M",
+          "outcome": "Loss"
+        },
+        {
+          "number": 2,
+          "formation": [
+            "신태일&아구몬",
+            "아로라",
+            "로란 대제",
+            "칸티아스",
+            "매튜&파피몬"
+          ],
+          "phantom": {
+            "name": "이중 봉인의 큐브",
+            "level": 11
+          },
+          "echo": "성운술+10",
+          "allyDamage": "10.3M",
+          "allyHealing": "2.1M",
+          "enemyDamage": "41.3M",
+          "outcome": "Loss",
+          "note": "큐브 10→11 체감 효과 없음"
+        },
+        {
+          "number": 3,
+          "formation": [
+            "솔리스",
+            "퀸",
+            "튜더",
+            "팔라모르",
+            "아로라"
+          ],
+          "phantom": {
+            "name": "어둠의 여왕 나사레스",
+            "level": 10
+          },
+          "echo": "성운술+10",
+          "allyDamage": "10.1M",
+          "allyHealing": "8.6M",
+          "enemyDamage": "46.7M",
+          "outcome": "Loss",
+          "note": "치유 4배 증가에도 결과 불변 → 생존이 아닌 화력 문제"
+        },
+        {
+          "number": 4,
+          "formation": [
+            "신태일&아구몬",
+            "아로라",
+            "로란 대제",
+            "칸티아스",
+            "매튜&파피몬"
+          ],
+          "phantom": {
+            "name": "이중 봉인의 큐브",
+            "level": 11
+          },
+          "echo": "광조술+13",
+          "allyDamage": "13.6M",
+          "allyHealing": "2.2M",
+          "enemyDamage": "40.3M",
+          "outcome": "Loss",
+          "detailedStats": {
+            "신태일": {
+              "damage": "185K"
+            },
+            "아로라": {
+              "damage": "7050K",
+              "damageReceived": "36.7M"
+            },
+            "로란": {
+              "damage": "123K"
+            },
+            "칸티아스": {
+              "damage": "278K"
+            },
+            "매튜": {
+              "damage": "2919K"
+            },
+            "큐브": {
+              "damage": "2997K"
+            }
+          },
+          "observation": "광조술+13은 성운술+10 대비 아군 딜 +31%. 적 딜 약 65%가 후방 라멘티스·카짐. 아로라가 아탈리아 표적"
+        }
+      ],
+      "conclusion": {
+        "evidence": "OBSERVATION",
+        "findings": [
+          "광조술+13 > 성운술+10: 아군 딜 +31%",
+          "큐브 10→11: 체감 효과 없음",
+          "치유 증가 4배에도 결과 불변 → 생존이 아닌 화력 문제",
+          "적 딜 약 65% = 후방 라멘티스(19M, 받피 1.7M) + 카짐(7M, 받피 0) → 아군이 앞줄만 공격"
+        ],
+        "nextSteps": "공명 레벨·장비 상승 후 재도전, 협력 전투 1회. 큐브 코어 추가 투입 보류"
+      }
+    }
+  ],
+  "entries": [],
+  "conversationIndex": [],
+  "boss": {
+    "overlay": ""
+  },
+  "heroes": [],
+  "nameCorrections": []
+}
