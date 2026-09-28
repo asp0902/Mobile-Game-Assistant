@@ -42,7 +42,7 @@ class RecommendationOverlayController @Inject constructor(
     fun show(text: String?, targets: List<OverlayTarget> = emptyList()) = mainHandler.post {
         if (!Settings.canDrawOverlays(context)) return@post
         root ?: FrameLayout(context).also { created ->
-            val effectView = EffectView(context)
+            val effectView = EffectView(context, windowManager)
             created.addView(effectView, FrameLayout.LayoutParams(-1, -1))
             effects = effectView
             runCatching { windowManager.addView(created, layoutParams()) }
@@ -91,7 +91,10 @@ class RecommendationOverlayController @Inject constructor(
         enum class Action { SELECT, CONSIDER, SKIP }
     }
 
-    private class EffectView(context: Context) : View(context) {
+    private class EffectView(
+        context: Context,
+        private val windowManager: WindowManager,
+    ) : View(context) {
         var targets: List<OverlayTarget> = emptyList()
             set(value) {
                 if (field == value) return
@@ -99,18 +102,35 @@ class RecommendationOverlayController @Inject constructor(
                 invalidate()
             }
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        private val location = IntArray(2)
+
+        // The overlay window can be inset from screen (0,0) by the system (status/nav bars),
+        // but normalized target coordinates are relative to the full screen the capture used.
+        // Convert with the real screen size, then subtract this view's on-screen offset.
+        private fun screenSize(): android.util.Size = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val bounds = windowManager.currentWindowMetrics.bounds
+            android.util.Size(bounds.width(), bounds.height())
+        } else {
+            val metrics = android.util.DisplayMetrics()
+            @Suppress("DEPRECATION")
+            windowManager.defaultDisplay.getRealMetrics(metrics)
+            android.util.Size(metrics.widthPixels, metrics.heightPixels)
+        }
 
         override fun onDraw(canvas: Canvas) {
+            if (targets.isEmpty()) return
+            val screen = screenSize()
+            getLocationOnScreen(location)
             targets.forEach { target ->
                 val color = when (target.action) {
                     OverlayTarget.Action.SELECT -> Color.rgb(255, 48, 48)
                     OverlayTarget.Action.CONSIDER -> Color.rgb(255, 202, 64)
                     OverlayTarget.Action.SKIP -> Color.rgb(151, 163, 175)
                 }
-                val left = target.left * width
-                val top = target.top * height
-                val right = target.right * width
-                val bottom = target.bottom * height
+                val left = target.left * screen.width - location[0]
+                val top = target.top * screen.height - location[1]
+                val right = target.right * screen.width - location[0]
+                val bottom = target.bottom * screen.height - location[1]
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 7f
                 paint.color = color
