@@ -7383,6 +7383,24 @@
         ],
         "nextSteps": "공명 레벨·장비 상승 후 재도전, 협력 전투 1회. 큐브 코어 추가 투입 보류"
       }
+    },
+    {
+      "date": "2026-09-28",
+      "type": "seasonProgress",
+      "note": "시즌 공명 수준 진행 현황 및 장비 레벨 갱신",
+      "evidence": "USER_CONFIRMED",
+      "account": {
+        "asOf": "2026-09-28",
+        "seasonResonance": 333,
+        "classEquipment": {
+          "supporter": 335,
+          "mage": 330,
+          "warrior": 330,
+          "ranger": 330,
+          "marksman": 330,
+          "tank": 330
+        }
+      }
     }
   ],
   "honorDuelStartingRarity": {
