@@ -59,7 +59,7 @@ fun LearningScreen(onBack: () -> Unit) {
     var showConversation by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
     val snapshot = loaded?.getOrNull()
-    val entries = if (showConversation) snapshot?.conversation.orEmpty() else snapshot?.entries.orEmpty()
+    val entries = (if (showConversation) snapshot?.conversation.orEmpty() else snapshot?.entries.orEmpty()).asReversed()
     val selected = entries.firstOrNull { it.id == selectedId }
     val detail by produceState<Result<String>?>(null, selected) {
         value = null
