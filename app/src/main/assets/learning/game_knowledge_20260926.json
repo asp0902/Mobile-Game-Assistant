@@ -8336,5 +8336,148 @@
       "메아리 배치 성패 결정: 오르파가 광조술, 이루시카 진혼술, 망령 명촉술",
       "부정 리플렉션 기믹 수정 확인 필요 (프로스트 디버프 면역)"
     ]
+  },
+  "jobCompositions": {
+    "schemaVersion": 1,
+    "asOf": "2026-09-28",
+    "description": "직업별·난이도별 추천 편성",
+    "compositions": [
+      {
+        "id": "tribe-phys-5-frost",
+        "name": "트라이브 5명 물리 (일루전 프로스트)",
+        "tower": "꿈의 추격",
+        "bossId": "frost",
+        "bossName": "일루전 프로스트",
+        "difficulty": "MEDIUM",
+        "status": "USER_CONFIRMED",
+        "heroCount": 5,
+        "requirements": {
+          "faction": "tribe",
+          "attackType": "physical",
+          "countDebuff": true
+        },
+        "heroes": [
+          "안탄드라",
+          "스모키와 미르키",
+          "에디",
+          "갈라하드",
+          "보라시아"
+        ],
+        "echo": "과거의 메아리",
+        "result": {
+          "percentage": 70.71,
+          "notes": "아이스 댄스 공격 속도 감소 대응"
+        }
+      },
+      {
+        "id": "frontTank-phys-orphaga",
+        "name": "전탱 중심 물리 (오르파가)",
+        "tower": "꿈의 추격",
+        "bossId": "orphaga",
+        "bossName": "오르파가",
+        "difficulty": "HIGH",
+        "status": "USER_CONFIRMED",
+        "heroCount": 5,
+        "requirements": {
+          "frontTank": "카렌",
+          "attackType": "mixed",
+          "bleedManagement": true
+        },
+        "heroes": [
+          "카렌",
+          "윙",
+          "보니",
+          "세미라",
+          "루보미르"
+        ],
+        "echo": "광조술+15",
+        "result": {
+          "time": "1:28.92",
+          "killed": true,
+          "notes": "탱커 부재 시 딜 감소. 메아리로 97% 벽 돌파"
+        }
+      },
+      {
+        "id": "tribe-melee-iruschka",
+        "name": "트라이브 근접 물리 (이루시카)",
+        "tower": "꿈의 추격",
+        "bossId": "iruschka",
+        "bossName": "\"언베일러\" 이루시카",
+        "difficulty": "HIGH",
+        "status": "USER_CONFIRMED",
+        "heroCount": 5,
+        "requirements": {
+          "faction": "tribe",
+          "attackType": "physical",
+          "rangeLimit": 1
+        },
+        "heroes": [
+          "게르다",
+          "브루투스",
+          "고르단",
+          "샤키르",
+          "소렌"
+        ],
+        "echo": "진혼술+15",
+        "result": {
+          "time": "1:09.24",
+          "killed": true,
+          "notes": "사거리 1 제한"
+        }
+      },
+      {
+        "id": "wildlings-dragon",
+        "name": "와일더스 5명 (네크로 드래곤)",
+        "tower": "꿈의 추격",
+        "bossId": "necroDragon",
+        "bossName": "네크로 드래곤",
+        "difficulty": "VERYHARD",
+        "status": "TRIAL",
+        "heroCount": 5,
+        "requirements": {
+          "faction": "wildlings",
+          "avoidStay": true
+        },
+        "heroes": [
+          "와일더스",
+          "와일더스",
+          "와일더스",
+          "와일더스",
+          "와일더스"
+        ],
+        "echo": "과거의 메아리",
+        "result": {
+          "percentage": 32.86,
+          "notes": "미해결 (심연의 낙인 기믹)"
+        }
+      },
+      {
+        "id": "support-shield-spectral",
+        "name": "서포터 5명 실드 (망령의 소굴)",
+        "tower": "꿈의 추격",
+        "bossId": "spectralCavern",
+        "bossName": "망령의 소굴",
+        "difficulty": "HIGH",
+        "status": "USER_CONFIRMED",
+        "heroCount": 5,
+        "requirements": {
+          "shieldSupport": true,
+          "formation": "tight",
+          "fearManagement": true
+        },
+        "heroes": [
+          "매튜&파피몬",
+          "후긴",
+          "루시우스",
+          "로완",
+          "아로라"
+        ],
+        "echo": "명촉술+15",
+        "result": {
+          "percentage": 35.86,
+          "notes": "로완 에너지 공급 필수"
+        }
+      }
+    ]
   }
 }

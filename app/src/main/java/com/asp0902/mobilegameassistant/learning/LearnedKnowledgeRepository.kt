@@ -78,6 +78,7 @@ data class LearnedSnapshot(
     val bossOverlay: String,
     val skyTrial: SkyTrialData? = null,
     val dreamRealm: Map<String, Any>? = null,
+    val jobCompositions: Map<String, Any>? = null,
     val heroes: List<HeroInfo> = emptyList(),
 )
 
@@ -194,8 +195,46 @@ class LearnedKnowledgeRepository @Inject constructor(
                     }
                 }.getOrDefault(emptyList())
             }
+            fun parseJobCompositions(): Map<String, Any>? {
+                return runCatching {
+                    root.optJSONObject("jobCompositions")?.let { jc ->
+                        mapOf(
+                            "schemaVersion" to jc.optInt("schemaVersion", 1),
+                            "asOf" to jc.optString("asOf", ""),
+                            "compositions" to (jc.optJSONArray("compositions")?.let { arr ->
+                                (0 until arr.length()).map { i ->
+                                    val c = arr.getJSONObject(i)
+                                    mapOf<String, Any>(
+                                        "id" to c.getString("id"),
+                                        "name" to c.getString("name"),
+                                        "tower" to c.getString("tower"),
+                                        "bossId" to c.getString("bossId"),
+                                        "difficulty" to c.getString("difficulty"),
+                                        "status" to c.getString("status"),
+                                        "heroes" to (c.optJSONArray("heroes")?.let { h ->
+                                            (0 until h.length()).map { h.getString(it) }
+                                        } ?: emptyList()),
+                                        "echo" to c.optString("echo", ""),
+                                        "requirements" to (c.optJSONObject("requirements")?.let { req ->
+                                            req.keys().asSequence().map { it to req.opt(it) }.toMap()
+                                        } ?: emptyMap()),
+                                        "result" to (c.optJSONObject("result")?.let { res ->
+                                            mapOf<String, Any>(
+                                                "killed" to res.optBoolean("killed", false),
+                                                "percentage" to res.optDouble("percentage", 0.0),
+                                                "time" to res.optString("time", ""),
+                                                "notes" to res.optString("notes", "")
+                                            )
+                                        } ?: emptyMap())
+                                    )
+                                }
+                            } ?: emptyList())
+                        )
+                    }
+                }.getOrNull()
+            }
             LearnedSnapshot(root.getString("snapshotDate"), entries("entries"), entries("conversationIndex"),
-                root.getJSONObject("boss").getString("overlay"), parseSkyTrial(), parseDreamRealm(), parseHeroes())
+                root.getJSONObject("boss").getString("overlay"), parseSkyTrial(), parseDreamRealm(), parseJobCompositions(), parseHeroes())
         }
     }
 

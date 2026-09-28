@@ -58,7 +58,7 @@ fun LearningScreen(onBack: () -> Unit) {
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
     var showConversation by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
-    var activePanel by rememberSaveable { mutableStateOf<String?>(null) } // "skyTrial", "dreamRealm", or null
+    var activePanel by rememberSaveable { mutableStateOf<String?>(null) } // "skyTrial", "dreamRealm", "jobComposition", or null
     val snapshot = loaded?.getOrNull()
     val entries = if (showConversation) snapshot?.conversation.orEmpty() else snapshot?.entries.orEmpty()
     val selected = entries.firstOrNull { it.id == selectedId }
@@ -152,6 +152,8 @@ fun LearningScreen(onBack: () -> Unit) {
                 SkyTrialPanel(snapshot.skyTrial!!)
             } else if (activePanel == "dreamRealm" && snapshot?.dreamRealm != null) {
                 DreamRealmPanel(snapshot.dreamRealm!!)
+            } else if (activePanel == "jobComposition" && snapshot?.jobCompositions != null) {
+                JobCompositionPanel(snapshot.jobCompositions!!)
             } else if (activePanel == "heroes" && snapshot?.heroes.isNotEmpty()) {
                 HeroPanel(snapshot!!.heroes)
             } else if (selected != null) {
@@ -179,6 +181,9 @@ fun LearningScreen(onBack: () -> Unit) {
                     }
                     if (snapshot?.dreamRealm != null) {
                         Button(onClick = { activePanel = "dreamRealm" }) { Text("꿈의 세계") }
+                    }
+                    if (snapshot?.jobCompositions != null) {
+                        Button(onClick = { activePanel = "jobComposition" }) { Text("직업별 편성") }
                     }
                     if (snapshot?.heroes.isNotEmpty()) {
                         Button(onClick = { activePanel = "heroes" }) { Text("영웅") }
