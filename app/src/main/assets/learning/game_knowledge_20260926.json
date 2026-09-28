@@ -117,25 +117,11 @@
       "role": "서포터",
       "rank": "에픽+",
       "portraitFile": "damian.png",
-      "portraitStatus": "USER_CONFIRMED",
       "portraitConfirmedAt": "2026-09-17",
       "portraitAsset": "learning/portraits-20260917/damian.png",
-      "portraitSource": "C:\\Users\\asp92\\OneDrive\\바탕 화면\\AFKː 새로운 여정\\Mobile-Game-Assistant\\app\\src\\main\\assets\\learning\\portraits-20260917\\damian.png",
       "owned": true,
       "rankEvidence": "사용자 명시 확인, 테두리 추론 아님",
       "asOf": "2026-09-17"
-    },
-    {
-      "id": "lucius",
-      "name": "루시우스",
-      "faction": "레오프론",
-      "role": "탱커",
-      "rank": "에픽",
-      "rankEvidence": "사용자 정정 기록, 현재 승급 변동 미확인",
-      "owned": true,
-      "portraitFile": "lucius-clear.png",
-      "portraitAsset": "learning/portraits-20260917/lucius-clear.png",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\afk-haunting-portraits\\lucius-clear.png"
     },
     {
       "id": "hugin",
@@ -149,20 +135,7 @@
       "attackType": "물리",
       "range": 20,
       "portraitFile": "hugin.png",
-      "portraitAsset": "learning/portraits-20260917/hugin.png",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\afk-haunting-portraits\\hugin.png"
-    },
-    {
-      "id": "rowan",
-      "name": "로완",
-      "faction": "레오프론",
-      "role": "서포터",
-      "rank": "CHECK",
-      "historicalRank": "레전드",
-      "owned": true,
-      "portraitFile": "rowan-corrected.png",
-      "portraitAsset": "learning/portraits-20260917/rowan-corrected.png",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\codex-clipboard-2d74d6e7-011f-4db3-9f73-319d87585c80.png"
+      "portraitAsset": "learning/portraits-20260917/hugin.png"
     },
     {
       "id": "aurora",
@@ -174,7 +147,6 @@
       "range": 5,
       "portraitFile": "aurora.png",
       "portraitAsset": "learning/portraits-20260917/aurora.png",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\afk-haunting-portraits\\aurora.png",
       "rankEvidence": "USER_EXPLICIT: 아로라 진급 결과 챔피언",
       "asOf": "20260918-151910",
       "rankHistory": [
@@ -195,8 +167,7 @@
       "owned": true,
       "range": 4,
       "portraitFile": "yamato.png",
-      "portraitAsset": "learning/portraits-20260917/yamato.png",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\afk-haunting-portraits\\yamato.png"
+      "portraitAsset": "learning/portraits-20260917/yamato.png"
     },
     {
       "id": "rolan",
@@ -208,8 +179,7 @@
       "range": 10,
       "exclusiveUnlocked": null,
       "portraitFile": "rolan.png",
-      "portraitAsset": "learning/portraits-20260917/rolan.png",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\afk-haunting-portraits\\rolan.png"
+      "portraitAsset": "learning/portraits-20260917/rolan.png"
     },
     {
       "id": "eddy",
@@ -221,10 +191,8 @@
       "owned": true,
       "portraitFile": "odie-corrected.png",
       "portraitAsset": "learning/portraits-20260917/eddy.png",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\codex-clipboard-b05e7dcd-89b9-44e2-8818-4ef6b6129907.png",
       "rankEvidence": "사용자 명시 확인, 테두리 추론 아님",
-      "asOf": "2026-09-17",
-      "portraitStatus": "USER_CONFIRMED"
+      "asOf": "2026-09-17"
     },
     {
       "id": "erinndor",
@@ -235,8 +203,7 @@
       "attackType": "마법",
       "range": 8,
       "capturedLevel": 398,
-      "capturedPowerK": 1174,
-      "portraitStatus": "CHECK"
+      "capturedPowerK": 1174
     },
     {
       "id": "kai",
@@ -249,10 +216,14 @@
       "range": 4,
       "capturedLevel": 398,
       "capturedPowerK": 1364,
-      "portraitStatus": "CHECK",
-      "portrait": "learning/portraits/tribe/kai.png",
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/tribe/kai.png",
       "portraitConfidence": "high",
-      "portraitNote": "차일드"
+      "portraitNote": "차일드",
+      "title": "바바리안 차일드",
+      "rarity": "SR",
+      "portraitMatch": "높음",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)"
     },
     {
       "id": "kruger",
@@ -266,8 +237,12 @@
       "capturedLevel": 398,
       "capturedPowerK": 948,
       "portraitStatus": "CHECK",
-      "portrait": "learning/portraits/tribe/kruger.png",
-      "portraitConfidence": "medium"
+      "portrait": "learning/portraits-20260928/tribe/kruger.png",
+      "portraitConfidence": "medium",
+      "title": "불굴의 전사",
+      "rarity": "SR",
+      "portraitMatch": "중간",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)"
     },
     {
       "id": "nerion",
@@ -279,8 +254,7 @@
       "attackType": "마법",
       "range": 7,
       "capturedLevel": 398,
-      "capturedPowerK": 861,
-      "portraitStatus": "CHECK"
+      "capturedPowerK": 861
     },
     {
       "id": "shakitalis",
@@ -291,8 +265,7 @@
       "historicalRank": "에픽",
       "range": 5,
       "portraitFile": "shakitalis.png",
-      "portraitAsset": "learning/portraits-20260917/shakitalis.png",
-      "portraitSource": "C:\\Users\\asp92\\OneDrive\\바탕 화면\\AFKː 새로운 여정\\Mobile-Game-Assistant\\app\\src\\main\\assets\\learning\\portraits-20260917\\shakitalis.png"
+      "portraitAsset": "learning/portraits-20260917/shakitalis.png"
     },
     {
       "id": "cantias",
@@ -300,8 +273,7 @@
       "faction": "악마",
       "role": "서포터",
       "rank": "CHECK",
-      "range": 6,
-      "portraitStatus": "CHECK"
+      "range": 6
     },
     {
       "id": "pandora",
@@ -309,8 +281,7 @@
       "faction": "이계",
       "role": "서포터",
       "rank": "CHECK",
-      "range": 5,
-      "portraitStatus": "CHECK"
+      "range": 5
     },
     {
       "name": "울머스",
@@ -319,8 +290,6 @@
       "owned": true,
       "role": "탱커",
       "faction": "와일더스",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\codex-clipboard-244bad69-d799-4c26-9795-bd2c0a98afd4.png",
-      "portraitStatus": "USER_CONFIRMED",
       "id": "ulmus",
       "rankEvidence": "사용자 명시 확인, 테두리 추론 아님",
       "asOf": "2026-09-17"
@@ -332,8 +301,6 @@
       "owned": true,
       "role": "서포터",
       "faction": "와일더스",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\codex-clipboard-b6ac6fc2-cbd0-4b14-aea4-75c9fd46627d.png",
-      "portraitStatus": "USER_CONFIRMED",
       "id": "solise",
       "rankEvidence": "사용자 명시 확인, 테두리 추론 아님",
       "asOf": "2026-09-17"
@@ -345,8 +312,6 @@
       "owned": true,
       "role": "서포터",
       "faction": "와일더스",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\codex-clipboard-e0f243a1-c953-499f-9850-7d8756a2fc36.png",
-      "portraitStatus": "USER_CONFIRMED",
       "id": "quinn",
       "rankEvidence": "사용자 명시 확인, 테두리 추론 아님",
       "asOf": "2026-09-17"
@@ -358,8 +323,6 @@
       "owned": true,
       "role": "레인저",
       "faction": "와일더스",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\codex-clipboard-31b411eb-2ae0-41a5-b53f-2a9ec269065c.png",
-      "portraitStatus": "USER_CONFIRMED",
       "id": "faramor",
       "rankEvidence": "사용자 직접 진급 확인",
       "asOf": "20260917-231700",
@@ -386,8 +349,6 @@
       "owned": true,
       "role": "마법사",
       "faction": "그레이브본",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\codex-clipboard-697c132f-b212-4706-a170-f0c82ca61044.png",
-      "portraitStatus": "USER_CONFIRMED",
       "id": "shemira",
       "rankEvidence": "사용자 명시 확인, 테두리 추론 아님",
       "asOf": "2026-09-17"
@@ -398,7 +359,6 @@
       "owned": true,
       "role": "레인저",
       "faction": "와일더스",
-      "portraitStatus": "CHECK",
       "id": "eironn",
       "rankEvidence": "사용자 명시 확인, 테두리 추론 아님",
       "portraitNote": "Previously supplied individual portrait; association must be recovered from source evidence, not a roster position.",
@@ -412,7 +372,6 @@
       "rank": "레전드+",
       "rankEvidence": "사용자 직접 진급 확인",
       "id": "hero_50090",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\codex-clipboard-667340ce-5663-4466-b87e-1a15d419a4ca.png",
       "portraitRankExamples": [
         null,
         {
@@ -429,8 +388,7 @@
         }
       ],
       "owned": true,
-      "asOf": "20260917-231700",
-      "portraitStatus": "USER_CONFIRMED"
+      "asOf": "20260917-231700"
     },
     {
       "faction": "레오프론",
@@ -440,7 +398,6 @@
       "rank": "레전드",
       "rankEvidence": "사용자 직접 진급 확인",
       "id": "dilgrey",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\codex-clipboard-8702da17-a6af-4ae7-b337-d1cd43712d89.png",
       "portraitRankExamples": [
         null,
         {
@@ -457,8 +414,7 @@
         }
       ],
       "owned": true,
-      "asOf": "20260917-231700",
-      "portraitStatus": "USER_CONFIRMED"
+      "asOf": "20260917-231700"
     },
     {
       "faction": "그레이브본",
@@ -468,7 +424,6 @@
       "rank": "엘리트+",
       "rankEvidence": "사용자 직접 진급 확인",
       "id": "silvina",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\codex-clipboard-c342fd21-86ba-48c1-9308-5fc2757b1cd4.png",
       "portraitRankExamples": [
         null,
         {
@@ -485,8 +440,7 @@
         }
       ],
       "owned": true,
-      "asOf": "20260917-231700",
-      "portraitStatus": "USER_CONFIRMED"
+      "asOf": "20260917-231700"
     },
     {
       "faction": "와일더스",
@@ -496,7 +450,6 @@
       "rank": "엘리트+",
       "rankEvidence": "사용자 직접 진급 확인",
       "id": "kafra",
-      "portraitSource": "C:\\Users\\asp92\\AppData\\Local\\Temp\\codex-clipboard-629058c1-5724-4e54-8f94-882f36c8e295.png",
       "portraitRankExamples": [
         null,
         {
@@ -513,20 +466,7 @@
         }
       ],
       "owned": true,
-      "asOf": "20260917-231700",
-      "portraitStatus": "USER_CONFIRMED"
-    },
-    {
-      "owned": true,
-      "asOf": "20260918-151910",
-      "rankEvidence": "USER_EXPLICIT: 엘리트+ -> 에픽",
-      "previousRankReported": "엘리트+",
-      "name": "워커",
-      "role": "사수",
-      "rank": "에픽",
-      "faction": "레오프론",
-      "portraitStatus": "CHECK",
-      "id": "walker"
+      "asOf": "20260917-231700"
     },
     {
       "id": "hoogin",
@@ -540,8 +480,7 @@
       "range": 20,
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
-      "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "asOf": "2026-09-28"
     },
     {
       "id": "silvain",
@@ -555,8 +494,7 @@
       "range": 7,
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
-      "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "asOf": "2026-09-28"
     },
     {
       "id": "cassedia",
@@ -570,8 +508,7 @@
       "range": 3,
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
-      "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "asOf": "2026-09-28"
     },
     {
       "id": "rowan",
@@ -586,7 +523,10 @@
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
       "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/leofron/rowan.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)"
     },
     {
       "id": "dellgray",
@@ -600,8 +540,7 @@
       "range": 6,
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
-      "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "asOf": "2026-09-28"
     },
     {
       "id": "walker",
@@ -616,7 +555,10 @@
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
       "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/leofron/walker.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)"
     },
     {
       "id": "vera",
@@ -631,7 +573,10 @@
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
       "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/leofron/vera.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)"
     },
     {
       "id": "perseus",
@@ -646,7 +591,10 @@
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
       "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/leofron/perseus.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)"
     },
     {
       "id": "lucius",
@@ -661,7 +609,10 @@
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
       "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/leofron/lucius.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)"
     },
     {
       "id": "fey",
@@ -675,8 +626,7 @@
       "range": 3,
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
-      "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "asOf": "2026-09-28"
     },
     {
       "id": "mirajel",
@@ -690,8 +640,7 @@
       "range": 3,
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
-      "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "asOf": "2026-09-28"
     },
     {
       "id": "eve",
@@ -706,7 +655,10 @@
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
       "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/leofron/eve.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)"
     },
     {
       "id": "merin",
@@ -720,8 +672,7 @@
       "range": 5,
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
-      "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "asOf": "2026-09-28"
     },
     {
       "id": "luca",
@@ -736,7 +687,10 @@
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
       "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/leofron/luca.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)"
     },
     {
       "id": "valen",
@@ -751,7 +705,10 @@
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
       "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/leofron/valen.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)"
     },
     {
       "id": "joa",
@@ -766,7 +723,10 @@
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
       "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/leofron/joa.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)"
     },
     {
       "id": "colin",
@@ -781,7 +741,10 @@
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
       "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/leofron/colin.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)"
     },
     {
       "id": "chippy",
@@ -796,7 +759,10 @@
       "owned": true,
       "rankEvidence": "사용자 명시 확인",
       "asOf": "2026-09-28",
-      "portraitStatus": "UNCONFIRMED"
+      "portraitStatus": "USER_CONFIRMED",
+      "portrait": "learning/portraits-20260928/leofron/chippy.png",
+      "portraitMatch": "확정(정보 미제공)",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)"
     },
     {
       "id": "smoky-mirky",
@@ -809,7 +775,6 @@
       "range": 8,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/smoky-mirky.png",
       "portraitConfidence": "high",
       "portraitNote": "악사·미어캣"
     },
@@ -824,9 +789,12 @@
       "range": 1,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/gordan.png",
+      "portrait": "learning/portraits-20260928/tribe/gordan.png",
       "portraitConfidence": "high",
-      "portraitNote": "유일 신화"
+      "portraitNote": "유일 신화",
+      "portraitMatch": "높음",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "USER_CONFIRMED"
     },
     {
       "id": "shakir",
@@ -839,9 +807,12 @@
       "range": 1,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/shakir.png",
+      "portrait": "learning/portraits-20260928/tribe/shakir.png",
       "portraitConfidence": "confirmed",
-      "portraitNote": "사용자 화면 확정"
+      "portraitNote": "사용자 화면 확정",
+      "portraitMatch": "확정(사용자 화면 확인 2026-09-28)",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "USER_CONFIRMED"
     },
     {
       "id": "galahad",
@@ -854,9 +825,12 @@
       "range": 10,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/galahad.png",
+      "portrait": "learning/portraits-20260928/tribe/galahad.png",
       "portraitConfidence": "high",
-      "portraitNote": "무녀"
+      "portraitNote": "무녀",
+      "portraitMatch": "높음",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "USER_CONFIRMED"
     },
     {
       "id": "eddie",
@@ -869,9 +843,12 @@
       "range": 5,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/eddie.png",
+      "portrait": "learning/portraits-20260928/tribe/eddie.png",
       "portraitConfidence": "confirmed",
-      "portraitNote": "사용자 화면 확정"
+      "portraitNote": "사용자 화면 확정",
+      "portraitMatch": "확정(사용자 화면 확인 2026-09-28)",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "USER_CONFIRMED"
     },
     {
       "id": "gerda",
@@ -884,8 +861,11 @@
       "range": 1,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/gerda.png",
-      "portraitConfidence": "medium"
+      "portrait": "learning/portraits-20260928/tribe/gerda.png",
+      "portraitConfidence": "medium",
+      "portraitMatch": "중간",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "CHECK"
     },
     {
       "id": "brutus",
@@ -898,8 +878,11 @@
       "range": 1,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/brutus.png",
-      "portraitConfidence": "medium"
+      "portrait": "learning/portraits-20260928/tribe/brutus.png",
+      "portraitConfidence": "medium",
+      "portraitMatch": "중간",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "CHECK"
     },
     {
       "id": "lumont",
@@ -912,8 +895,11 @@
       "range": 1,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/lumont.png",
-      "portraitConfidence": "high"
+      "portrait": "learning/portraits-20260928/tribe/lumont.png",
+      "portraitConfidence": "high",
+      "portraitMatch": "높음",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "USER_CONFIRMED"
     },
     {
       "id": "borasia",
@@ -926,8 +912,11 @@
       "range": 10,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/borasia.png",
-      "portraitConfidence": "medium"
+      "portrait": "learning/portraits-20260928/tribe/borasia.png",
+      "portraitConfidence": "medium",
+      "portraitMatch": "중간",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "CHECK"
     },
     {
       "id": "antandra",
@@ -940,9 +929,12 @@
       "range": 1,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/antandra.png",
+      "portrait": "learning/portraits-20260928/tribe/antandra.png",
       "portraitConfidence": "medium",
-      "portraitNote": "사막"
+      "portraitNote": "사막",
+      "portraitMatch": "중간",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "CHECK"
     },
     {
       "id": "soren",
@@ -955,8 +947,11 @@
       "range": 1,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/soren.png",
-      "portraitConfidence": "medium"
+      "portrait": "learning/portraits-20260928/tribe/soren.png",
+      "portraitConfidence": "medium",
+      "portraitMatch": "중간",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "CHECK"
     },
     {
       "id": "satrana",
@@ -969,9 +964,12 @@
       "range": 1,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/satrana.png",
+      "portrait": "learning/portraits-20260928/tribe/satrana.png",
       "portraitConfidence": "medium",
-      "portraitNote": "불의 마녀"
+      "portraitNote": "불의 마녀",
+      "portraitMatch": "중간",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "CHECK"
     },
     {
       "id": "seths",
@@ -984,7 +982,6 @@
       "range": 1,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/seths.png",
       "portraitConfidence": "medium",
       "portraitNote": "그림자"
     },
@@ -999,9 +996,170 @@
       "range": 7,
       "owned": true,
       "asOf": "2026-09-28",
-      "portrait": "learning/portraits/tribe/kazim.png",
+      "portrait": "learning/portraits-20260928/tribe/kazim.png",
       "portraitConfidence": "medium",
-      "portraitNote": "깃털"
+      "portraitNote": "깃털",
+      "portraitMatch": "중간",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "CHECK"
+    },
+    {
+      "id": "huginn",
+      "name": "후긴",
+      "title": "기괴한 천재",
+      "rank": "신화",
+      "rarity": "SR",
+      "role": "서포터",
+      "attackType": "물리",
+      "range": 20,
+      "owned": true,
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits-20260928/leofron/huginn.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)",
+      "portraitStatus": "USER_CONFIRMED"
+    },
+    {
+      "id": "sylven",
+      "name": "실벤",
+      "title": "영광의 후예",
+      "rank": "레전드+",
+      "rarity": "SR",
+      "role": "사수",
+      "attackType": "마법",
+      "range": 7,
+      "owned": true,
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits-20260928/leofron/sylven.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)",
+      "portraitStatus": "USER_CONFIRMED"
+    },
+    {
+      "id": "cassadee",
+      "name": "카세디아",
+      "title": "푸른 심연",
+      "rank": "레전드",
+      "rarity": "SSR",
+      "role": "마법사",
+      "attackType": "마법",
+      "range": 3,
+      "owned": true,
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits-20260928/leofron/cassadee.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)",
+      "portraitStatus": "USER_CONFIRMED"
+    },
+    {
+      "id": "dilgray",
+      "name": "딜그레이",
+      "title": "암흑의 그림자",
+      "rank": "레전드",
+      "rarity": "SSR",
+      "role": "마법사",
+      "attackType": "마법",
+      "range": 6,
+      "owned": true,
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits-20260928/leofron/dilgray.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)",
+      "portraitStatus": "USER_CONFIRMED"
+    },
+    {
+      "id": "mirael",
+      "name": "미라엘",
+      "title": "화염의 마녀",
+      "rank": "에픽",
+      "rarity": "SR",
+      "role": "마법사",
+      "attackType": "마법",
+      "range": 3,
+      "owned": true,
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits-20260928/leofron/mirael.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)",
+      "portraitStatus": "USER_CONFIRMED"
+    },
+    {
+      "id": "fay",
+      "name": "페이",
+      "title": "빛나는 춤",
+      "rank": "에픽",
+      "rarity": "SR",
+      "role": "서포터",
+      "attackType": "마법",
+      "range": 3,
+      "owned": true,
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits-20260928/leofron/fay.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)",
+      "portraitStatus": "USER_CONFIRMED"
+    },
+    {
+      "id": "merlin",
+      "name": "메린",
+      "title": "숲의 화살",
+      "rank": "엘리트+",
+      "rarity": "SR",
+      "role": "사수",
+      "attackType": "물리",
+      "range": 5,
+      "owned": true,
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits-20260928/leofron/merlin.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 공명 영웅 화면(308레벨)",
+      "portraitStatus": "USER_CONFIRMED"
+    },
+    {
+      "id": "hammie",
+      "name": "해미",
+      "title": "도토리 마법사",
+      "rank": "레어",
+      "rarity": "레어",
+      "role": "서포터",
+      "attackType": "마법",
+      "range": 5,
+      "owned": true,
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits-20260928/leofron/hammie.png",
+      "portraitMatch": "확정",
+      "portraitSource": "2026-09-26 해미 단독 화면(308레벨)",
+      "portraitStatus": "USER_CONFIRMED"
+    },
+    {
+      "id": "smokey_mirky",
+      "name": "스모키와 미르키",
+      "title": "황무지 악사",
+      "rank": "레전드",
+      "rarity": "SSR",
+      "role": "서포터",
+      "attackType": "마법",
+      "range": 8,
+      "owned": true,
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits-20260928/tribe/smokey_mirky.png",
+      "portraitStatus": "USER_CONFIRMED"
+    },
+    {
+      "id": "seth",
+      "name": "세스",
+      "title": "신속한 그림자",
+      "rank": "엘리트+",
+      "rarity": "SR",
+      "role": "레인저",
+      "attackType": "물리",
+      "range": 1,
+      "owned": true,
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits-20260928/tribe/seth.png",
+      "portraitMatch": "중간",
+      "portraitSource": "2026-09-28 공명 영웅 화면(328레벨, 트라이브 필터)",
+      "portraitStatus": "CHECK"
     }
   ],
   "echoes": [
@@ -2284,6 +2442,12 @@
       "title": "꿈의 세계 상세 전투 기록 (3회차)",
       "text": "메아리: 광조술+13, 전원 레벨 310\n\n1회차: 아로라·세미라·에디·갈라하드·카이\n합계 141M (22.9%), 랭킹 193위\n\n2회차: 아로라·세미라·로란대제·갈라하드·카이  \n합계 189M (30.7%), 랭킹 162위\n\n3회차: 아로라·세미라·칸티아스·갈라하드·로란대제\n합계 192M (31.2%), 랭킹 160위\n개별 전투력: 세미라 72.3M, 아로라 85.5M, 칸티아스 1.8M(치유 13.4M), 갈라하드 29.7M, 로란 3.2M(치유 231M), 보스 준 피해 25.5M\n특징: 3회 모두 사망·이동 없음 (위치 파악 회피 성공)",
       "evidence": "OBSERVATION"
+    },
+    {
+      "id": "heroes-portraits-20260928",
+      "title": "보유 레오프론·트라이브 영웅 초상화 (2026-09-28)",
+      "text": "레오프론 19명 + 트라이브 16명 = 35명 초상화 자산. 공명 영웅 화면 기준 매칭. 확정: 레오프론 전원·에디·샤키르 / 높음: 7명 / 중간: 8명",
+      "portrait": null
     }
   ],
   "conversationIndex": [
