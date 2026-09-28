@@ -68,6 +68,11 @@ fun HeroCard(hero: HeroInfo) {
         else -> Color(0xFF9E9E9E)
     }
 
+    val skillNote = when (hero.name) {
+        "로완" -> "궁극기: 죽음의 재물 Lv5 → 주변 2칸 에너지 320 회복\n패시브: 생명의 약물 2병 자동 사용 (HP 50% 미만)"
+        else -> null
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -115,6 +120,23 @@ fun HeroCard(hero: HeroInfo) {
                 }
                 if (hero.asOf != null) {
                     Text(hero.asOf, style = MaterialTheme.typography.labelSmall, color = Color(0xFF9E9E9E))
+                }
+            }
+
+            // Skill note if available
+            if (skillNote != null) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF9C4))
+                ) {
+                    Text(
+                        skillNote,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color(0xFF5D4037),
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
         }
