@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.asp0902.mobilegameassistant.analysis.ShopRoiOverlay
 import com.asp0902.mobilegameassistant.analysis.HeroReference
 import com.asp0902.mobilegameassistant.capture.TrackingState
@@ -64,6 +65,7 @@ fun TrackingScreen(
     onDetailSlotSelected: (Int) -> Unit,
     onHeroCorrected: (Long, Int, String) -> Unit,
     onHeroPurchaseRecorded: (Long, Int) -> Unit,
+    diagnostic: String? = null,
 ) {
     var showLearning by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
     if (showLearning) {
@@ -124,6 +126,9 @@ fun TrackingScreen(
                     }
                     if (frame == null) {
                         Text("아직 캡처된 화면이 없습니다.")
+                        if (diagnostic != null) {
+                            Text(diagnostic, fontSize = 10.sp, color = Color.Gray)
+                        }
                     } else {
                         Text(template?.let { "필드 캐시: ${it.id.displayName}" } ?: "필드 선택 필요")
                         FormationTemplateId.entries.forEach { id ->

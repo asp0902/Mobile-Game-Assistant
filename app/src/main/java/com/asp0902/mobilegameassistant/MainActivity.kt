@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
             val analysis by viewModel.analysis.collectAsStateWithLifecycle()
             val artisansAnalysis by viewModel.artisansAnalysis.collectAsStateWithLifecycle()
             val detailSlot by viewModel.detailSlot.collectAsStateWithLifecycle()
+            val diagnostic by viewModel.diagnostic.collectAsStateWithLifecycle()
             TrackingScreen(
                 state = state,
                 frame = frame,
@@ -72,6 +73,7 @@ class MainActivity : ComponentActivity() {
                 onDetailSlotSelected = viewModel::selectDetailSlot,
                 onHeroCorrected = viewModel::correctHero,
                 onHeroPurchaseRecorded = viewModel::recordHeroPurchase,
+                diagnostic = diagnostic,
             )
         }
     }

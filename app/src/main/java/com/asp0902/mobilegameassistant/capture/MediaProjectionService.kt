@@ -167,20 +167,33 @@ class MediaProjectionService : Service() {
 
     private fun captureFrame() {
         if (captureSession.state.value == TrackingState.Paused) return
-        if (captureInProgress || mediaProjection == null || virtualDisplay == null) return
-        val reader = imageReader ?: return
+        if (captureInProgress || mediaProjection == null || virtualDisplay == null) {
+            captureSession.updateDiagnostic("미디어 프로젝션 대기중")
+            return
+        }
+        val reader = imageReader ?: run {
+            captureSession.updateDiagnostic("이미지 리더 없음")
+            return
+        }
 
         captureInProgress = true
         try {
-            val image = reader.latestImage() ?: return
+            val image = reader.latestImage() ?: run {
+                captureSession.updateDiagnostic("캡처된 이미지 없음")
+                return
+            }
             val bitmap = try {
                 image.toBitmap()
             } finally {
                 image.close()
             }
             publishIfStable(bitmap)
-        } catch (_: IllegalStateException) {
+            captureSession.updateDiagnostic("캡처 성공")
+        } catch (e: IllegalStateException) {
+            captureSession.updateDiagnostic("예외: ${e.javaClass.simpleName}")
             releaseImageReader()
+        } catch (e: Exception) {
+            captureSession.updateDiagnostic("예외: ${e.javaClass.simpleName}")
         } finally {
             captureInProgress = false
         }

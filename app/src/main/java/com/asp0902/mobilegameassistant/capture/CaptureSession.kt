@@ -10,9 +10,11 @@ import javax.inject.Singleton
 class CaptureSession @Inject constructor() {
     private val mutableState = MutableStateFlow<TrackingState>(TrackingState.Idle())
     private val mutableFrame = MutableStateFlow<Bitmap?>(null)
+    private val mutableDiagnostic = MutableStateFlow<String?>(null)
 
     val state = mutableState.asStateFlow()
     val frame = mutableFrame.asStateFlow()
+    val diagnostic = mutableDiagnostic.asStateFlow()
 
     fun awaitConsent() {
         mutableState.value = TrackingState.AwaitingConsent
@@ -43,5 +45,11 @@ class CaptureSession @Inject constructor() {
             return
         }
         mutableFrame.value = bitmap
+    }
+
+    fun updateDiagnostic(message: String?) {
+        if (message != mutableDiagnostic.value) {
+            mutableDiagnostic.value = message
+        }
     }
 }

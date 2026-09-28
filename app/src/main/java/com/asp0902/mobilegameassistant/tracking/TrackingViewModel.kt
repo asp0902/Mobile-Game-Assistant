@@ -53,6 +53,7 @@ class TrackingViewModel @Inject constructor(
 ) : ViewModel() {
     val state = captureSession.state
     val frame = captureSession.frame
+    val diagnostic = captureSession.diagnostic
     private val mutableTemplate = MutableStateFlow<FormationTemplate?>(null)
     val template = mutableTemplate.asStateFlow()
     private val mutableAnalysis = MutableStateFlow<ShopAnalysisUiState>(ShopAnalysisUiState.Idle)
