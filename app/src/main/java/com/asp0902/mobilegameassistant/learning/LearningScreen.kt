@@ -58,6 +58,7 @@ fun LearningScreen(onBack: () -> Unit) {
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
     var showConversation by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
+    var activePanel by rememberSaveable { mutableStateOf<String?>(null) } // "skyTrial", "dreamRealm", or null
     val snapshot = loaded?.getOrNull()
     val entries = if (showConversation) snapshot?.conversation.orEmpty() else snapshot?.entries.orEmpty()
     val selected = entries.firstOrNull { it.id == selectedId }
@@ -73,10 +74,24 @@ fun LearningScreen(onBack: () -> Unit) {
             }
         }
     }
-    BackHandler { if (showUpdate) { showUpdate = false; token = "" } else if (selectedId != null) selectedId = null else onBack() }
+    BackHandler {
+        when {
+            showUpdate -> { showUpdate = false; token = "" }
+            activePanel != null -> { activePanel = null }
+            selectedId != null -> selectedId = null
+            else -> onBack()
+        }
+    }
     Scaffold(containerColor = Color(0xFFF1EBDE)) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Button(onClick = { if (showUpdate) { showUpdate = false; token = "" } else if (selectedId != null) selectedId = null else onBack() }) { Text("뒤로") }
+            Button(onClick = {
+                when {
+                    showUpdate -> { showUpdate = false; token = "" }
+                    activePanel != null -> { activePanel = null }
+                    selectedId != null -> selectedId = null
+                    else -> onBack()
+                }
+            }) { Text("뒤로") }
             Text("저장된 학습 · ${snapshot?.date ?: "불러오는 중"}", style = MaterialTheme.typography.titleLarge)
             Text("과거 기록과 미실험 제안을 분리합니다. 현재 계정 자동 확인이나 성공 보장이 아닙니다.")
             if (showUpdate) {
@@ -133,6 +148,10 @@ fun LearningScreen(onBack: () -> Unit) {
             } else if (loaded?.isFailure == true) {
                 Text("학습 자료 읽기 실패: ${loaded?.exceptionOrNull()?.message}")
                 Button(onClick = { showUpdate = true }) { Text("원격 업데이트") }
+            } else if (activePanel == "skyTrial" && snapshot?.skyTrial != null) {
+                SkyTrialPanel(snapshot.skyTrial!!)
+            } else if (activePanel == "dreamRealm" && snapshot?.dreamRealm != null) {
+                DreamRealmPanel(snapshot.dreamRealm!!)
             } else if (selected != null) {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     item { Text(selected.title, style = MaterialTheme.typography.titleMedium) }
@@ -151,6 +170,14 @@ fun LearningScreen(onBack: () -> Unit) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Button(onClick = { showConversation = false; query = "" }) { Text("정리 자료") }
                     Button(onClick = { showConversation = true; query = "" }) { Text("대화 원문") }
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (snapshot?.skyTrial != null) {
+                        Button(onClick = { activePanel = "skyTrial" }) { Text("천공의 시련") }
+                    }
+                    if (snapshot?.dreamRealm != null) {
+                        Button(onClick = { activePanel = "dreamRealm" }) { Text("꿈의 세계") }
+                    }
                 }
                 if (showConversation) Text("당시 발언 원문입니다. 오래된 수치·오답은 정리 자료의 정정 사항보다 우선하지 않습니다. 검색은 제목 기준입니다.")
                 OutlinedTextField(value = query, onValueChange = { query = it }, label = { Text("자료 검색") }, modifier = Modifier.fillMaxWidth())

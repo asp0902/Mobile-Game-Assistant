@@ -7384,5 +7384,178 @@
         "nextSteps": "공명 레벨·장비 상승 후 재도전, 협력 전투 1회. 큐브 코어 추가 투입 보류"
       }
     }
-  ]
+  ],
+  "skyTrial": {
+    "evidence": "USER_CONFIRMED",
+    "period": "2026-09-23 ~ 2027-01",
+    "towers": [
+      {
+        "name": "빛의 탑",
+        "faction": "레오프론",
+        "openDays": [
+          "월",
+          "금",
+          "일"
+        ],
+        "currentFloor": 9,
+        "status": "진행 전",
+        "phantom": "비밀의 은월 그로웬"
+      },
+      {
+        "name": "의지의 탑",
+        "faction": "트라이브",
+        "openDays": [
+          "화",
+          "금",
+          "일"
+        ],
+        "currentFloor": 12,
+        "status": "진행 전",
+        "phantom": "크리스탈 스카라브"
+      },
+      {
+        "name": "자연의 탑",
+        "faction": "와일더스",
+        "openDays": [
+          "수",
+          "토",
+          "일"
+        ],
+        "currentFloor": 19,
+        "status": "클리어",
+        "phantom": "어둠의 여왕 나사레스",
+        "note": "나사레스 Lv20으로 19층 돌파"
+      },
+      {
+        "name": "영원의 탑",
+        "faction": "그레이브본",
+        "openDays": [
+          "목",
+          "토",
+          "일"
+        ],
+        "currentFloor": 13,
+        "status": "클리어",
+        "phantom": "역병 크리퍼",
+        "note": "4배속 궁극기 버그 주의, 2배속 권장"
+      }
+    ],
+    "floorOpening": {
+      "stage1": "1~80층",
+      "stage2": "81~140층",
+      "stage3": "141~200층"
+    },
+    "floorRewards": {
+      "pastFragment": 150,
+      "gold": "120K",
+      "fragmentNote": "메아리 11~20레벨 상승용, 명촉·광조 +14 필요 공명: 325"
+    },
+    "warnings": [
+      {
+        "type": "4배속_궁극기_버그",
+        "description": "4배속 전투에서 궁극기 시전 안 됨 (세미라 사례: 0.9M → 6.2M 회복 with 2배속)",
+        "recommendation": "2배속 권장"
+      },
+      {
+        "type": "원거리_영웅_속박",
+        "description": "원거리 영웅은 넉백으로 가장자리까지 밀림 → 제자리 공격 → 5초 경과 → 붙잡힘",
+        "recommendation": "근접 영웅 포함 편성"
+      }
+    ]
+  },
+  "dreamRealm": {
+    "lastEncounter": "2026-09-28",
+    "boss": {
+      "name": "루트 로어",
+      "title": "침식의 거목",
+      "type": "엘리트 몬스터",
+      "difficulty": "노멀 I",
+      "level": 270,
+      "battlePower": "1750K",
+      "estimatedHP": "≈267M",
+      "evidence": "OBSERVATION"
+    },
+    "bossSkills": [
+      {
+        "name": "궁극기: 침식의 알",
+        "effect": "아군 전체 50% × 8회 + 벌레알 소환(HP = 보스 공격력 × 3000%)",
+        "conditions": {
+          "notDestroyed": "1칸 300% 피해",
+          "destroyed": "보스 약화 + 아군 공격력 +10%(최대 3중첩)"
+        },
+        "duration": "8초간 보스 공격 불가"
+      },
+      {
+        "name": "관통 덩굴",
+        "effect": "직선 5개 200% 피해",
+        "scaling": "알 파괴마다 1개 감소"
+      },
+      {
+        "name": "배척 반응",
+        "effect": "아군 전체 150% 피해 + 제어 면역 무시",
+        "knockback": "필드 가장자리까지"
+      },
+      {
+        "name": "속박의 고치 (패시브)",
+        "zone": "가장 뒷열 3칸 = 부식 넝쿨",
+        "mechanic": "5초 이상 구역에 머물면 전투 끝까지 붙잡힘",
+        "allyBreak": "1칸 후퇴 + 풀려남, HP 피해 −70%",
+        "loss": "전원 붙잡히면 패배"
+      }
+    ],
+    "bestComposition": {
+      "formation": [
+        "튜더(앞)",
+        "아로라(조수)",
+        "팔라모르",
+        "세미라",
+        "퀸"
+      ],
+      "echo": "광조술+14",
+      "totalDamage": "약 154M",
+      "percentage": "약 57.8%",
+      "evidence": "USER_CONFIRMED",
+      "rank": 55,
+      "notes": "튜더 어둠의 맹세 필수: 조수 선택, 뒤 칸 비면 발동 안 함"
+    },
+    "effectAnalysis": [
+      {
+        "change": "팔라모르 기용",
+        "effect": "+30M",
+        "baseline": "샤키르 13.3M → 팔라모르 48.5M"
+      },
+      {
+        "change": "튜더 조수 배치",
+        "effect": "+18.8M 직접",
+        "baseline": "아로라 60.7M → 79.0M (회차 3→4)"
+      },
+      {
+        "change": "세미라 기용",
+        "effect": "+14M 이상",
+        "note": "버프 손해 -4M 상쇄"
+      },
+      {
+        "change": "메아리: 광조술",
+        "effect": "최고",
+        "comparison": "진혼술(-2M), 명촉술(-12M)"
+      }
+    ],
+    "ineffective": [
+      {
+        "attempt": "퀸 마법진 위 배치",
+        "result": "영향 없음",
+        "reason": "마법진이 넝쿨 구역 안에 위치"
+      },
+      {
+        "attempt": "아든 기용",
+        "result": "손해",
+        "damage": "0.7M + 조기 속박"
+      }
+    ],
+    "targetGoal": {
+      "target": "60%",
+      "estimated": "≈160M",
+      "shortfall": "약 6M 부족"
+    }
+  }
 }
