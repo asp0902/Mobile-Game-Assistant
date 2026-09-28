@@ -225,6 +225,7 @@ class MediaProjectionService : Service() {
             mainHandler.post(autoCapture)
         } else {
             captureSession.pause()
+            overlayController.hide()
         }
         getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, notification())
     }
