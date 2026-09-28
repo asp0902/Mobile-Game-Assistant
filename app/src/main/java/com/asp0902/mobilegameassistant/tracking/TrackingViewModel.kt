@@ -510,12 +510,16 @@ class TrackingViewModel @Inject constructor(
         runRecs: List<RunRecommendation>,
     ) {
         val msg = buildString {
-            append("화면: 명예의 결투 상점\n")
+            append("화면: ${analysis.screenType}\n")
+            if (analysis.screenReasons.isNotEmpty()) append("분류 사유: ${analysis.screenReasons.joinToString(", ")}\n")
             append("진단: ${captureSession.diagnostic.value ?: "없음"}\n")
+            val h = analysis.header
+            append("헤더: 골드=${h.currency ?: "?"} 라운드=${h.currentRound ?: "?"} HP=${h.hp ?: "?"} 리롤=${h.refreshCost ?: "?"} 승리=${h.wins ?: "?"}/${h.targetWins ?: "?"}\n")
             append("아이템 ${analysis.shopItems.size}개:\n")
             analysis.shopItems.forEach { item ->
-                append("  슬롯${item.slotIndex}: ${item.heroName ?: item.heroId ?: "불명"}")
+                append("  슬롯${item.slotIndex}: ${item.itemType} ${item.heroName ?: item.heroId ?: ""} [${item.heroRecognitionStatus}]")
                 if (item.price != null) append(" / ${item.price}골드")
+                if (item.classificationReasons.isNotEmpty()) append(" (${item.classificationReasons.joinToString(", ")})")
                 append("\n")
             }
             if (shopRecs.isNotEmpty()) {
@@ -533,7 +537,9 @@ class TrackingViewModel @Inject constructor(
             }
         }
         val logKey = buildString {
-            append(analysis.shopItems.map { "${it.slotIndex}:${it.heroName ?: it.heroId}" }.joinToString("|"))
+            append(analysis.screenType)
+            append("|")
+            append(analysis.shopItems.map { "${it.slotIndex}:${it.itemType}:${it.heroName ?: it.heroId}:${it.heroRecognitionStatus}" }.joinToString("|"))
             append("|")
             append(shopRecs.map { "${it.slotIndex}:${it.action}" }.joinToString("|"))
         }

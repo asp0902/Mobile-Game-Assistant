@@ -13,8 +13,8 @@ android {
         applicationId = "com.asp0902.mobilegameassistant"
         minSdk = 23
         targetSdk = 36
-        versionCode = 27
-        versionName = "0.1.21-pause-hides-overlay-20260928"
+        versionCode = 29
+        versionName = "0.1.23-shop-misclassify-fix-20260928"
     }
 
     buildFeatures {

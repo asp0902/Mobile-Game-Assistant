@@ -409,7 +409,9 @@ object HonorDuelScreenClassifier {
         if (text.contains("판매가") || text.contains("영웅 판매")) {
             return ScreenClassification(ScreenType.HONOR_DUEL_HERO_SELL, 0.9f, listOf("영웅 판매 문구"))
         }
-        if (text.contains("보유 영웅") || text.contains("진형 관리")) {
+        // "진형 관리" is the shop screen's own always-visible bottom-nav button label
+        // (confirmed via honor-shop-round1-20260928-device.png), not evidence of this screen.
+        if (text.contains("보유 영웅")) {
             return ScreenClassification(ScreenType.HONOR_DUEL_HERO_MANAGEMENT, 0.75f, listOf("영웅 관리 문구"))
         }
         return shopScreen
