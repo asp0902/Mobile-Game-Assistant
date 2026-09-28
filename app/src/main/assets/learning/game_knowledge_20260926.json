@@ -249,7 +249,10 @@
       "range": 4,
       "capturedLevel": 398,
       "capturedPowerK": 1364,
-      "portraitStatus": "CHECK"
+      "portraitStatus": "CHECK",
+      "portrait": "learning/portraits/tribe/kai.png",
+      "portraitConfidence": "high",
+      "portraitNote": "차일드"
     },
     {
       "id": "kruger",
@@ -262,7 +265,9 @@
       "range": 1,
       "capturedLevel": 398,
       "capturedPowerK": 948,
-      "portraitStatus": "CHECK"
+      "portraitStatus": "CHECK",
+      "portrait": "learning/portraits/tribe/kruger.png",
+      "portraitConfidence": "medium"
     },
     {
       "id": "nerion",
@@ -803,7 +808,10 @@
       "attackType": "마법",
       "range": 8,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/smoky-mirky.png",
+      "portraitConfidence": "high",
+      "portraitNote": "악사·미어캣"
     },
     {
       "id": "gordan",
@@ -815,7 +823,10 @@
       "attackType": "물리",
       "range": 1,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/gordan.png",
+      "portraitConfidence": "high",
+      "portraitNote": "유일 신화"
     },
     {
       "id": "shakir",
@@ -827,7 +838,10 @@
       "attackType": "물리",
       "range": 1,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/shakir.png",
+      "portraitConfidence": "confirmed",
+      "portraitNote": "사용자 화면 확정"
     },
     {
       "id": "galahad",
@@ -839,7 +853,10 @@
       "attackType": "마법",
       "range": 10,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/galahad.png",
+      "portraitConfidence": "high",
+      "portraitNote": "무녀"
     },
     {
       "id": "eddie",
@@ -851,7 +868,10 @@
       "attackType": "마법",
       "range": 5,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/eddie.png",
+      "portraitConfidence": "confirmed",
+      "portraitNote": "사용자 화면 확정"
     },
     {
       "id": "gerda",
@@ -863,7 +883,9 @@
       "attackType": "물리",
       "range": 1,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/gerda.png",
+      "portraitConfidence": "medium"
     },
     {
       "id": "brutus",
@@ -875,7 +897,9 @@
       "attackType": "물리",
       "range": 1,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/brutus.png",
+      "portraitConfidence": "medium"
     },
     {
       "id": "lumont",
@@ -887,7 +911,9 @@
       "attackType": "물리",
       "range": 1,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/lumont.png",
+      "portraitConfidence": "high"
     },
     {
       "id": "borasia",
@@ -899,7 +925,9 @@
       "attackType": "마법",
       "range": 10,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/borasia.png",
+      "portraitConfidence": "medium"
     },
     {
       "id": "antandra",
@@ -911,7 +939,10 @@
       "attackType": "물리",
       "range": 1,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/antandra.png",
+      "portraitConfidence": "medium",
+      "portraitNote": "사막"
     },
     {
       "id": "soren",
@@ -923,7 +954,9 @@
       "attackType": "물리",
       "range": 1,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/soren.png",
+      "portraitConfidence": "medium"
     },
     {
       "id": "satrana",
@@ -935,7 +968,10 @@
       "attackType": "마법",
       "range": 1,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/satrana.png",
+      "portraitConfidence": "medium",
+      "portraitNote": "불의 마녀"
     },
     {
       "id": "seths",
@@ -947,7 +983,10 @@
       "attackType": "물리",
       "range": 1,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/seths.png",
+      "portraitConfidence": "medium",
+      "portraitNote": "그림자"
     },
     {
       "id": "kazim",
@@ -959,7 +998,10 @@
       "attackType": "물리",
       "range": 7,
       "owned": true,
-      "asOf": "2026-09-28"
+      "asOf": "2026-09-28",
+      "portrait": "learning/portraits/tribe/kazim.png",
+      "portraitConfidence": "medium",
+      "portraitNote": "깃털"
     }
   ],
   "echoes": [
