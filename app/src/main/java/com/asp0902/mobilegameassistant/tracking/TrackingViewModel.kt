@@ -460,6 +460,17 @@ class TrackingViewModel @Inject constructor(
                 append("  카드${offer.slotIndex + 1}: ${offer.artifactName ?: "불명"} (${offer.artifactSource})\n")
             }
 
+            append("경계(정규화 0~1, 기기 해상도 곱하면 픽셀좌표):\n")
+            offers.forEach { offer ->
+                append("  카드${offer.slotIndex + 1} rowBounds: L${"%.4f".format(offer.rowBounds.left)} T${"%.4f".format(offer.rowBounds.top)} R${"%.4f".format(offer.rowBounds.right)} B${"%.4f".format(offer.rowBounds.bottom)}\n")
+                offer.selectButtonBounds?.let { b ->
+                    append("  카드${offer.slotIndex + 1} selectButton: L${"%.4f".format(b.left)} T${"%.4f".format(b.top)} R${"%.4f".format(b.right)} B${"%.4f".format(b.bottom)}\n")
+                }
+                offer.heroSlots.forEachIndexed { slot, hero ->
+                    append("  카드${offer.slotIndex + 1}-${slot} bounds: L${"%.4f".format(hero.bounds.left)} T${"%.4f".format(hero.bounds.top)} R${"%.4f".format(hero.bounds.right)} B${"%.4f".format(hero.bounds.bottom)}\n")
+                }
+            }
+
             append("영웅 인식:\n")
             offers.forEach { offer ->
                 offer.heroSlots.forEachIndexed { slot, hero ->
