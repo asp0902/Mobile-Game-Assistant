@@ -1,5 +1,6 @@
 package com.asp0902.mobilegameassistant.tracking
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asp0902.mobilegameassistant.analysis.HonorDuelShopAnalysis
@@ -70,6 +71,7 @@ class TrackingViewModel @Inject constructor(
     private var lastArtisansSelectionSignature: String? = null
     private var artisansStableFrames = 0
     private val analysisSequence = AtomicLong(0)
+    private var lastLogMessage: String? = null
 
     init {
         viewModelScope.launch {
@@ -98,6 +100,7 @@ class TrackingViewModel @Inject constructor(
                         resetArtisansStability()
                         mutableAnalysis.value = ShopAnalysisUiState.HonorDuelStart
                         overlayController.show("명예의 결투 시작 화면\n지금 시작을 누르면 다음 화면을 분석합니다.")
+                        logAnalysis("화면: 명예의 결투 시작", captureSession.diagnostic.value)
                         return@onSuccess
                     }
                     if (result.screenType == ScreenType.HONOR_DUEL_INITIAL_FORMATION_SELECTION) {
@@ -122,6 +125,7 @@ class TrackingViewModel @Inject constructor(
                             offers = offers,
                             recommendations = formationRecommendations,
                         )
+                        logInitialFormation(offers, formationRecommendations)
                         val overlayText = buildString {
                             append("명예의 결투 초기 진형 선택 화면")
                             append("\n초기 제공 영웅: 전원 에픽 (사용자 확인)")
@@ -150,6 +154,7 @@ class TrackingViewModel @Inject constructor(
                             ?: "저장된 보스 자료를 읽지 못했습니다. 추천을 보류합니다."
                         mutableAnalysis.value = ShopAnalysisUiState.LearnedBoss(message)
                         overlayController.show(message)
+                        logAnalysis("화면: 보스\n$message", captureSession.diagnostic.value)
                         return@onSuccess
                     }
                     LabyrinthChoiceAdvisor.analyze(ocrText)?.let { advice ->
@@ -157,6 +162,7 @@ class TrackingViewModel @Inject constructor(
                         resetArtisansStability()
                         mutableAnalysis.value = ShopAnalysisUiState.Labyrinth(advice.message)
                         overlayController.show("이계의 미궁\n${advice.message}")
+                        logAnalysis("화면: 이계의 미궁\n${advice.message}", captureSession.diagnostic.value)
                         return@onSuccess
                     }
                     val artisans = ArtisansPathAdvisor.analyze(
@@ -176,6 +182,7 @@ class TrackingViewModel @Inject constructor(
                         resetArtisansStability()
                         mutableAnalysis.value = ShopAnalysisUiState.UnsupportedScreen(result.screenType, result.screenReasons)
                         updateOverlay(null, emptyList(), emptyList())
+                        logAnalysis("화면: ${result.screenType}\n${result.screenReasons.joinToString(", ")}", captureSession.diagnostic.value)
                         return@onSuccess
                     }
                     resetArtisansStability()
@@ -198,6 +205,7 @@ class TrackingViewModel @Inject constructor(
                     val shopRecommendations = ruleEngine.recommend(tracked.analysis)
                     val runRecommendations = ruleEngine.recommendRunActions(tracked.analysis, tracked.progress.status)
                     mutableAnalysis.value = ShopAnalysisUiState.Result(tracked.analysis, shopRecommendations, runRecommendations, snapshotId, tracked.headerSources, runStatus = tracked.progress.status)
+                    logShopAnalysis(tracked.analysis, shopRecommendations, runRecommendations)
                     updateOverlay(null, shopRecommendations, runRecommendations)
                     viewModelScope.launch(Dispatchers.IO) {
                         runRepository.save(tracked)
@@ -206,7 +214,9 @@ class TrackingViewModel @Inject constructor(
                 }.onFailure {
                     if (it is CancellationException || analysisId != analysisSequence.get()) return@onFailure
                     overlayController.clearTargets()
-                    mutableAnalysis.value = ShopAnalysisUiState.Error("OCR 분석 실패: ${it.message ?: "알 수 없음"}")
+                    val errorMsg = "OCR 분석 실패: ${it.message ?: "알 수 없음"}"
+                    mutableAnalysis.value = ShopAnalysisUiState.Error(errorMsg)
+                    logAnalysis(errorMsg, captureSession.diagnostic.value)
                 }
             }
         }
@@ -423,6 +433,102 @@ class TrackingViewModel @Inject constructor(
                 lastRunState?.progress?.status ?: RunStatus.ACTIVE,
             )
             updateOverlay(null, shopRecommendations, runRecommendations)
+        }
+    }
+
+    private fun logAnalysis(message: String, diagnostic: String?) {
+        val fullMsg = buildString {
+            if (diagnostic != null) append("진단: $diagnostic\n")
+            append(message)
+        }
+        if (fullMsg != lastLogMessage) {
+            Log.i("AFKTracker", fullMsg)
+            lastLogMessage = fullMsg
+        }
+    }
+
+    private fun logInitialFormation(
+        offers: List<InitialFormationOffer>,
+        recommendations: List<InitialFormationRecommendation>,
+    ) {
+        val msg = buildString {
+            append("화면: 명예의 결투 초기 진형 선택\n")
+            append("진단: ${captureSession.diagnostic.value ?: "없음"}\n")
+
+            append("아티팩트:\n")
+            offers.forEach { offer ->
+                append("  카드${offer.slotIndex + 1}: ${offer.artifactName ?: "불명"} (${offer.artifactSource})\n")
+            }
+
+            append("영웅 인식:\n")
+            offers.forEach { offer ->
+                offer.heroSlots.forEachIndexed { slot, hero ->
+                    val status = when (hero.status) {
+                        com.asp0902.mobilegameassistant.analysis.HeroRecognitionStatus.CONFIRMED -> "확정"
+                        com.asp0902.mobilegameassistant.analysis.HeroRecognitionStatus.NEEDS_CONFIRMATION -> "미확인"
+                        com.asp0902.mobilegameassistant.analysis.HeroRecognitionStatus.UNKNOWN -> "불명"
+                    }
+                    val conf = if (hero.confidence > 0f) " ${(hero.confidence * 100).toInt()}%" else ""
+                    val reasonStr = if (offer.reasons.isNotEmpty()) " (${offer.reasons.joinToString(", ")})" else ""
+                    append("  카드${offer.slotIndex + 1}-${slot}: ${hero.heroName ?: "불명"} [$status$conf]$reasonStr\n")
+                }
+            }
+
+            append("추천:\n")
+            recommendations.forEach { rec ->
+                append("  카드${rec.slotIndex + 1}: ${rec.action} (점수: ${rec.score ?: "없음"})\n")
+                append("    사유: ${rec.reason}\n")
+            }
+        }
+        val logKey = buildString {
+            append(offers.map { it.artifactName }.joinToString("|"))
+            append("|")
+            append(offers.flatMap { it.heroSlots }.map { "${it.heroName}:${it.status}" }.joinToString("|"))
+            append("|")
+            append(recommendations.map { "${it.slotIndex}:${it.action}" }.joinToString("|"))
+        }
+        if (logKey != lastLogMessage) {
+            Log.i("AFKTracker", msg)
+            lastLogMessage = logKey
+        }
+    }
+
+    private fun logShopAnalysis(
+        analysis: HonorDuelShopAnalysis,
+        shopRecs: List<ShopRecommendation>,
+        runRecs: List<RunRecommendation>,
+    ) {
+        val msg = buildString {
+            append("화면: 명예의 결투 상점\n")
+            append("진단: ${captureSession.diagnostic.value ?: "없음"}\n")
+            append("아이템 ${analysis.shopItems.size}개:\n")
+            analysis.shopItems.forEach { item ->
+                append("  슬롯${item.slotIndex}: ${item.heroName ?: item.heroId ?: "불명"}")
+                if (item.price != null) append(" / ${item.price}골드")
+                append("\n")
+            }
+            if (shopRecs.isNotEmpty()) {
+                append("추천:\n")
+                shopRecs.forEach { rec ->
+                    append("  슬롯${rec.slotIndex}: ${rec.action}\n    사유: ${rec.reason}\n")
+                }
+            }
+            if (runRecs.isNotEmpty()) {
+                append("진행 추천: ")
+                runRecs.forEach { rec ->
+                    append("${rec.action} ")
+                }
+                append("\n")
+            }
+        }
+        val logKey = buildString {
+            append(analysis.shopItems.map { "${it.slotIndex}:${it.heroName ?: it.heroId}" }.joinToString("|"))
+            append("|")
+            append(shopRecs.map { "${it.slotIndex}:${it.action}" }.joinToString("|"))
+        }
+        if (logKey != lastLogMessage) {
+            Log.i("AFKTracker", msg)
+            lastLogMessage = logKey
         }
     }
 }
