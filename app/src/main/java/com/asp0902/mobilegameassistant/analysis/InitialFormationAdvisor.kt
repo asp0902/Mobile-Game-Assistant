@@ -42,21 +42,39 @@ object InitialFormationKnowledge {
     fun applyStartingRarity(offers: List<InitialFormationOffer>) = offers.map { offer ->
         offer.copy(heroSlots = offer.heroSlots.map { it.copy(rarity = HeroRarity.EPIC) })
     }
-    fun applyConfirmedStartLayout(offers: List<InitialFormationOffer>, names: Set<String>): List<InitialFormationOffer> {
-        val layout = listOf(
-            "성상의 조각" to listOf("페르세우스", "오리안", "틸로아"),
-            "불멸의 불꽃" to listOf("귀네스", "퀸", "발리카"),
-            "마이다스의 재물" to listOf("발리카", "카렌", "스모키와 미르키"),
-        )
+    // Layout shape (artifact/hero identity+order) is fixed in code, never remotely editable.
+    // Which of the recognized names count as USER_CONFIRMED for a given layoutId comes from
+    // learning/honor_initial_confirmations.json (scoped user confirmation, remotely updatable).
+    data class ConfirmedStartLayout(val layoutId: String, val artifacts: List<String>, val heroNames: List<List<String>>)
+    val confirmedStartLayouts = listOf(
+        ConfirmedStartLayout(
+            "honor-start-20260918-3offers",
+            listOf("성상의 조각", "불멸의 불꽃", "마이다스의 재물"),
+            listOf(listOf("페르세우스", "오리안", "틸로아"), listOf("귀네스", "퀸", "발리카"), listOf("발리카", "카렌", "스모키와 미르키")),
+        ),
+        ConfirmedStartLayout(
+            "honor-start-20260928-3offers",
+            listOf("고블린 가면", "달그림자 활", "평정의 샘물"),
+            listOf(listOf("카세디아", "카짐", "스모키와 미르키"), listOf("인듀어", "사리에", "이사벨라"), listOf("사리에", "갈라하드", "튜더")),
+        ),
+    )
+    fun applyConfirmedStartLayout(
+        offers: List<InitialFormationOffer>,
+        confirmedNamesByLayoutId: Map<String, Set<String>>,
+        layouts: List<ConfirmedStartLayout> = confirmedStartLayouts,
+    ): List<InitialFormationOffer> {
         val ordered = offers.sortedBy { it.slotIndex }
         if (ordered.size != 4 || !ordered.last().isRandom || ordered.last().heroSlots.isNotEmpty()) return offers
-        if (layout.indices.any { index ->
-            val offer = ordered[index]
-            offer.slotIndex != index || offer.isRandom || offer.artifactSource != "OCR_MATCH" ||
-                offer.artifactName != layout[index].first ||
-                offer.heroSlots.map { it.heroName } != layout[index].second ||
-                offer.heroSlots.any { it.rarity != HeroRarity.EPIC || it.status == HeroRecognitionStatus.UNKNOWN }
-        }) return offers
+        val matched = layouts.singleOrNull { layout ->
+            layout.artifacts.indices.all { index ->
+                val offer = ordered[index]
+                offer.slotIndex == index && !offer.isRandom && offer.artifactSource == "OCR_MATCH" &&
+                    offer.artifactName == layout.artifacts[index] &&
+                    offer.heroSlots.map { it.heroName } == layout.heroNames[index] &&
+                    offer.heroSlots.all { it.rarity == HeroRarity.EPIC && it.status != HeroRecognitionStatus.UNKNOWN }
+            }
+        } ?: return offers
+        val names = confirmedNamesByLayoutId[matched.layoutId].orEmpty()
         return offers.map { offer -> offer.copy(heroSlots = offer.heroSlots.map { hero ->
             if (hero.heroName in names && hero.status == HeroRecognitionStatus.NEEDS_CONFIRMATION)
                 hero.copy(status = HeroRecognitionStatus.CONFIRMED) else hero

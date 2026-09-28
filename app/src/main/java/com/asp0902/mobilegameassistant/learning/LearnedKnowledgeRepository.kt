@@ -33,19 +33,23 @@ class LearnedKnowledgeRepository @Inject constructor(
         }
     }
     fun initialFormationRules() = rules
-    private val confirmedStartNames by lazy {
+    private val confirmedStartNamesByLayoutId by lazy {
         runCatching {
             LearningFiles.open(context, "learning/honor_initial_confirmations.json").bufferedReader().use {
                 val root = JSONObject(it.readText())
-                require(root.getInt("schemaVersion") == 1 && root.getString("evidence") == "USER_CONFIRMED" &&
-                    root.getString("layoutId") == "honor-start-20260918-3offers")
-                val names = root.getJSONArray("confirmedNames")
-                (0 until names.length()).map { index -> names.getString(index) }.toSet()
+                require(root.getInt("schemaVersion") == 2)
+                val layouts = root.getJSONArray("layouts")
+                (0 until layouts.length()).associate { index ->
+                    val layout = layouts.getJSONObject(index)
+                    require(layout.getString("evidence") == "USER_CONFIRMED")
+                    val names = layout.getJSONArray("confirmedNames")
+                    layout.getString("layoutId") to (0 until names.length()).map { n -> names.getString(n) }.toSet()
+                }
             }
-        }.getOrDefault(emptySet())
+        }.getOrDefault(emptyMap())
     }
     fun confirmInitialOffers(offers: List<com.asp0902.mobilegameassistant.analysis.InitialFormationOffer>) =
-        com.asp0902.mobilegameassistant.analysis.InitialFormationKnowledge.applyConfirmedStartLayout(offers, confirmedStartNames)
+        com.asp0902.mobilegameassistant.analysis.InitialFormationKnowledge.applyConfirmedStartLayout(offers, confirmedStartNamesByLayoutId)
 
     private val snapshot by lazy {
         runCatching {

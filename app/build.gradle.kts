@@ -13,8 +13,8 @@ android {
         applicationId = "com.asp0902.mobilegameassistant"
         minSdk = 23
         targetSdk = 36
-        versionCode = 23
-        versionName = "0.1.17-bounds-logging-20260928"
+        versionCode = 24
+        versionName = "0.1.18-confirmed-layout-20260928"
     }
 
     buildFeatures {
@@ -24,6 +24,20 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+// ponytail: Gradle resolves the junction alias back to the real Unicode project path for
+// test worker workingDir/classpath, which crashes the JVM classloader (ClassNotFoundException
+// on every test class). Rewrite both to the ASCII junction path before the worker forks.
+val junctionRoot = System.getenv("AFK_TEST_JUNCTION")
+if (junctionRoot != null) {
+    tasks.withType<Test> {
+        val originalRoot = project.projectDir.path
+        doFirst {
+            workingDir = File(junctionRoot, "app")
+            classpath = files(classpath.files.map { file -> File(file.path.replace(originalRoot, "$junctionRoot\\app")) })
+        }
     }
 }
 
