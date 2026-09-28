@@ -13,8 +13,8 @@ android {
         applicationId = "com.asp0902.mobilegameassistant"
         minSdk = 23
         targetSdk = 36
-        versionCode = 24
-        versionName = "0.1.18-confirmed-layout-20260928"
+        versionCode = 25
+        versionName = "0.1.19-mlkit-telemetry-off-20260928"
     }
 
     buildFeatures {

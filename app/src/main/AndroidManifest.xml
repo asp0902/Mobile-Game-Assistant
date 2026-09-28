@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -29,6 +30,21 @@
             android:name=".capture.MediaProjectionService"
             android:exported="false"
             android:foregroundServiceType="mediaProjection" />
+
+        <!-- ML Kit has no official opt-out for its usage-analytics upload (checked
+             developers.google.com/ml-kit/android-data-disclosure and ml-kit/terms: no
+             disable API/flag documented). These datatransport components only schedule
+             that upload; on-device OCR (MlKitComponentDiscoveryService/MlKitInitProvider)
+             is untouched by removing them. -->
+        <service
+            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+            tools:node="remove" />
+        <service
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+            tools:node="remove" />
+        <receiver
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+            tools:node="remove" />
     </application>
 
 </manifest>
