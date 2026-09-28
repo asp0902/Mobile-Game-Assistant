@@ -8114,98 +8114,227 @@
     }
   },
   "dreamRealm": {
-    "lastEncounter": "2026-09-28",
-    "boss": {
-      "name": "루트 로어",
-      "title": "침식의 거목",
-      "type": "엘리트 몬스터",
-      "difficulty": "노멀 I",
-      "level": 270,
-      "battlePower": "1750K",
-      "estimatedHP": "≈267M",
-      "evidence": "OBSERVATION"
+    "mode": "꿈의 추격",
+    "season": "달빛의 장막",
+    "rules": {
+      "updateCycle": "매주 월요일 09:00(UTC+9)",
+      "bossCount": 5,
+      "timeLimit": "보스당 90초",
+      "scoring": "처치 여부 → 소요 시간",
+      "rotationPattern": "주간 1퇴장, 1신규 진입, 신규는 2주차부터 버프 1개",
+      "duplication": "5파티 간 영웅·메아리 중복 불가",
+      "heroLevel": 241,
+      "echoLevel": 15,
+      "nextBoss": "미스 루스타 (추정)"
     },
-    "bossSkills": [
+    "bosses": [
       {
-        "name": "궁극기: 침식의 알",
-        "effect": "아군 전체 50% × 8회 + 벌레알 소환(HP = 보스 공격력 × 3000%)",
-        "conditions": {
-          "notDestroyed": "1칸 300% 피해",
-          "destroyed": "보스 약화 + 아군 공격력 +10%(최대 3중첩)"
-        },
-        "duration": "8초간 보스 공격 불가"
+        "id": "frost",
+        "name": "일루전 프로스트",
+        "level": 240,
+        "job": "전사",
+        "attack": "마법",
+        "range": 20,
+        "faction": "기타",
+        "mechanics": [
+          {
+            "name": "미러 리플렉션",
+            "effect": "속성 감소 면역 → 결정체 전환, 초기 배치 가장 뒤 2명에게 결정체당 120% 피해"
+          },
+          {
+            "name": "아이스 댄스",
+            "effect": "공격 속도 영구 −150"
+          },
+          {
+            "name": "한기의 별",
+            "effect": "중앙선 레이저"
+          }
+        ],
+        "counters": "디버프 영웅 제외, 트라이브 5명. 과거의 메아리 > 명촉술",
+        "bestResult": {
+          "percentage": 70.71,
+          "attempt": 5,
+          "composition": [
+            "안탄드라",
+            "스모키와 미르키",
+            "에디",
+            "갈라하드",
+            "보라시아"
+          ],
+          "echo": "과거의 메아리"
+        }
       },
       {
-        "name": "관통 덩굴",
-        "effect": "직선 5개 200% 피해",
-        "scaling": "알 파괴마다 1개 감소"
+        "id": "orphaga",
+        "name": "오르파가",
+        "level": 240,
+        "job": "전사",
+        "attack": "물리",
+        "range": 2,
+        "faction": "기타",
+        "mechanics": [
+          {
+            "name": "공포의 그림자",
+            "effect": "가장 뒤 4명 끌어옴 + 공포"
+          },
+          {
+            "name": "파열참",
+            "effect": "열상 100스택 분담 (10스택당 입히는 HP 손상 −15%)"
+          },
+          {
+            "name": "핏빛 저주",
+            "effect": "가장 가까운 적 대상"
+          },
+          {
+            "name": "제물의 돌격",
+            "effect": "직선 돌진 스턴"
+          }
+        ],
+        "counters": "앞줄 탱커 필수(카렌 제외 시 손해). 광조술 필수",
+        "bestResult": {
+          "time": "1:28.92",
+          "killed": true,
+          "attempt": 6,
+          "composition": [
+            "카렌",
+            "윙",
+            "보니",
+            "세미라",
+            "루보미르"
+          ],
+          "echo": "광조술+15"
+        }
       },
       {
-        "name": "배척 반응",
-        "effect": "아군 전체 150% 피해 + 제어 면역 무시",
-        "knockback": "필드 가장자리까지"
+        "id": "necroDragon",
+        "name": "네크로 드래곤",
+        "level": 240,
+        "job": "마법사",
+        "attack": "마법",
+        "range": 20,
+        "faction": "기타",
+        "mechanics": [
+          {
+            "name": "심연의 낙인",
+            "effect": "3초 제자리 시 폭발 80% + 입히는 피해 −80%"
+          },
+          {
+            "name": "심연의 심판",
+            "effect": "15·40·65초 전체 공격 + 받는 피해 누적"
+          },
+          {
+            "name": "드래곤 브레스",
+            "effect": "밀집 지점 늪"
+          }
+        ],
+        "counters": "미해결 (약 32% 기록)",
+        "bestResult": {
+          "percentage": 32.86,
+          "attempt": 6,
+          "composition": [
+            "와일더스",
+            "와일더스",
+            "와일더스",
+            "와일더스",
+            "와일더스"
+          ],
+          "echo": "과거의 메아리"
+        }
       },
       {
-        "name": "속박의 고치 (패시브)",
-        "zone": "가장 뒷열 3칸 = 부식 넝쿨",
-        "mechanic": "5초 이상 구역에 머물면 전투 끝까지 붙잡힘",
-        "allyBreak": "1칸 후퇴 + 풀려남, HP 피해 −70%",
-        "loss": "전원 붙잡히면 패배"
+        "id": "spectralCavern",
+        "name": "망령의 소굴",
+        "level": 240,
+        "job": "마법사",
+        "attack": "마법",
+        "range": 20,
+        "faction": "기타",
+        "mechanics": [
+          {
+            "name": "공포 게이지",
+            "effect": "시작 공포 100, 공포 100을 10초 유지 시 처치 간주"
+          },
+          {
+            "name": "공포 피해 감소",
+            "effect": "공포 1당 입히는 피해 −0.8%"
+          },
+          {
+            "name": "실드 상호작용",
+            "effect": "실드 보유 시 공포 무시 + 초당 공포 −3"
+          },
+          {
+            "name": "고립 페널티",
+            "effect": "고립 시 공포 +10"
+          },
+          {
+            "name": "안개",
+            "effect": "5·25·45초 발동"
+          }
+        ],
+        "counters": "5명 밀집 + 루시우스 궁극기 전원 실드 + 명촉술. 로완 필수",
+        "bestResult": {
+          "percentage": 35.86,
+          "attempt": 3,
+          "composition": [
+            "매튜&파피몬",
+            "후긴",
+            "루시우스",
+            "로완",
+            "아로라"
+          ],
+          "echo": "명촉술+15",
+          "note": "로완 제외 시 매튜&파피몬 37.6M → 2.6M. 로완 에너지 공급 핵심"
+        }
+      },
+      {
+        "id": "iruschka",
+        "name": "\"언베일러\" 이루시카",
+        "level": 240,
+        "job": "마법사",
+        "attack": "마법",
+        "range": 20,
+        "faction": "기타",
+        "mechanics": [
+          {
+            "name": "다크 블룸",
+            "effect": "물리 외 피해 −99%"
+          },
+          {
+            "name": "슈프림 크레스트",
+            "effect": "뒷줄부터 궁극기 봉인"
+          },
+          {
+            "name": "지배의 춤",
+            "effect": "앞줄부터 고양이 변신"
+          },
+          {
+            "name": "전투 버프",
+            "effect": "아군 근접 피해 +100%"
+          }
+        ],
+        "counters": "근접 물리 5명 (트라이브). 사거리 1 영웅만 버프 효과",
+        "bestResult": {
+          "time": "1:09.24",
+          "killed": true,
+          "attempt": 2,
+          "composition": [
+            "게르다",
+            "브루투스",
+            "고르단",
+            "샤키르",
+            "소렌"
+          ],
+          "echo": "진혼술+15",
+          "note": "카이(사거리 4) 0.5M → 브루투스(사거리 1) 17.3M. 메아리 배치 필수"
+        }
       }
     ],
-    "bestComposition": {
-      "formation": [
-        "튜더(앞)",
-        "아로라(조수)",
-        "팔라모르",
-        "세미라",
-        "퀸"
-      ],
-      "echo": "광조술+14",
-      "totalDamage": "약 154M",
-      "percentage": "약 57.8%",
-      "evidence": "USER_CONFIRMED",
-      "rank": 55,
-      "notes": "튜더 어둠의 맹세 필수: 조수 선택, 뒤 칸 비면 발동 안 함"
-    },
-    "effectAnalysis": [
-      {
-        "change": "팔라모르 기용",
-        "effect": "+30M",
-        "baseline": "샤키르 13.3M → 팔라모르 48.5M"
-      },
-      {
-        "change": "튜더 조수 배치",
-        "effect": "+18.8M 직접",
-        "baseline": "아로라 60.7M → 79.0M (회차 3→4)"
-      },
-      {
-        "change": "세미라 기용",
-        "effect": "+14M 이상",
-        "note": "버프 손해 -4M 상쇄"
-      },
-      {
-        "change": "메아리: 광조술",
-        "effect": "최고",
-        "comparison": "진혼술(-2M), 명촉술(-12M)"
-      }
-    ],
-    "ineffective": [
-      {
-        "attempt": "퀸 마법진 위 배치",
-        "result": "영향 없음",
-        "reason": "마법진이 넝쿨 구역 안에 위치"
-      },
-      {
-        "attempt": "아든 기용",
-        "result": "손해",
-        "damage": "0.7M + 조기 속박"
-      }
-    ],
-    "targetGoal": {
-      "target": "60%",
-      "estimated": "≈160M",
-      "shortfall": "약 6M 부족"
-    }
+    "conclusions": [
+      "이루시카: 근접 물리 5명 필수. 사거리 영향 검증 완료",
+      "오르파가: 97~99% 벽은 편성 교체로 못 넘고 메아리(광조술)로 突破",
+      "망령의 소굴: 로완 에너지 공급 핵심. 밀집 배치 필수",
+      "메아리 배치 성패 결정: 오르파가 광조술, 이루시카 진혼술, 망령 명촉술",
+      "부정 리플렉션 기믹 수정 확인 필요 (프로스트 디버프 면역)"
+    ]
   }
 }

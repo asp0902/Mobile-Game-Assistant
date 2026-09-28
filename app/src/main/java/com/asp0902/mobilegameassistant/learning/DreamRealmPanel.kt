@@ -1,16 +1,11 @@
 package com.asp0902.mobilegameassistant.learning
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,102 +14,98 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DreamRealmPanel(data: DreamRealmData) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        // Title and basic boss info
+fun DreamRealmPanel(dreamRealm: Map<String, Any>) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
         item {
-            Text("꿈의 세계", style = MaterialTheme.typography.titleLarge)
+            Text("꿈의 추격 (2026-09-28, 「달빛의 장막」)", style = MaterialTheme.typography.titleMedium)
+            Text("매주 월요일 09:00(UTC+9) 갱신 | 보스 5마리 5파티 연속 도전 | 보스당 90초 제한")
+            Text("다음 신규 보스: 미스 루스타 (추정)")
         }
 
-        // Boss information card
-        item {
+        @Suppress("UNCHECKED_CAST")
+        val bosses = (dreamRealm["bosses"] as? List<Map<String, Any>>) ?: emptyList()
+
+        items(bosses) { bossMap ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 0.dp),
+                    .padding(8.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
             ) {
-                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("${data.boss.name} - ${data.boss.title}", style = MaterialTheme.typography.titleMedium)
-                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("등급", style = MaterialTheme.typography.labelSmall)
-                            Text(data.boss.type, style = MaterialTheme.typography.bodyMedium)
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    val name = bossMap["name"] as? String ?: "Unknown"
+                    val level = bossMap["level"] as? Int ?: 0
+                    val job = bossMap["job"] as? String ?: ""
+                    val attack = bossMap["attack"] as? String ?: ""
+                    val range = bossMap["range"] as? Int ?: 0
+
+                    Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                        Text(name, style = MaterialTheme.typography.titleSmall)
+                        Text("Lv.$level $job | $attack/$range", 
+                            style = MaterialTheme.typography.labelSmall)
+                    }
+
+                    val counters = bossMap["counters"] as? String ?: ""
+                    Text("⚡ $counters", 
+                        style = MaterialTheme.typography.labelSmall, 
+                        modifier = Modifier
+                            .background(Color(0xFFE8F5E9), shape = MaterialTheme.shapes.small)
+                            .padding(8.dp))
+
+                    @Suppress("UNCHECKED_CAST")
+                    val result = bossMap["bestResult"] as? Map<String, Any> ?: emptyMap()
+                    
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                        modifier = Modifier
+                            .background(Color(0xFFF0F0F0), shape = MaterialTheme.shapes.small)
+                            .padding(8.dp)
+                    ) {
+                        val resultText = when {
+                            result["killed"] == true -> "✓ 처치 | ${result["time"]}"
+                            result.containsKey("percentage") -> "${result["percentage"]}% (${result["attempt"]}회차)"
+                            else -> "미기록"
                         }
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("레벨", style = MaterialTheme.typography.labelSmall)
-                            Text(data.boss.level.toString(), style = MaterialTheme.typography.bodyMedium)
+                        Text("최고 기록: $resultText", style = MaterialTheme.typography.labelSmall)
+                        
+                        @Suppress("UNCHECKED_CAST")
+                        val comp = result["composition"] as? List<String>
+                        comp?.let {
+                            Text("편성: ${it.joinToString(" · ")}", style = MaterialTheme.typography.bodySmall)
                         }
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("추정 HP", style = MaterialTheme.typography.labelSmall)
-                            Text(data.boss.estimatedHP, style = MaterialTheme.typography.bodyMedium)
+                        
+                        result["echo"]?.let { echo ->
+                            Text("메아리: $echo", style = MaterialTheme.typography.labelSmall)
+                        }
+                        
+                        result["note"]?.let { note ->
+                            Text("📝 $note", style = MaterialTheme.typography.labelSmall, color = Color(0xFF666666))
                         }
                     }
                 }
             }
         }
 
-        // Boss skills section
         item {
-            Text("보스 스킬", style = MaterialTheme.typography.titleSmall)
-        }
-        items(data.skills) { skill ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 0.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA))
+                    .padding(8.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD))
             ) {
                 Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(skill, style = MaterialTheme.typography.bodyMedium, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic)
-                }
-            }
-        }
-
-        // Best composition section
-        item {
-            Text("최적 구성", style = MaterialTheme.typography.titleSmall)
-        }
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 0.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA))
-            ) {
-                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    data.bestComposition.forEach { (key, value) ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(key, style = MaterialTheme.typography.bodyMedium)
-                            Text(
-                                value.toString(),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFF616161)
-                            )
-                        }
+                    Text("학습 결론", style = MaterialTheme.typography.titleSmall)
+                    @Suppress("UNCHECKED_CAST")
+                    val conclusions = (dreamRealm["conclusions"] as? List<String>) ?: emptyList()
+                    conclusions.forEach { conclusion ->
+                        Text("• $conclusion", style = MaterialTheme.typography.bodySmall)
                     }
-                }
-            }
-        }
-
-        // Note section
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 0.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0))
-            ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text("유의사항", style = MaterialTheme.typography.labelSmall)
-                    Text("보스 스킬 개념과 최적 구성은 현재 시험 단계입니다. 실제 전투는 서버 상태, 선택지 변동, 랜덤 요소의 영향을 받습니다.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF5D4037))
                 }
             }
         }

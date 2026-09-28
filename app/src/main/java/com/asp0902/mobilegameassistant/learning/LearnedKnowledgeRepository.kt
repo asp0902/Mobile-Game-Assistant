@@ -77,7 +77,7 @@ data class LearnedSnapshot(
     val conversation: List<LearningEntry>,
     val bossOverlay: String,
     val skyTrial: SkyTrialData? = null,
-    val dreamRealm: DreamRealmData? = null,
+    val dreamRealm: Map<String, Any>? = null,
     val heroes: List<HeroInfo> = emptyList(),
 )
 
@@ -141,18 +141,45 @@ class LearnedKnowledgeRepository @Inject constructor(
                     SkyTrialData(towers, rewards, warnings, phantomMapping)
                 }.getOrNull()
             }
-            fun parseDreamRealm(): DreamRealmData? {
+            fun parseDreamRealm(): Map<String, Any>? {
                 return runCatching {
-                    val dr = root.optJSONObject("dreamRealm") ?: return@runCatching null
-                    val boss = dr.getJSONObject("boss").let {
-                        DreamRealmBossInfo(it.getString("name"), it.getString("title"), it.getString("type"),
-                            it.getInt("level"), it.getString("estimatedHP"))
+                    root.optJSONObject("dreamRealm")?.let { dr ->
+                        val result = mutableMapOf<String, Any>()
+                        result["mode"] = dr.optString("mode", "꿈의 추격")
+                        result["season"] = dr.optString("season", "")
+                        result["conclusions"] = dr.optJSONArray("conclusions")?.let { arr ->
+                            (0 until arr.length()).map { arr.getString(it) }
+                        } ?: emptyList<String>()
+                        result["bosses"] = dr.optJSONArray("bosses")?.let { arr ->
+                            (0 until arr.length()).map { i ->
+                                val b = arr.getJSONObject(i)
+                                mapOf(
+                                    "id" to b.getString("id"),
+                                    "name" to b.getString("name"),
+                                    "level" to b.getInt("level"),
+                                    "job" to b.getString("job"),
+                                    "attack" to b.getString("attack"),
+                                    "range" to b.getInt("range"),
+                                    "faction" to b.getString("faction"),
+                                    "counters" to b.getString("counters"),
+                                    "bestResult" to (b.optJSONObject("bestResult")?.let { res ->
+                                        mapOf<String, Any>(
+                                            "killed" to res.optBoolean("killed", false),
+                                            "percentage" to res.optDouble("percentage", 0.0),
+                                            "time" to res.optString("time", ""),
+                                            "attempt" to res.optInt("attempt", 0),
+                                            "composition" to (res.optJSONArray("composition")?.let { comp ->
+                                                (0 until comp.length()).map { comp.getString(it) }
+                                            } ?: emptyList()),
+                                            "echo" to res.optString("echo", ""),
+                                            "note" to res.optString("note", "")
+                                        )
+                                    } ?: emptyMap<String, Any>())
+                                )
+                            }
+                        } ?: emptyList<Map<String, Any>>()
+                        result as Map<String, Any>
                     }
-                    val skills = dr.getJSONArray("bossSkills").let { arr ->
-                        (0 until arr.length()).map { arr.getJSONObject(it).getString("name") }
-                    }
-                    val comp = dr.getJSONObject("bestComposition").let { map { it.key to it.value } }.toMap()
-                    DreamRealmData(boss, skills, comp)
                 }.getOrNull()
             }
             fun parseHeroes(): List<HeroInfo> {
