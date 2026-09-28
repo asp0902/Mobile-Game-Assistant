@@ -7669,7 +7669,8 @@
         ],
         "currentFloor": 9,
         "status": "진행 전",
-        "phantom": "비밀의 은월 그로웬"
+        "phantom": "비밀의 은월 그로웬",
+        "failureReason": "20층: 딜 부족 (적 전투력 7274K vs 아군 4034K, 배속별 권장 성장 후 재도전)"
       },
       {
         "name": "의지의 탑",
@@ -7694,7 +7695,8 @@
         "currentFloor": 19,
         "status": "클리어",
         "phantom": "어둠의 여왕 나사레스",
-        "note": "나사레스 Lv20으로 19층 돌파"
+        "note": "나사레스 Lv20으로 19층 돌파",
+        "failureReason": "20층: 딜 부족"
       },
       {
         "name": "영원의 탑",
@@ -7707,7 +7709,8 @@
         "currentFloor": 13,
         "status": "클리어",
         "phantom": "역병 크리퍼",
-        "note": "4배속 궁극기 버그 주의, 2배속 권장"
+        "note": "4배속 궁극기 버그 주의, 2배속 권장",
+        "failureReason": "14층: 딜 부족 + 적 탱·힐에 딜 분산"
       }
     ],
     "floorOpening": {
@@ -7722,16 +7725,19 @@
     },
     "warnings": [
       {
-        "type": "4배속_궁극기_버그",
-        "description": "4배속 전투에서 궁극기 시전 안 됨 (세미라 사례: 0.9M → 6.2M 회복 with 2배속)",
-        "recommendation": "2배속 권장"
-      },
-      {
-        "type": "원거리_영웅_속박",
-        "description": "원거리 영웅은 넉백으로 가장자리까지 밀림 → 제자리 공격 → 5초 경과 → 붙잡힘",
-        "recommendation": "근접 영웅 포함 편성"
+        "type": "BUG_4X_SPEED",
+        "severity": "HIGH",
+        "title": "4배속 궁극기 버그",
+        "description": "4배속 전투에서 궁극기가 시전되지 않음. 2배속으로 변경 권장.",
+        "example": "세미라: 4배속 미사용 → 2배속 정상 (딜 0.9M → 6.2M)"
       }
-    ]
+    ],
+    "phantomMapping": {
+      "빛의 탑": "비밀의 은월 그로웬",
+      "의지의 탑": "크리스탈 스카라브",
+      "자연의 탑": "나사레스",
+      "영원의 탑": "역병 크리퍼"
+    }
   },
   "dreamRealm": {
     "lastEncounter": "2026-09-28",

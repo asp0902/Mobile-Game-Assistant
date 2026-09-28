@@ -24,19 +24,40 @@ fun SkyTrialPanel(skyTrial: SkyTrialData) {
             Text("기간: 시즌 1단계 1~80층, 2단계 81~140층, 3단계 141~200층")
             Text("층 보상: 과거의 단편 ×150 + 골드 ×120K | 메아리 11~20레벨 상승용, +14 필요 공명: 325")
         }
-        item {
-            Text("⚠️ 중요: 4배속 궁극기 버그", style = MaterialTheme.typography.titleSmall)
+        items(skyTrial.warnings) { warning ->
             Card(
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEEEE)),
+                colors = CardDefaults.cardColors(
+                    containerColor = when (warning.severity) {
+                        "HIGH" -> Color(0xFFFFEEEE)
+                        "MEDIUM" -> Color(0xFFFFF9C4)
+                        else -> Color(0xFFE8F5E9)
+                    }
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
-                Text(
-                    "4배속 전투에서 궁극기 시전 안 됨 (세미라 사례: 0.9M → 6.2M with 2배속)\n권장: 2배속으로 변경",
-                    modifier = Modifier.padding(12.dp),
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text("⚠️ ${warning.type}", style = MaterialTheme.typography.labelSmall)
+                    Text(warning.message, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
+        if (skyTrial.phantomMapping.isNotEmpty()) {
+            item {
+                Text("팬텀 배치", style = MaterialTheme.typography.titleSmall)
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        skyTrial.phantomMapping.forEach { (tower, phantom) ->
+                            Text("$tower: $phantom", style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
+                }
             }
         }
         items(skyTrial.towers) { tower ->

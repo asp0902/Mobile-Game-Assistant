@@ -26,9 +26,17 @@ data class SkyTrialTower(
     val note: String? = null,
 )
 
+data class SkyTrialWarning(
+    val message: String,
+    val severity: String, // HIGH, MEDIUM, LOW
+    val type: String,
+)
+
 data class SkyTrialData(
     val towers: List<SkyTrialTower>,
     val floorRewards: Map<String, Any>,
+    val warnings: List<SkyTrialWarning> = emptyList(),
+    val phantomMapping: Map<String, String> = emptyMap(),
 )
 
 data class DreamRealmBossSkill(
@@ -123,7 +131,14 @@ class LearnedKnowledgeRepository @Inject constructor(
                         }
                     }
                     val rewards = st.getJSONObject("floorRewards").let { map { it.key to it.value } }.toMap()
-                    SkyTrialData(towers, rewards)
+                    val warnings = st.optJSONArray("warnings")?.let { arr ->
+                        (0 until arr.length()).map { i ->
+                            val w = arr.getJSONObject(i)
+                            SkyTrialWarning(w.getString("message"), w.getString("severity"), w.getString("type"))
+                        }
+                    } ?: emptyList()
+                    val phantomMapping = st.optJSONObject("phantomMapping")?.let { map { it.key to it.value as String } }.toMap() ?: emptyMap()
+                    SkyTrialData(towers, rewards, warnings, phantomMapping)
                 }.getOrNull()
             }
             fun parseDreamRealm(): DreamRealmData? {
