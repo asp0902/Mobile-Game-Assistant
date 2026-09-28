@@ -22,6 +22,11 @@ object InitialFormationKnowledge {
         Hero("quinn", "퀸", "와일더스", "서포터"),
         Hero("valka", "발리카", "그레이브본", "전사"),
         Hero("karen", "카렌", "그레이브본", "탱커"),
+        Hero("endure", "인듀어", "와일더스", "사수"),
+        Hero("sarie", "사리에", "와일더스", "레인저"),
+        Hero("isabella", "이사벨라", "그레이브본", "서포터"),
+        Hero("galahad", "갈라하드", "트라이브", "마법사"),
+        Hero("tudor", "튜더", "와일더스", "탱커"),
     )
     val artifactHeadlines = mapOf(
         "신성한 소환" to "반신영웅을소환해함께전투",
@@ -30,6 +35,7 @@ object InitialFormationKnowledge {
         "성상의 조각" to "레오프론제국영웅중심",
         "불멸의 불꽃" to "단체공격지원",
         "마이다스의 재물" to "체험카드영웅중심",
+        "달그림자 활" to "인듀어중심",
     )
     fun hero(name: String?) = heroes.firstOrNull { it.name == name }
     // User-confirmed Honor Duel START rule, never a personal-account rank inference.
@@ -221,6 +227,11 @@ object InitialFormationAdvisor {
                 if ("카세디아" in names) { score += rules.weight("goblinCassadia", 2); reasons.add("카세디아의 피해 증가 버프가 초반 공격 기회를 보조할 가능성") }
                 if ("카짐" in names) reasons.add("카짐의 에어본 조건을 제공하는 아군은 미확인")
                 if ("스모키와 미르키" in names) reasons.add("스모키의 치료는 주변 위치·전투 시간 의존")
+            }
+            "달그림자 활" -> {
+                reasons.add("아군의 가장 강력한 인듀어가 인사이트로 강화된 뒤 일반 공격 시 화살 2발 추가 발사, 약점 격파가 쿨타임 제한을 받지 않음")
+                reasons.add("기본 효과만 평가; 경험치 24(인듀어 궁극기 피해 500% + 같은 양의 HP 차감)·46(레전드 장비 1개 선택) 잠금 효과 제외")
+                if ("인듀어" in names) reasons.add("인듀어가 확인됨") else reasons.add("인듀어 미확인")
             }
             "신성한 소환" -> {
                 reasons.add("최후열 아군 최대 HP 75%·공격력 80% 손실을 대가로 랜덤 반신 소환")

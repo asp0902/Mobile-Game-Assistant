@@ -107,10 +107,15 @@ class HeroRecognitionCatalog @Inject constructor(
     private val templates by lazy { heroes.mapNotNull(::template) }
     private val formationTemplates by lazy {
         val supplemental = runCatching {
-            LearningFiles.list(context, "hero_recognition/initial_formation_20260918").mapNotNull { file ->
-                val identity = InitialFormationKnowledge.heroes.firstOrNull { file.removeSuffix(".png") == it.id }
-                heroes.firstOrNull { it.koreanName == identity?.name }?.copy(
-                    portraitAsset = "hero_recognition/initial_formation_20260918/$file")
+            val folders = listOf("hero_recognition/initial_formation_20260918", "hero_recognition/initial_formation_20260928")
+            folders.flatMap { folder ->
+                runCatching {
+                    LearningFiles.list(context, folder).mapNotNull { file ->
+                        val identity = InitialFormationKnowledge.heroes.firstOrNull { file.removeSuffix(".png") == it.id }
+                        heroes.firstOrNull { it.koreanName == identity?.name }?.copy(
+                            portraitAsset = "$folder/$file")
+                    }
+                }.getOrDefault(emptyList())
             }
         }.getOrDefault(emptyList())
         val epicStartReferences = runCatching {
