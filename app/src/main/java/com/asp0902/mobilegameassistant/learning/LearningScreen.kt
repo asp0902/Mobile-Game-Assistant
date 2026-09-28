@@ -152,6 +152,8 @@ fun LearningScreen(onBack: () -> Unit) {
                 SkyTrialPanel(snapshot.skyTrial!!)
             } else if (activePanel == "dreamRealm" && snapshot?.dreamRealm != null) {
                 DreamRealmPanel(snapshot.dreamRealm!!)
+            } else if (activePanel == "heroes" && snapshot?.heroes.isNotEmpty()) {
+                HeroPanel(snapshot!!.heroes)
             } else if (selected != null) {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     item { Text(selected.title, style = MaterialTheme.typography.titleMedium) }
@@ -177,6 +179,9 @@ fun LearningScreen(onBack: () -> Unit) {
                     }
                     if (snapshot?.dreamRealm != null) {
                         Button(onClick = { activePanel = "dreamRealm" }) { Text("꿈의 세계") }
+                    }
+                    if (snapshot?.heroes.isNotEmpty()) {
+                        Button(onClick = { activePanel = "heroes" }) { Text("영웅") }
                     }
                 }
                 if (showConversation) Text("당시 발언 원문입니다. 오래된 수치·오답은 정리 자료의 정정 사항보다 우선하지 않습니다. 검색은 제목 기준입니다.")

@@ -50,6 +50,19 @@ data class DreamRealmData(
     val bestComposition: Map<String, Any>,
 )
 
+data class HeroInfo(
+    val id: String,
+    val name: String,
+    val title: String? = null,
+    val rank: String,
+    val rarity: String? = null,
+    val role: String,
+    val attackType: String? = null,
+    val range: Int? = null,
+    val owned: Boolean = false,
+    val asOf: String? = null,
+)
+
 data class LearnedSnapshot(
     val date: String,
     val entries: List<LearningEntry>,
@@ -57,6 +70,7 @@ data class LearnedSnapshot(
     val bossOverlay: String,
     val skyTrial: SkyTrialData? = null,
     val dreamRealm: DreamRealmData? = null,
+    val heroes: List<HeroInfo> = emptyList(),
 )
 
 @Singleton
@@ -126,8 +140,20 @@ class LearnedKnowledgeRepository @Inject constructor(
                     DreamRealmData(boss, skills, comp)
                 }.getOrNull()
             }
+            fun parseHeroes(): List<HeroInfo> {
+                return runCatching {
+                    val arr = root.optJSONArray("heroes") ?: return@runCatching emptyList()
+                    (0 until arr.length()).map { i ->
+                        val h = arr.getJSONObject(i)
+                        HeroInfo(h.getString("id"), h.getString("name"), h.optString("title").takeIf { it.isNotBlank() },
+                            h.getString("rank"), h.optString("rarity").takeIf { it.isNotBlank() },
+                            h.getString("role"), h.optString("attackType").takeIf { it.isNotBlank() },
+                            h.optInt("range").takeIf { it >= 0 }, h.optBoolean("owned", false), h.optString("asOf").takeIf { it.isNotBlank() })
+                    }
+                }.getOrDefault(emptyList())
+            }
             LearnedSnapshot(root.getString("snapshotDate"), entries("entries"), entries("conversationIndex"),
-                root.getJSONObject("boss").getString("overlay"), parseSkyTrial(), parseDreamRealm())
+                root.getJSONObject("boss").getString("overlay"), parseSkyTrial(), parseDreamRealm(), parseHeroes())
         }
     }
 
