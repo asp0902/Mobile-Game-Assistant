@@ -64,6 +64,7 @@ class MediaProjectionService : Service() {
         }
 
         override fun onCapturedContentResize(width: Int, height: Int) {
+            if (width == contentWidth && height == contentHeight) return
             contentWidth = width
             contentHeight = height
             virtualDisplay?.resize(width, height, resources.configuration.densityDpi)

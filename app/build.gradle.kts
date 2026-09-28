@@ -13,8 +13,8 @@ android {
         applicationId = "com.asp0902.mobilegameassistant"
         minSdk = 23
         targetSdk = 36
-        versionCode = 19
-        versionName = "0.1.13-honor-initial-20260928"
+        versionCode = 20
+        versionName = "0.1.14-capture-loop-fix-20260928"
     }
 
     buildFeatures {
