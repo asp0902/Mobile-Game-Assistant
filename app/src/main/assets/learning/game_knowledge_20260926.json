@@ -6754,6 +6754,12 @@
       "seasonResonance": 416,
       "workflow": "ChatGPT: 학습/분석/추천. Codex: 코딩/자료 반영/APK 빌드.",
       "asOf": "20260918-151910"
+    },
+    {
+      "date": "2026-09-28",
+      "type": "seasonProgress",
+      "note": "시즌 공명의 용사 레벨 333(이전 332), 서포터 시즌 장비 335(이전 직업 장비 330대). 서포터 외 직업(마법사·전사·레인저·사수·탱커)은 330 유지",
+      "evidence": "USER_CONFIRMED"
     }
   ],
   "preservationUpdate": {
@@ -7382,24 +7388,6 @@
           "적 딜 약 65% = 후방 라멘티스(19M, 받피 1.7M) + 카짐(7M, 받피 0) → 아군이 앞줄만 공격"
         ],
         "nextSteps": "공명 레벨·장비 상승 후 재도전, 협력 전투 1회. 큐브 코어 추가 투입 보류"
-      }
-    },
-    {
-      "date": "2026-09-28",
-      "type": "seasonProgress",
-      "note": "시즌 공명 수준 진행 현황 및 장비 레벨 갱신",
-      "evidence": "USER_CONFIRMED",
-      "account": {
-        "asOf": "2026-09-28",
-        "seasonResonance": 333,
-        "classEquipment": {
-          "supporter": 335,
-          "mage": 330,
-          "warrior": 330,
-          "ranger": 330,
-          "marksman": 330,
-          "tank": 330
-        }
       }
     }
   ],
