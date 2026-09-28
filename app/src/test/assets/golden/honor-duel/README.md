@@ -18,6 +18,7 @@
 | `trial-queen-equipment.png` | 체험 카드 상세 | 퀸 체험 카드, 침묵의 투구 장착 |
 | `equipment-simple-bow.png` | 장비 상세 | 간이 활, 레어, 거리 3칸 이상 적 대상 피해 +25% |
 | `random-lightbearer-result.png` | 랜덤 획득 결과 | 랜덤 레오프론 영웅 3명 획득 결과 |
+| `honor-initial-20260928-device.png` | 초기 편성 | adb screencap 2026-09-28, 1080×2316. 카드1(고블린) 카드2(달그림자) 카드3(평정) 카드4(랜덤). 상태바·알림 없음 |
 
 ## 정답 기록 원칙
 
