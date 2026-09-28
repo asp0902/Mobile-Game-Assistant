@@ -1804,6 +1804,13 @@
       "title": "꿈의 세계 상세 전투 기록 (3회차)",
       "text": "메아리: 광조술+13, 전원 레벨 310\n\n1회차: 아로라·세미라·에디·갈라하드·카이\n합계 141M (22.9%), 랭킹 193위\n\n2회차: 아로라·세미라·로란대제·갈라하드·카이  \n합계 189M (30.7%), 랭킹 162위\n\n3회차: 아로라·세미라·칸티아스·갈라하드·로란대제\n합계 192M (31.2%), 랭킹 160위\n개별 전투력: 세미라 72.3M, 아로라 85.5M, 칸티아스 1.8M(치유 13.4M), 갈라하드 29.7M, 로란 3.2M(치유 231M), 보스 준 피해 25.5M\n특징: 3회 모두 사망·이동 없음 (위치 파악 회피 성공)",
       "evidence": "OBSERVATION"
+    },
+    {
+      "id": "honor_shop_round1_20260928",
+      "title": "명예의 결투 상점 1라운드 상품 (2026-09-28 화면)",
+      "text": "범위: 명예의 결투 상점 1라운드, 2026-09-28 화면 1회 관찰. 가격·구성이 다른 라운드에도 같은지는 확인되지 않았다.\n\n묶음 상품 3종(팝업 제목 OCR로 확정, 이 화면의 가격):\n- \"모든 진영 랜덤 영웅\" 18골드, 설명 \"오픈 후 3명의 영웅 랜덤 획득\" (칸 0, 7)\n- \"랜덤 트라이브 영웅\" 33골드, 설명 \"오픈 후 3명의 트라이브 영웅 랜덤 획득\" (칸 2)\n- \"랜덤 그레이브본 영웅\" 33골드, 설명 \"오픈 후 3명의 그레이브본 영웅 랜덤 획득\" (칸 6)\n관찰(OBSERVATION, 미확정): 이 화면에서는 주황 아이콘 묶음=트라이브, 초록 아이콘 묶음=그레이브본, \"?\" 묶음=모든 진영이었다. 아이콘 모양·색으로 진영을 판정하는 규칙은 다른 라운드 캡처로 반복 확인 전에는 세우지 않는다.\n\n난폭한 세이렌 (칸 3, 6골드): 에픽, 체험 카드, 진영 표시 \"기타\", 전사, 물리 공격, 사정거리 1. 장착 장비: 정교한 가죽고리(레어, \"초기 에너지를 250 획득한다\").\n\n체험 카드 공통 규칙(팝업 원문 요지): 1회 사용 후 회수. 업그레이드·판매·영웅 장비 교환 불가. 화폐 보너스 없음. 동일 체험 카드는 중복 출전 불가.\n\n칸 1·5(+4 EXP, 15골드)와 칸 4(장비, 10골드)는 팝업을 확인하지 않아 상세 미확정.\n\n증거 이미지 (learning/honor-shop-r1-20260928/):\nhonor-shop-round1-20260928-device.png (기기 상점 화면 전체, adb screencap)\nhonor-shop-r1-popup-slot0-all-faction-random.webp (칸0 팝업)\nhonor-shop-r1-popup-slot2-tribe-random.webp (칸2 팝업)\nhonor-shop-r1-popup-slot3-siren-trial.webp (칸3 영웅 상세)\nhonor-shop-r1-popup-slot3-trial-card-rules.webp (칸3 체험 카드 규칙)\nhonor-shop-r1-popup-slot6-graveborn-random.webp (칸6 팝업)\nhonor-shop-r1-popup-slot7-all-faction-random.webp (칸7 팝업)",
+      "asset": "learning/honor-shop-r1-20260928/honor-shop-round1-20260928-device.png",
+      "evidence": "USER_CONFIRMED"
     }
   ],
   "conversationIndex": [
