@@ -1,0 +1,29 @@
+# Gradle
+.gradle/
+build/
+*.apk
+*.aab
+
+# Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+
+# Local properties
+local.properties
+
+# Generated files
+.classpath
+.project
+.settings/
+bin/
+gen/
+
+# Keystore
+*.keystore
+*.jks
+
+# Environment
+.env
