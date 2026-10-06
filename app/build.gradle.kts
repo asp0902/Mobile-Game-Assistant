@@ -13,8 +13,8 @@ android {
         applicationId = "com.asp0902.mobilegameassistant"
         minSdk = 23
         targetSdk = 36
-        versionCode = 31
-        versionName = "0.1.25-learning-list-reversed-20260928"
+        versionCode = 34
+        versionName = "0.1.28-night-gold-theme-20261006"
     }
 
     buildFeatures {
@@ -43,6 +43,7 @@ if (junctionRoot != null) {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")

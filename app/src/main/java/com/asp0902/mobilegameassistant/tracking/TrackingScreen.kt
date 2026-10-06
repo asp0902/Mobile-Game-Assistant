@@ -4,6 +4,7 @@ import com.asp0902.mobilegameassistant.analysis.InitialFormationAction
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -46,6 +48,8 @@ import com.asp0902.mobilegameassistant.rules.HonorDuelEconomy
 import com.asp0902.mobilegameassistant.artisans.ArtisansAction
 import com.asp0902.mobilegameassistant.artisans.ArtisansPathAnalysis
 import com.asp0902.mobilegameassistant.analysis.HeroRarity
+import com.asp0902.mobilegameassistant.AppColors
+import com.asp0902.mobilegameassistant.appBackground
 
 @Composable
 fun TrackingScreen(
@@ -72,17 +76,18 @@ fun TrackingScreen(
         com.asp0902.mobilegameassistant.learning.LearningScreen(onBack = { showLearning = false })
         return
     }
-    Scaffold(containerColor = Color(0xFFF1EBDE)) { padding ->
+    Scaffold(containerColor = Color.Transparent) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .appBackground()
                 .padding(padding)
                 .padding(24.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         ) {
-            Text("AFK: 새로운 여정 트래커", style = MaterialTheme.typography.headlineSmall)
+            Text("AFK: 새로운 여정 트래커", style = MaterialTheme.typography.headlineSmall, color = AppColors.GoldText)
             Text(statusText(state))
             Button(onClick = { showLearning = true }, modifier = Modifier.fillMaxWidth()) {
                 Text("학습 자료 · 메아리 / 보스 / 전투 기록")
@@ -90,7 +95,10 @@ fun TrackingScreen(
 
             when (state) {
                 is TrackingState.Idle -> Button(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(AppColors.GoldBandBrush, ButtonDefaults.shape),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color(0xFFFFF8E1)),
                     onClick = onStart,
                 ) {
                     Text("트래킹 시작")
@@ -127,7 +135,7 @@ fun TrackingScreen(
                     if (frame == null) {
                         Text("아직 캡처된 화면이 없습니다.")
                         if (diagnostic != null) {
-                            Text(diagnostic, fontSize = 10.sp, color = Color.Gray)
+                            Text(diagnostic, fontSize = 10.sp, color = AppColors.Body.copy(alpha = 0.7f))
                         }
                     } else {
                         Text(template?.let { "필드 캐시: ${it.id.displayName}" } ?: "필드 선택 필요")

@@ -1,6 +1,8 @@
 package com.asp0902.mobilegameassistant.learning
 
 import android.graphics.BitmapFactory
+import com.asp0902.mobilegameassistant.AppColors
+import com.asp0902.mobilegameassistant.appBackground
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -74,10 +76,10 @@ fun LearningScreen(onBack: () -> Unit) {
         }
     }
     BackHandler { if (showUpdate) { showUpdate = false; token = "" } else if (selectedId != null) selectedId = null else onBack() }
-    Scaffold(containerColor = Color(0xFFF1EBDE)) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Scaffold(containerColor = Color.Transparent) { padding ->
+        Column(Modifier.fillMaxSize().appBackground().padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(onClick = { if (showUpdate) { showUpdate = false; token = "" } else if (selectedId != null) selectedId = null else onBack() }) { Text("뒤로") }
-            Text("저장된 학습 · ${snapshot?.date ?: "불러오는 중"}", style = MaterialTheme.typography.titleLarge)
+            Text("저장된 학습 · ${snapshot?.date ?: "불러오는 중"}", style = MaterialTheme.typography.titleLarge, color = AppColors.GoldText)
             Text("과거 기록과 미실험 제안을 분리합니다. 현재 계정 자동 확인이나 성공 보장이 아닙니다.")
             if (showUpdate) {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -135,7 +137,7 @@ fun LearningScreen(onBack: () -> Unit) {
                 Button(onClick = { showUpdate = true }) { Text("원격 업데이트") }
             } else if (selected != null) {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    item { Text(selected.title, style = MaterialTheme.typography.titleMedium) }
+                    item { Text(selected.title, style = MaterialTheme.typography.titleMedium, color = AppColors.GoldText) }
                     item {
                         portrait?.let { Image(it, contentDescription = selected.title, modifier = Modifier.size(100.dp)) }
                         if (selected.portrait != null && portrait == null) Text("초상화: CHECK")

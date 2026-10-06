@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.asp0902.mobilegameassistant.capture.MediaProjectionService
 import com.asp0902.mobilegameassistant.tracking.TrackingScreen
@@ -46,6 +47,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         overlayPermissionGranted = Settings.canDrawOverlays(this)
         setContent {
@@ -56,25 +58,27 @@ class MainActivity : ComponentActivity() {
             val artisansAnalysis by viewModel.artisansAnalysis.collectAsStateWithLifecycle()
             val detailSlot by viewModel.detailSlot.collectAsStateWithLifecycle()
             val diagnostic by viewModel.diagnostic.collectAsStateWithLifecycle()
-            TrackingScreen(
-                state = state,
-                frame = frame,
-                template = template,
-                analysis = analysis,
-                artisansAnalysis = artisansAnalysis,
-                detailSlot = detailSlot,
-                heroChoices = viewModel.heroChoices(),
-                onStart = ::startTracking,
-                onStop = { MediaProjectionService.stop(this) },
-                onTogglePause = { MediaProjectionService.togglePause(this) },
-                overlayPermissionGranted = overlayPermissionGranted,
-                onEnableOverlay = ::requestOverlayPermission,
-                onTemplateSelected = viewModel::selectFormationTemplate,
-                onDetailSlotSelected = viewModel::selectDetailSlot,
-                onHeroCorrected = viewModel::correctHero,
-                onHeroPurchaseRecorded = viewModel::recordHeroPurchase,
-                diagnostic = diagnostic,
-            )
+            AppTheme {
+                TrackingScreen(
+                    state = state,
+                    frame = frame,
+                    template = template,
+                    analysis = analysis,
+                    artisansAnalysis = artisansAnalysis,
+                    detailSlot = detailSlot,
+                    heroChoices = viewModel.heroChoices(),
+                    onStart = ::startTracking,
+                    onStop = { MediaProjectionService.stop(this) },
+                    onTogglePause = { MediaProjectionService.togglePause(this) },
+                    overlayPermissionGranted = overlayPermissionGranted,
+                    onEnableOverlay = ::requestOverlayPermission,
+                    onTemplateSelected = viewModel::selectFormationTemplate,
+                    onDetailSlotSelected = viewModel::selectDetailSlot,
+                    onHeroCorrected = viewModel::correctHero,
+                    onHeroPurchaseRecorded = viewModel::recordHeroPurchase,
+                    diagnostic = diagnostic,
+                )
+            }
         }
     }
 

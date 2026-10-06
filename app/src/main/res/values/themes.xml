@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.MobileGameAssistant" parent="android:style/Theme.Material.Light.NoActionBar" />
+    <style name="Theme.MobileGameAssistant" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">#07243C</item>
+    </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#07243C</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_afk_tracker</item>
+        <item name="postSplashScreenTheme">@style/Theme.MobileGameAssistant</item>
+    </style>
 </resources>
