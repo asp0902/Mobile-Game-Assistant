@@ -174,10 +174,13 @@ class HonorDuelShopAnalyzer @Inject constructor(
             SlotBounds(.26f, .28f, .49f, .47f, .38f),
             SlotBounds(.51f, .28f, .74f, .47f, .38f),
             SlotBounds(.75f, .28f, .98f, .47f, .38f),
-            SlotBounds(.03f, .47f, .25f, .67f, .58f),
-            SlotBounds(.26f, .47f, .49f, .67f, .58f),
-            SlotBounds(.51f, .47f, .74f, .67f, .58f),
-            SlotBounds(.75f, .47f, .98f, .67f, .58f),
+            // priceTop measured on honor-shop-round1-20260928-device.png (1080x2316, full-screen
+            // capture): price badge top sits at y=1270px (.548), below the .58 previously used,
+            // which put the badge text above priceTop and dropped it from the price filter.
+            SlotBounds(.03f, .47f, .25f, .67f, .547f),
+            SlotBounds(.26f, .47f, .49f, .67f, .547f),
+            SlotBounds(.51f, .47f, .74f, .67f, .547f),
+            SlotBounds(.75f, .47f, .98f, .67f, .547f),
         )
         // ponytail: six visible first-row roster cards. Add second-row anchors with a matching Golden sample.
         val ROSTER_SLOT_BOUNDS = (0 until 6).map { index ->
@@ -524,13 +527,21 @@ object HonorDuelHeaderParser {
             .filter { it.centerX > .72f && it.centerY < .22f }
             .mapNotNull { Regex("\\d+").find(it.text)?.value?.toIntOrNull() }
             .maxOrNull()
+        // Narrowed from .22..34: on honor-shop-round1-20260928-device.png (1080x2316) the
+        // reroll "3" measures at y .220-.235, well clear of the first shop row starting at
+        // y=.28. The wider band let a card's own digits (still unconfirmed which one) win the
+        // min() pick over the real reroll cost -- narrowing keeps the filter inside the header
+        // strip and out of card territory regardless.
         val refreshCost = blocks
-            .filter { it.centerX > .72f && it.centerY in .22f.. .34f }
+            .filter { it.centerX > .72f && it.centerY in .22f.. .27f }
             .mapNotNull { Regex("\\d+").find(it.text)?.value?.toIntOrNull() }
             .filter { it in 1..10 }
             .minOrNull()
-        val targetWins = Regex("목표\\s*:?\\s*(\\d+)").find(allText)?.groupValues?.get(1)?.toIntOrNull()
-        val wins = Regex("현재\\s*(\\d+)\\s*승").find(allText)?.groupValues?.get(1)?.toIntOrNull()
+        // "목표: 9회 승리" measured at y .045-.058 on the same capture; matching against the
+        // full OCR text let these patterns latch onto unrelated digits elsewhere on screen.
+        val headerText = blocks.filter { it.centerY < .12f }.joinToString(" ") { it.text }
+        val targetWins = Regex("목표\\s*:?\\s*(\\d+)").find(headerText)?.groupValues?.get(1)?.toIntOrNull()
+        val wins = Regex("현재\\s*(\\d+)\\s*승").find(headerText)?.groupValues?.get(1)?.toIntOrNull()
         val round = Regex("(\\d+)\\s*라운드").find(allText)?.groupValues?.get(1)?.toIntOrNull()
         val artifactName = KNOWN_ARTIFACTS.firstOrNull(allText::contains)
         val artifactXp = blocks
@@ -691,9 +702,20 @@ object HeroOfferClassifier {
         val legendaryTrial = trial && price == 12 && visual.redBackgroundRatio >= .08f &&
             (visual.hasEquipmentBadge || equipmentName != null)
         val rarity = if (legendaryTrial) HeroRarity.LEGENDARY else explicitRarity
+        // 3-0k-1 (honor_shop_round1_20260928): "모든 진영/랜덤 트라이브/랜덤 그레이브본 랜덤 영웅"
+        // popup titles confirm this shop can offer a 3-card random-hero bundle. Only the popup
+        // reveals that; the closed shop tile just shows a warm-toned card frame, which the color
+        // heuristic (SlotVisualEvidence.likelyHeroPortrait) can't tell apart from an actual hero
+        // portrait. So without popup-title text, don't default to HERO -- stay UNKNOWN instead
+        // of inventing an identity for a bundle slot.
+        val randomHeroPack = text.contains("랜덤") && text.contains("영웅")
+        val allFactionPack = randomHeroPack && text.contains("모든 진영")
         val type = when {
             trial -> ShopItemType.TRIAL_HERO_CARD
             quantity != null && quantity > 1 -> ShopItemType.HERO_BUNDLE
+            allFactionPack -> ShopItemType.RANDOM_HERO_PACK
+            randomHeroPack -> ShopItemType.FACTION_HERO_PACK
+            text.isBlank() -> ShopItemType.UNKNOWN
             else -> ShopItemType.HERO
         }
         val reasons = buildList {
@@ -701,6 +723,8 @@ object HeroOfferClassifier {
             if (quantity != null) add("수량 ${quantity}장")
             if (legendaryTrial) add("12휘장·빨간 배경·체험 카드·장비")
             if (explicitRarity != HeroRarity.UNKNOWN) add("등급 텍스트")
+            if (randomHeroPack) add("팝업 제목: 랜덤 영웅 묶음")
+            if (type == ShopItemType.UNKNOWN) add("묶음 상품 가능성, 상세 확인 필요")
         }
         return HeroOfferClassification(type, quantity ?: if (type == ShopItemType.HERO) 1 else null, trial, rarity, equipmentName, reasons)
     }
