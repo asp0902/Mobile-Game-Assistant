@@ -8948,6 +8948,12 @@
       "type": "phantomContract",
       "note": "팬텀의 계약 레벨: 물질의 큐브(사용자 문구 \"이중 봉인의 큐브\") 37, 그로웬·나사레스·크리스탈 스카라브·역병 크리퍼 38. 10/6 \"전체 37\"을 대체하되 이전 값 유지. \"이중 봉인의 큐브\"가 물질의 큐브의 칭호라는 것은 추정.",
       "evidence": "USER_CONFIRMED"
+    },
+    {
+      "date": "2026-10-08",
+      "type": "seasonProgress",
+      "note": "시즌 공명의 용사 레벨 446 (같은 날 445 → 446, 이전 값 유지).",
+      "evidence": "USER_CONFIRMED"
     }
   ],
   "preservationUpdate": {
