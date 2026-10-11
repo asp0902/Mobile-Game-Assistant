@@ -9039,6 +9039,12 @@
       "type": "seasonProgress",
       "note": "시즌 공명의 용사 레벨 487 (477에서 +10; 이전 값 유지). 팬텀의 계약·시즌 메아리·직업 장비는 10/10 기록 값 유지(사용자 언급 없음).",
       "evidence": "USER_CONFIRMED"
+    },
+    {
+      "date": "2026-10-11",
+      "type": "seasonProgress",
+      "note": "시즌 공명의 용사 레벨 489 (같은 날 487 → 489, 최신값; 487 기록은 유지). 팬텀의 계약·시즌 메아리·직업 장비는 10/10 기록 값 유지(사용자 언급 없음).",
+      "evidence": "USER_CONFIRMED"
     }
   ],
   "preservationUpdate": {
