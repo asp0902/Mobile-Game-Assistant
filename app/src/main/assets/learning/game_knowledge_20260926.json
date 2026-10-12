@@ -458,7 +458,32 @@
       "asOf": "2026-09-17",
       "title": "검은 달의 제사장",
       "rank20260930": "챔피언",
-      "rankEvidence20260930": "사용자 확정 2026-09-30 (adb 캡처 overview.png). 9/17 자료의 rank(레전드)는 그대로 유지."
+      "rankEvidence20260930": "사용자 확정 2026-09-30 (adb 캡처 overview.png). 9/17 자료의 rank(레전드)는 그대로 유지.",
+      "rank20261012": "챔피언+",
+      "rankPrev20261012": "챔피언",
+      "asOf20261012": "2026-10-12",
+      "rankEvidence20261012": "USER_CONFIRMED 2026-10-12: 챔피언 → 챔피언+ 진급(각성 \"각성의 힘\" 해제). 기존 rank/rank20260930 기록은 유지.",
+      "exclusiveWeapon20261012": {
+        "name": "침묵의 심판",
+        "level": "+10",
+        "stars": 3,
+        "prevLevel": "+6",
+        "stats": "HP 15% · 공격력 19.2% · 물방/마방 15%",
+        "upgradeMaterial": "70 사용(75→5)",
+        "evidence": "USER_CONFIRMED 2026-10-12(+6 → +10), 수치는 화면 관찰"
+      },
+      "exclusiveSkill20261012": {
+        "name": "은총의 심판",
+        "level": 3,
+        "prevLevel": 2,
+        "summary": "2칸 범위 HP 최저 유닛에 파동: 아군 8초 실드 → 퀸 공격력 550%, 적 대미지 350%(활성 마법진 1개당 +10%), 10초마다 필드 HP 최저 유닛에 재발사, +15에서 600%/400%",
+        "evidence": "USER_CONFIRMED 2026-10-12(2 → 3레벨), 원문 요지는 화면 관찰"
+      },
+      "awakening20261012": {
+        "name": "각성의 힘",
+        "summary": "모든 마법진 활성화 시 무자비한 의식의 마법진 효과가 전투 끝까지 필드 전체로 확대, 이후 시전 시 모든 아군 5초 제어 면역 + 입히는 대미지 5% 증가",
+        "evidence": "화면 관찰(OBSERVATION) 원문 요지"
+      }
     },
     {
       "name": "팔라모르",
@@ -9241,6 +9266,12 @@
       "date": "2026-10-12",
       "type": "seasonProgress",
       "note": "시즌 공명의 용사 레벨 502 (501에서 갱신; 이전 값 유지). 진급(사용자 확정): 루보미르 에픽 → 에픽+ → 레전드. 진급 화면 수치(OBSERVATION): 에픽→에픽+ HP 27,835K→29,853K · 공격력 2,412K→2,582K · 물방/마방 576K→614K · 숙련도 607→615(재료 1/1) / 에픽+→레전드 HP 29,853K→32,173K · 공격력 2,582K→2,778K · 물방/마방 614K→659K · 숙련도 615→620(재료 365/50). 원본 학습보관/promotion-20261012/lubomir-112~115.webp.",
+      "evidence": "USER_CONFIRMED"
+    },
+    {
+      "date": "2026-10-12",
+      "type": "heroProgress",
+      "note": "퀸 챔피언 → 챔피언+ 진급(사용자 확정). 진급 화면(OBSERVATION): HP 44,751K→49,190K · 공격력 4,540K→5,018K · 물방/마방 784K→852K · 숙련도 632→634. 전용 무기 침묵의 심판 +6 → +10(별 3), 전용 스킬 은총의 심판 2 → 3레벨(사용자 확정). 상세는 heroes quinn의 rank20261012·exclusiveWeapon20261012·exclusiveSkill20261012·awakening20261012. 원본 학습보관/promotion-20261012/quinn-116~127.webp.",
       "evidence": "USER_CONFIRMED"
     }
   ],
