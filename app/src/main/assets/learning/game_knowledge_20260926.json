@@ -2316,7 +2316,9 @@
       "source20261011": "화면 관찰(adb, 2026-10-11, 추론용 세션 원문 전달). 사용자 확정값 아님. 원본 학습보관/season-echo-20261011/",
       "sources20261011": [
         "learning/season-echo-20261011/echoes-1to3-detail.webp"
-      ]
+      ],
+      "level20261012": 20,
+      "levelEvidence20261012": "USER_CONFIRMED 2026-10-12 (나머지 시즌 메아리 6종 +20)"
     },
     {
       "id": "brightTacticsArt",
@@ -2391,7 +2393,9 @@
       "source20261011": "화면 관찰(adb, 2026-10-11, 추론용 세션 원문 전달). 사용자 확정값 아님. 원본 학습보관/season-echo-20261011/",
       "sources20261011": [
         "learning/season-echo-20261011/echoes-1to3-detail.webp"
-      ]
+      ],
+      "level20261012": 20,
+      "levelEvidence20261012": "USER_CONFIRMED 2026-10-12 (나머지 시즌 메아리 6종 +20)"
     },
     {
       "id": "soulRequiemArt",
@@ -2436,7 +2440,9 @@
       "source20261011": "화면 관찰(adb, 2026-10-11, 추론용 세션 원문 전달). 사용자 확정값 아님. 원본 학습보관/season-echo-20261011/",
       "sources20261011": [
         "learning/season-echo-20261011/echoes-1to3-detail.webp"
-      ]
+      ],
+      "level20261012": 20,
+      "levelEvidence20261012": "USER_CONFIRMED 2026-10-12 (나머지 시즌 메아리 6종 +20)"
     },
     {
       "id": "meteorArt",
@@ -2473,7 +2479,9 @@
       "source20261011": "화면 관찰(adb, 2026-10-11, 추론용 세션 원문 전달). 사용자 확정값 아님. 원본 학습보관/season-echo-20261011/",
       "sources20261011": [
         "learning/season-echo-20261011/echoes-4to6-detail.webp"
-      ]
+      ],
+      "level20261012": 20,
+      "levelEvidence20261012": "USER_CONFIRMED 2026-10-12 (나머지 시즌 메아리 6종 +20)"
     },
     {
       "id": "thunderArt",
@@ -2489,7 +2497,9 @@
       "sources20261011": [
         "learning/season-echo-20261011/echoes-4to6-detail.webp"
       ],
-      "note": "10/10 사용자 확정은 +18(이름만). 아이콘: 파란 원, 번개. 이전에는 효과·아이콘 미확인이었다."
+      "note": "10/10 사용자 확정은 +18(이름만). 아이콘: 파란 원, 번개. 이전에는 효과·아이콘 미확인이었다.",
+      "level20261012": 20,
+      "levelEvidence20261012": "USER_CONFIRMED 2026-10-12 (나머지 시즌 메아리 6종 +20)"
     },
     {
       "id": "swordArt",
@@ -2505,7 +2515,43 @@
       "sources20261011": [
         "learning/season-echo-20261011/echoes-4to6-detail.webp"
       ],
-      "note": "10/10 사용자 확정은 +18(이름만). 아이콘: 주황 원, 칼날. 이전에는 효과·아이콘 미확인이었다."
+      "note": "10/10 사용자 확정은 +18(이름만). 아이콘: 주황 원, 칼날. 이전에는 효과·아이콘 미확인이었다.",
+      "level20261012": 20,
+      "levelEvidence20261012": "USER_CONFIRMED 2026-10-12 (나머지 시즌 메아리 6종 +20) — 초검술은 화면에서 잘려 +20으로 보임(추정)"
+    },
+    {
+      "id": "linkArt",
+      "name": "연결술",
+      "seasonOnly": true,
+      "level": 14,
+      "level20261012": 14,
+      "evidence": "USER_CONFIRMED",
+      "levelEvidence20261012": "USER_CONFIRMED 2026-10-12: 7번째 시즌 메아리 활성화, +14",
+      "stats20261012": "공격력 +6%, 물리·마법 방어력 +18%, HP +12%",
+      "effect": "전투 시작 시 아군 가장 뒤·가장 앞 영웅 1명씩 연결. 앞 영웅이 뒤 영웅이 받는 대미지의 20%를 부담하고, 뒤 영웅이 입힌 대미지의 30%(현재 34%)만큼 앞 영웅 HP를 회복한다. 다른 방식으로 에너지를 얻으면 연결된 아군이 15%를 획득한다.",
+      "unlockedUpgrades20261012": [
+        "현재 34%"
+      ],
+      "locked20261012": [
+        {
+          "level": 15,
+          "effect": "36%"
+        },
+        {
+          "level": 20,
+          "effect": "38%"
+        },
+        {
+          "level": 25,
+          "effect": "40%"
+        },
+        {
+          "level": 30,
+          "effect": "누적 20초 연결 후 두 아군 공격력 +25%"
+        }
+      ],
+      "note": "화면 순서: 연결술 · 명촉술 · 광조술 · 진혼술 · 운석술 · 질뇌술 · 초검술. 아이콘(파랑·초록 타원, 흰 인물 두 명)이 진혼술(보라·남색, 흰 쌍둥이)과 비슷해 인식 규칙을 만들 때 색으로 구분해야 한다(추론용 세션 전달; 앱 인식 규칙은 아직 만들지 않음). 아이콘 이미지는 앱 자산에 넣지 않았다.",
+      "source20261012": "사용자 확정(레벨 활성화)·화면 관찰 원문(adb, 2026-10-12, 추론용 세션 전달). 원본 학습보관/season-echo-20261012/"
     }
   ],
   "boss": {
@@ -9272,6 +9318,12 @@
       "date": "2026-10-12",
       "type": "heroProgress",
       "note": "퀸 챔피언 → 챔피언+ 진급(사용자 확정). 진급 화면(OBSERVATION): HP 44,751K→49,190K · 공격력 4,540K→5,018K · 물방/마방 784K→852K · 숙련도 632→634. 전용 무기 침묵의 심판 +6 → +10(별 3), 전용 스킬 은총의 심판 2 → 3레벨(사용자 확정). 상세는 heroes quinn의 rank20261012·exclusiveWeapon20261012·exclusiveSkill20261012·awakening20261012. 원본 학습보관/promotion-20261012/quinn-116~127.webp.",
+      "evidence": "USER_CONFIRMED"
+    },
+    {
+      "date": "2026-10-12",
+      "type": "seasonEcho",
+      "note": "시즌 메아리 7번째 \"연결술\" +14 활성화(사용자 확정). 나머지 시즌 메아리 6종(명촉술·광조술·진혼술·운석술·질뇌술·초검술) +20(사용자 확정; 초검술은 화면에서 잘려 보여 +20으로 읽음). 연결술 속성·효과·레벨별 해제는 echoes linkArt 참조.",
       "evidence": "USER_CONFIRMED"
     }
   ],
