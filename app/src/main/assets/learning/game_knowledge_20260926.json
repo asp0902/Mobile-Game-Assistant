@@ -1873,7 +1873,11 @@
       "role20261011": "레인저",
       "range20261011": 1,
       "asOf20261011": "2026-10-11",
-      "evidence20261011": "영웅의 전당 화면 원문(adb, 2026-10-11, 추론용 세션 전달), 원본 학습보관/hero-cards-20261011/ (OBSERVATION)"
+      "evidence20261011": "영웅의 전당 화면 원문(adb, 2026-10-11, 추론용 세션 전달), 원본 학습보관/hero-cards-20261011/ (OBSERVATION)",
+      "rank20261028": "챔피언",
+      "rankPrev20261028": "신화+",
+      "asOf20261028": "2026-10-28",
+      "rankEvidence20261028": "USER_CONFIRMED 2026-10-28: 신화+ → 챔피언 진급(캡처). 진급 화면 수치는 accountUpdates(2026-10-28) 참조(OBSERVATION). 이전 기록(rank20261008 신화 등)은 유지."
     },
     {
       "id": "lemia",
@@ -9680,6 +9684,12 @@
       "type": "environment",
       "note": "플레이 환경 변경(추론용 세션 전달): 휴대폰(S23 Ultra)의 AFK는 이제 보안 폴더(사용자 150)에만 설치돼 있다. adb screencap·input은 보안 폴더 안 게임 화면에서도 정상 동작했다.",
       "evidence": "OBSERVATION"
+    },
+    {
+      "date": "2026-10-28",
+      "type": "heroProgress",
+      "note": "윙 신화+ → 챔피언 진급(사용자 확정, 캡처). 진급 화면 수치(OBSERVATION): HP 158M → 168M · 공격력 15,182K → 16,203K · 물리·마법 방어력 3,451K → 3,683K · 숙련도 728 → 730. 원본 학습보관/promotion-20261028/wing-champion-1·2.webp. 참고: 10/11 기록에는 윙이 신화였고 신화+ 진급 시점은 따로 전달되지 않았다.",
+      "evidence": "USER_CONFIRMED"
     }
   ],
   "preservationUpdate": {
