@@ -1877,7 +1877,23 @@
       "rank20261028": "챔피언",
       "rankPrev20261028": "신화+",
       "asOf20261028": "2026-10-28",
-      "rankEvidence20261028": "USER_CONFIRMED 2026-10-28: 신화+ → 챔피언 진급(캡처). 진급 화면 수치는 accountUpdates(2026-10-28) 참조(OBSERVATION). 이전 기록(rank20261008 신화 등)은 유지."
+      "rankEvidence20261028": "USER_CONFIRMED 2026-10-28: 신화+ → 챔피언 진급(캡처). 진급 화면 수치는 accountUpdates(2026-10-28) 참조(OBSERVATION). 이전 기록(rank20261008 신화 등)은 유지.",
+      "exclusiveWeapon20261028": {
+        "name": "뼈 가시 단검",
+        "level": "+5",
+        "stars": 2,
+        "weaponCombatPower": "3,327,731",
+        "stats": "HP 8.8% · 공격력 12.3% · 물리/마법 방어력 7% · 방어 관통 10.5 · 종결 10.5",
+        "statsBefore": "HP 7.5% · 공격력 10.5% · 물방 6%",
+        "nextUnlocks": "[+10] 침식의 저주 폭발 대미지를 85% 고정 대미지로 전환, [+15] 대미지 최고치 48%",
+        "evidence": "USER_CONFIRMED 2026-10-28(+5 강화, 캡처), 수치는 화면 관찰"
+      },
+      "exclusiveSkill20261028": {
+        "name": "저주깃의 의식",
+        "level": 2,
+        "prevLevel": 1,
+        "evidence": "USER_CONFIRMED 2026-10-28(1 → 2레벨, 캡처); 스킬 원문은 전달되지 않음"
+      }
     },
     {
       "id": "lemia",
@@ -9689,6 +9705,12 @@
       "date": "2026-10-28",
       "type": "heroProgress",
       "note": "윙 신화+ → 챔피언 진급(사용자 확정, 캡처). 진급 화면 수치(OBSERVATION): HP 158M → 168M · 공격력 15,182K → 16,203K · 물리·마법 방어력 3,451K → 3,683K · 숙련도 728 → 730. 원본 학습보관/promotion-20261028/wing-champion-1·2.webp. 참고: 10/11 기록에는 윙이 신화였고 신화+ 진급 시점은 따로 전달되지 않았다.",
+      "evidence": "USER_CONFIRMED"
+    },
+    {
+      "date": "2026-10-28",
+      "type": "heroProgress",
+      "note": "윙 전용 무기 \"뼈 가시 단검\" +5 강화, 전용 스킬 \"저주깃의 의식\" 1 → 2레벨(사용자 확정, 캡처). 별 2, 무기 전투력 3,327,731. 기본 속성(OBSERVATION): HP 8.8% · 공격력 12.3% · 물리/마법 방어력 7% · 방어 관통 10.5 · 종결 10.5(강화 전 HP 7.5% · 공격력 10.5% · 물방 6%). 다음 해제: [+10] 침식의 저주 폭발 대미지 85% 고정 대미지 전환, [+15] 대미지 최고치 48%. 같은 날 앞선 윙 챔피언 진급 기록에 이어진다.",
       "evidence": "USER_CONFIRMED"
     }
   ],
